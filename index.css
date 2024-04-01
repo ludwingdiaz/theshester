@@ -1,0 +1,28 @@
+.spotify-player {
+    width: 300px;
+    /* Ancho del mini reproductor */
+    height: 80px;
+    /* Altura del mini reproductor */
+    border: 1px solid #ccc;
+    /* Borde del mini reproductor */
+    border-radius: 5px;
+    /* Bordes redondeados */
+    overflow: hidden;
+    /* Para recortar cualquier contenido que desborde */
+}
+
+body {
+    background: #000000;
+    /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #434343, #000000);
+    /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #434343, #000000);
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    /* Esto centra verticalmente el contenido */
+    margin: 0;
+    /* Elimina el margen predeterminado del cuerpo */
+}
