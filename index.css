@@ -9,7 +9,9 @@
     /* Bordes redondeados */
     overflow: hidden;
     /* Para recortar cualquier contenido que desborde */
+    
 }
+
 
 body {
     background: #000000;
@@ -17,12 +19,14 @@ body {
     background: -webkit-linear-gradient(to right, #434343, #000000);
     /* Chrome 10-25, Safari 5.1-6 */
     background: linear-gradient(to right, #434343, #000000);
-    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.estilos {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    /* Esto centra verticalmente el contenido */
-    margin: 0;
-    /* Elimina el margen predeterminado del cuerpo */
+    height: 90vh; /* O ajusta la altura según sea necesario */
 }
