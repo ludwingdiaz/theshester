@@ -1,22 +1,11 @@
+fetch('../header/header.html')
+    .then(response => response.text())
+    .then(html => {
+        document.getElementById('contenedor').innerHTML = html;
+    });
 
-
-const toggleMenu = () => {
-    const burgerMenu = document.querySelector(".menu-icon");
-    const src = burgerMenu.getAttribute('src');
-    const iconName = src === 'assets/burger-menu.svg' ?
-        'assets/close.svg'
-        :
-        'assets/burger-menu.svg';
-
-
-    burgerMenu.setAttribute(
-        'src',
-        iconName
-    );
-
-    const navigation = document.querySelector('.navigation');
-
-    navigation.classList.toggle(
-        'navigation--mobile'
-    );
-};
+    fetch('../footer/footer.html')
+    .then(response => response.text())
+    .then(html => {
+      document.getElementById('contenedor02').innerHTML = html;
+    }); 
