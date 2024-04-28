@@ -8,7 +8,7 @@
 }
 
 body {
-    font-family: "Red Hat Display", 
+    font-family: "Red Hat Display",
         sans-serif;
     font-size: 16px;
 }
@@ -26,10 +26,8 @@ body {
     justify-content: space-between;
     width: 100vw;
     z-index: 2;
-    gap: 24px; 
-    background-color: var(
-        --background
-    );
+    gap: 24px;
+    background-color: var(--background);
     height: var(--navbar-height);
     padding: 0px 16px;
     align-items: center;
@@ -50,26 +48,25 @@ body {
 .logo svg {
     fill: var(--white);
 }
-     
-.navigation {    
+
+.navigation {
     display: flex;
     flex-direction: row;
     list-style-type: none;
     align-items: center;
     gap: 8px;
-    background-color: var(
-        --background);
-}
-               
-.navigation > li {
-  display: flex;
-  position: relative;
-  cursor: pointer;
-  align-items: center;
-  height: 42px;
+    background-color: var(--background);
 }
 
-.navigation > li > button > svg {
+.navigation>li {
+    display: flex;
+    position: relative;
+    cursor: pointer;
+    align-items: center;
+    height: 42px;
+}
+
+.navigation>li>button>svg {
     stroke: var(--white);
     fill: var(--white);
     color: var(--white);
@@ -77,13 +74,13 @@ body {
     transition: all 0.2s ease-in-out;
 }
 
-.navigation > li > a {
+.navigation>li>a {
     color: var(--white);
     font-size: 14px;
     text-decoration: none;
 }
 
-.navigation > li > button {
+.navigation>li>button {
     color: var(--white);
     border-bottom: 2px solid transparent;
     transition: all 0.3s ease;
@@ -101,16 +98,15 @@ body {
     display: flex;
     padding: 3px 0;
     position: relative;
-    transition: all 0.2s 
-        ease-in-out;
+    transition: all 0.2s ease-in-out;
 }
 
-.navigation > li > button:hover, 
-.navigation > li > a:hover {
+.navigation>li>button:hover,
+.navigation>li>a:hover {
     opacity: 0.75;
 }
 
-.navigation > li > button:hover > svg {
+.navigation>li>button:hover>svg {
     opacity: 0.75;
     margin-top: 0;
 }
@@ -124,25 +120,23 @@ body {
     display: none;
     flex-direction: column;
     padding: 16px;
-    box-shadow: 0 5px 30px 
-        rgba(27, 31, 35, 0.1), 
-        0 0 1px rgba(27, 31, 35, 0.4), 
+    box-shadow: 0 5px 30px rgba(27, 31, 35, 0.1),
+        0 0 1px rgba(27, 31, 35, 0.4),
         0 1px 2px rgba(27, 31, 35, 0.15);
     z-index: 2;
     animation: fadeIn 0.2s ease-in-out;
 }
 
 @keyframes fadeIn {
-    from {        
+    from {
         opacity: 0;
-        transform: scale(0.99)
-            translateY(-0.7em);
+        transform: scale(0.99) translateY(-0.7em);
         transform-origin: top;
     }
+
     to {
         opacity: 1;
-        transform: scale(1) 
-            translateY(0);
+        transform: scale(1) translateY(0);
     }
 }
 
@@ -154,13 +148,13 @@ body {
 
 .list-menu-items {
     display: flex;
-    list-style-type: none; 
+    list-style-type: none;
     flex-direction: column;
     gap: 4px;
 }
 
 
-.list-menu-items > li > a {
+.list-menu-items>li>a {
     display: flex;
     gap: 16px;
     font-size: 14px;
@@ -170,7 +164,7 @@ body {
 }
 
 
-.list-menu-items > li > a:hover {
+.list-menu-items>li>a:hover {
     color: var(--primary);
 }
 
@@ -208,7 +202,7 @@ body {
     font-size: 12px;
 }
 
-.navigation > li:hover .dropdown {
+.navigation>li:hover .dropdown {
     display: flex;
     opacity: 1;
 }
@@ -284,8 +278,10 @@ body {
 /* Estilos para dispositivos móviles */
 @media (max-width: 768px) {
     .navigation {
-        display: none; /* Ocultar la navegación en pantallas pequeñas */
-        flex-direction: column; /* Mostrar elementos de navegación en columna */
+        display: none;
+        /* Ocultar la navegación en pantallas pequeñas */
+        flex-direction: column;
+        /* Mostrar elementos de navegación en columna */
         position: absolute;
         top: 60px;
         left: 0;
@@ -295,21 +291,25 @@ body {
     }
 
     .navigation.show {
-        display: flex; /* Mostrar la navegación cuando se hace clic en el botón del menú */
+        display: flex;
+        /* Mostrar la navegación cuando se hace clic en el botón del menú */
     }
 
     .navigation li {
-        margin-bottom: 10px; /* Espacio entre elementos de navegación */
+        margin-bottom: 10px;
+        /* Espacio entre elementos de navegación */
     }
 
     .burger-menu {
-        display: block; /* Mostrar el botón del menú hamburguesa en pantallas pequeñas */
+        display: block;
+        /* Mostrar el botón del menú hamburguesa en pantallas pequeñas */
         background: none;
         border: none;
         cursor: pointer;
     }
 
     .action-buttons {
-        display: none; /* Ocultar los botones de acción en pantallas pequeñas */
+        display: none;
+        /* Ocultar los botones de acción en pantallas pequeñas */
     }
 }
