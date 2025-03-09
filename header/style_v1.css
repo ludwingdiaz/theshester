@@ -31,7 +31,7 @@ body {
     height: var(--navbar-height);
     padding: 0px 16px;
     align-items: center;
-    position: relative;
+    position: fixed;
 }
 
 .menu__bar {
