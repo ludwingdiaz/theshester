@@ -268,10 +268,12 @@ color:  black !important    ;
     .menu__wrapper {
         justify-content: space-between;
         position: relative;
+        z-index: 10;
     }
 
     .action-buttons {
         order: -1;
+        z-index: 10;
     }
 }
 
@@ -280,46 +282,43 @@ color:  black !important    ;
     .burger-menu {
         display: flex;
         align-items: center;
+        position: relative;
+        z-index: 20;
     }
 }
-
 
 /* Estilos para dispositivos móviles */
 @media (max-width: 768px) {
     .navigation {
         display: none;
-        /* Ocultar la navegación en pantallas pequeñas */
         flex-direction: column;
-        /* Mostrar elementos de navegación en columna */
         position: absolute;
         top: 60px;
         left: 0;
         background-color: #24292e;
         width: 100%;
         padding: 10px;
+        z-index: 50; /* Mayor que otros elementos */
     }
 
     .navigation.show {
         display: flex;
-        /* Mostrar la navegación cuando se hace clic en el botón del menú */
     }
 
     .navigation li {
-        margin-bottom: 10px;
-        /* Espacio entre elementos de navegación */
+        margin-bottom: 0px;
     }
 
     .burger-menu {
         display: block;
-        /* Mostrar el botón del menú hamburguesa en pantallas pequeñas */
         background: none;
         border: none;
         cursor: pointer;
+        position: relative;
+        z-index: 100;
     }
 
     .action-buttons {
         display: none;
-        /* Ocultar los botones de acción en pantallas pequeñas */
     }
-    
 }

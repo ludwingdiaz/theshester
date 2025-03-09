@@ -1276,9 +1276,10 @@ h3 {
     .home{
         width: 100%;
         align-items: normal;
-        padding-top: 35%;
-        padding-bottom: 25;
+         /*padding-top: 35%;*/
+       padding-bottom: 25;
         margin-top: 15px;
+        z-index: 1;
     }
     .home-content h1 {
         font-size: 25px;
