@@ -220,6 +220,7 @@ body {
     white-space: nowrap;
     padding: 4px 8px;
     transition: all 0.2s ease-in-out;
+    display: none;
 }
 
 .action-buttons a:hover {
@@ -259,6 +260,7 @@ body {
 
     .menu__wrapper {
         justify-content: space-between;
+        position: relative;
     }
 
     .action-buttons {
@@ -312,4 +314,5 @@ body {
         display: none;
         /* Ocultar los botones de acción en pantallas pequeñas */
     }
+    
 }
