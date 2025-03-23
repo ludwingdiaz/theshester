@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/png" href="../../assets/EmoteBulldog 28x28.png">
+    <title>Usando NVM para Node.js</title>
+    <link rel="stylesheet" href="../css/como-cambiar-versiones-en-angular.css">
+</head>
+
+<body>
+    <header>
+        <h1>Usando NVM para Node.js</h1>
+    </header>
+    <main>
+        <section class="step">
+            <h2>¿Qué es NVM?</h2>
+            <p>NVM (Node Version Manager) es una herramienta que te permite instalar y cambiar entre diferentes
+                versiones de Node.js en tu sistema.</p>
+        </section>
+        <section class="step">
+            <h2>Paso 1: Descargar NVM</h2>
+            <p>Descarga NVM desde su repositorio oficial en GitHub:</p>
+            <p><a href="https://github.com/nvm-sh/nvm">https://github.com/nvm-sh/nvm</a></p>
+            <p>Sigue las instrucciones de instalación para tu sistema operativo.</p>
+        </section>
+        <section class="step">
+            <h2>Paso 2: Verificar la Instalación</h2>
+            <p>Abre tu terminal y ejecuta el siguiente comando para verificar que NVM se instaló correctamente:</p>
+            <pre><code>nvm --version</code></pre>
+            <p>Deberías ver la versión de NVM instalada.</p>
+        </section>
+        <section class="step">
+            <h2>Paso 3: Listar Versiones de Node.js</h2>
+            <p>Para ver las versiones de Node.js disponibles para instalar, usa:</p>
+            <pre><code>nvm ls-remote</code></pre>
+            <p>Para listar las versiones de Node.js que ya tienes instaladas, usa:</p>
+            <pre><code>nvm list</code></pre>
+        </section>
+        <section class="step">
+            <h2>Paso 4: Instalar una Versión de Node.js</h2>
+            <p>Para instalar una versión específica de Node.js, usa:</p>
+            <pre><code>nvm install 18.17.1</code></pre>
+            <p>Reemplaza "18.17.1" con la versión que quieras instalar.</p>
+        </section>
+        <section class="step">
+            <h2>Paso 5: Usar una Versión de Node.js</h2>
+            <p>Para cambiar a una versión específica de Node.js, usa:</p>
+            <pre><code>nvm use 18.17.1</code></pre>
+            <p>Reemplaza "18.17.1" con la versión que quieras usar.</p>
+        </section>
+        <section class="step">
+            <h2>Paso 6: Establecer una Versión Predeterminada</h2>
+            <p>Para establecer una versión predeterminada de Node.js, usa:</p>
+            <pre><code>nvm alias default 18.17.1</code></pre>
+            <p>Reemplaza "18.17.1" con la versión que quieras usar como predeterminada.</p>
+        </section>
+        <section class="summary">
+            <h2>Resumen de Comandos</h2>
+            <ul>
+                <li><code>nvm --version</code>: Verifica la versión de NVM.</li>
+                <li><code>nvm ls-remote</code>: Lista las versiones disponibles de Node.js.</li>
+                <li><code>nvm list</code>: Lista las versiones instaladas de Node.js.</li>
+                <li><code>nvm install [versión]</code>: Instala una versión de Node.js.</li>
+                <li><code>nvm use [versión]</code>: Usa una versión de Node.js.</li>
+                <li><code>nvm alias default [versión]</code>: Establece una versión predeterminada de Node.js.</li>
+            </ul>
+        </section>
+    </main>
+    <script src="../js/js.js"></script>
+</body>
+
+</html>
