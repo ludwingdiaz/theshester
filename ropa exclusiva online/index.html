@@ -7,59 +7,69 @@
     <title>Tienda de Ropa Moderna</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link rel="shortcut icon" href="../assets//EmoteBulldog 28x28.png" type="image/x-icon">
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <header class="header">
         <nav class="navbar navbar-expand-lg navbar-dark">
-            <a class="navbar-brand" href="#">Tu Tienda de Ropa</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Catálogo
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="#">Todo el Catálogo</a>
-                                <a class="dropdown-item" href="#">Recomendaciones</a>
+            <div class="d-flex align-items-center w-100">
+                <a class="navbar-brand" href="#">
+                    <img src="assets/logo.png" alt="Tu Tienda de Ropa" class="logo">
+                </a>
+                <div class="d-flex justify-content-center" style="flex-grow: 1;">
+                    <button class="btn btn-secondary categorias-btn" type="button" data-toggle="collapse" data-target="#categoriasSidebar" aria-controls="categoriasSidebar" aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fas fa-bars"></i> Todas las categorías
+                    </button>
+                </div>
+                <div class="d-flex justify-content-center" style="flex-grow: 2;">
+                    <div class="search-box">
+                        <div class="input-group">
+                            <select class="form-control category-select">
+                                <option value="all">Todo el catálogo</option>
+                                <option value="recomendados">Recomendados</option>
+                            </select>
+                            <input type="text" class="form-control search-input" placeholder="Buscar">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-light search-button" type="button">
+                                    <i class="fas fa-search"></i>
+                                </button>
                             </div>
                         </div>
-                    </li>
+                    </div>
+                </div>
+                <ul class="navbar-nav">
                     <li class="nav-item">
-                        <form class="form-inline my-2 my-lg-0">
-                            <div class="input-group">
-                                <input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar">
-                                <div class="input-group-append">
-                                    <button class="btn btn-outline-light" type="submit">
-                                        <i class="fas fa-search"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="#">Inicio</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Productos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Contacto</a>
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-user"></i> Mi Cuenta
+                        </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">
-                            <i class="fas fa-shopping-cart"></i>
+                            <i class="fas fa-shopping-cart"></i> Mi Cesta <span class="badge badge-light cart-count">0</span>
                         </a>
                     </li>
                 </ul>
             </div>
         </nav>
     </header>
+
+    <div class="sidebar collapse" id="categoriasSidebar">
+        <ul class="list-group">
+            <li class="list-group-item">
+                <a href="#">Ropa de Mujer</a>
+            </li>
+            <li class="list-group-item">
+                <a href="#">Ropa de Hombre</a>
+            </li>
+            <li class="list-group-item">
+                <a href="#">Accesorios</a>
+            </li>
+        </ul>
+    </div>
+
+
 
     <main class="main">
         <section class="hero">

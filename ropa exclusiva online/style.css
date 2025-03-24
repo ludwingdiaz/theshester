@@ -10,17 +10,62 @@ body {
     top: 0;
     width: 100%;
     z-index: 100;
+    padding: 10px 0;
 }
 
-.navbar-brand {
-    font-weight: bold;
+.navbar-brand .logo {
+    height: 40px;
 }
 
-/* Estilos para el buscador */
-.form-inline .form-control {
-    width: 200px; /* Ajusta el ancho según necesites */
+.categorias-btn {
+    /* Los márgenes automáticos se eliminan */
 }
 
+.search-box {
+    width: 400px;
+}
+
+.search-input {
+    border-radius: 0;
+}
+
+.search-button {
+    border-radius: 0;
+}
+
+.category-select {
+    border-radius: 0;
+}
+
+.form-control{
+    width: 400px;
+}
+.cart-count {
+    margin-left: 5px;
+}
+
+.sidebar {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    width: 250px;
+    height: 100%;
+    background: #f8f9fa;
+    z-index: 99;
+    padding: 20px;
+    border-right: 1px solid #dee2e6;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar li {
+    margin-bottom: 10px;
+}
+
+////
 .navbar-brand {
     font-weight: bold;
 }
