@@ -1,0 +1,58 @@
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.header {
+    background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+/* Estilos para el buscador */
+.form-inline .form-control {
+    width: 200px; /* Ajusta el ancho según necesites */
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+.hero {
+    background: linear-gradient(135deg, #a8dadc, #457b9d);
+    color: white;
+    text-align: center;
+    padding: 100px 0;
+}
+
+.hero h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+}
+
+.products {
+    padding: 50px 0;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-img-top {
+    height: 250px;
+    object-fit: cover;
+}
+
+.footer {
+    background: linear-gradient(135deg, #e0e0e0, #f0f0f0);
+    padding: 20px 0;
+    text-align: center;
+}

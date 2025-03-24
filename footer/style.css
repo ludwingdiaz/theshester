@@ -7,7 +7,7 @@
     position: relative;
     /* Cambiado a relative */
     top: 0px;
-    margin-top: 100vh;
+    margin-top: 100vh !important ;
 }
 
 .footer .row {
