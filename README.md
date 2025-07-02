@@ -1,2 +1,2 @@
 # theshester
-theshester.com
+https://ludwingdiaz.site/
