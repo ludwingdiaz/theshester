@@ -1,0 +1,138 @@
+body {
+  background: linear-gradient(135deg, #e0f7fa, #c2e9f2); /* Gradiente suave */
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+  position: relative; /* Para el efecto de montañas */
+}
+
+body::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100px; /* Altura de las montañas */
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M1200 120L0 120 600 0z" fill="#f4f4f4"/></svg>') repeat-x; /* Patrón de montañas */
+  background-size: 1200px 100px;
+  z-index: -1; /* Detrás del contenido */
+}
+
+header {
+  background-color: #007bfc;
+    color: white;
+    text-align: center;
+    padding: 2em 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.tutorials-list__cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.tutorials-list__card {
+  display: block;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  text-decoration: none;
+  color: #333;
+  transition: box-shadow 0.3s ease;
+}
+
+.tutorials-list__card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.card-category {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.card-description {
+  font-size: 1rem;
+  margin-bottom: 15px;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-stats {
+  display: flex;
+  align-items: center;
+}
+
+.card-views, .card-comments {
+  display: flex;
+  align-items: center;
+  margin-right: 15px;
+  font-size: 0.9rem;
+}
+
+.card-views img, .card-comments img {
+  margin-right: 5px;
+}
+
+.card-meta {
+  display: flex;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.card-date, .card-author {
+  margin-left: 10px;
+}
+
+/* Estilos de paginación (manteniendo los estilos que ya tenías) */
+.pagination-number {
+  /* ... (tus estilos de paginación) ... */
+}
+
+.view-more-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 25px;
+  height: 25px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 50%;
+  text-decoration: none;
+  margin-left: 10px;
+  font-size: 1.2em;
+}
+
+.view-more-button:hover {
+  background-color: #0056b3;
+}
+
+/* ... (tus estilos existentes) ... */
+
+.card-web-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-web-link a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
