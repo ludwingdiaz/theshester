@@ -1,3 +1,4 @@
+// backend/models/Tutorial.js
 const mongoose = require('mongoose');
 
 // Definir el Schema y el Modelo para los tutoriales
@@ -15,3 +16,6 @@ const tutorialSchema = new mongoose.Schema({
 }, { timestamps: true }); // 'timestamps' añade createdAt y updatedAt automáticamente
 
 const Tutorial = mongoose.model('Tutorial', tutorialSchema);
+
+// ¡FALTA ESTA LÍNEA! Exporta el modelo para que pueda ser importado en otros archivos
+module.exports = Tutorial;
