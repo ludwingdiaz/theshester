@@ -20,12 +20,10 @@ const authRouter = require('./routes/auth');         // NUEVO: Importa el router
 app.use(express.json()); // Permite a Express parsear JSON en el cuerpo de las solicitudes
 
 app.use(cors({
-    origin: 'https://ludwingdiaz.site' // Tu dominio de frontend
-    //origin: ['https://ludwingdiaz.site', 'http://127.0.0.1:5500'], // Añade tu origen local aquí
-    //methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos HTTP permitidos
-    //allowedHeaders: ['Content-Type', 'Authorization'] // Cabeceras permitidas (Content-Type es crucial para JSON)
+    origin: ['https://ludwingdiaz.site', 'https://ludwingdiaz.site/'], // Asegúrate de que no haya una barra final accidental si tu frontend no la tiene, o viceversa
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Es buena práctica especificarlos
+    allowedHeaders: ['Content-Type', 'Authorization'] // Crucial
 }));
-
 // Conexión a MongoDB
 const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017/tutorialViewsDB'; // Asegúrate de que apunte a tu DB real
 
