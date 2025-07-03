@@ -20,9 +20,10 @@ const authRouter = require('./routes/auth');         // NUEVO: Importa el router
 app.use(express.json()); // Permite a Express parsear JSON en el cuerpo de las solicitudes
 
 app.use(cors({
-    //origin: 'https://ludwingdiaz.site' // Tu dominio de frontend
-    origin: 'https://ludwingdiaz.site', // Añade tu origen local aquí
-   
+    origin: 'https://ludwingdiaz.site' // Tu dominio de frontend
+    //origin: ['https://ludwingdiaz.site', 'http://127.0.0.1:5500'], // Añade tu origen local aquí
+    //methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos HTTP permitidos
+    //allowedHeaders: ['Content-Type', 'Authorization'] // Cabeceras permitidas (Content-Type es crucial para JSON)
 }));
 
 // Conexión a MongoDB
@@ -36,7 +37,7 @@ mongoose.connect(mongoURI)
 // Usar los routers para organizar las rutas de la API
 // ====================================================================
 // app.use('/api/comments', commentsRouter); // Descomenta si ya tienes el router de comentarios
-// app.use('/api/views', viewsRouter);     // Descomenta si ya tienes el router de vistas
+app.use('/api/views', viewsRouter);     // Descomenta si ya tienes el router de vistas
 app.use('/api/auth', authRouter);         // NUEVO: Todas las rutas en authRouter se prefijan con /api/auth
 
 
