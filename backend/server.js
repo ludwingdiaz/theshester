@@ -12,7 +12,7 @@ const app = express();
 const PORT = process.env.PORT || 3000; // El puerto del servidor, usa 3000 si no está en .env
 
 // Middleware
-app.use(cors()); // Habilita CORS para todas las rutas
+//app.use(cors()); // Habilita CORS para todas las rutas
 app.use(express.json()); // Permite a Express parsear JSON en el cuerpo de las solicitudes
 
 app.use(cors({
