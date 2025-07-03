@@ -21,9 +21,8 @@ app.use(express.json()); // Permite a Express parsear JSON en el cuerpo de las s
 
 app.use(cors({
     //origin: 'https://ludwingdiaz.site' // Tu dominio de frontend
-    origin: ['https://ludwingdiaz.site', 'http://127.0.0.1:5500'], // Añade tu origen local aquí
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos HTTP permitidos
-    allowedHeaders: ['Content-Type', 'Authorization'] // Cabeceras permitidas (Content-Type es crucial para JSON)
+    origin: 'https://ludwingdiaz.site', // Añade tu origen local aquí
+   
 }));
 
 // Conexión a MongoDB
