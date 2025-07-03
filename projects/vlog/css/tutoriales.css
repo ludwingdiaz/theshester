@@ -322,3 +322,144 @@ body:not(.dark-mode) .icon-light-mode {
 body.dark-mode .icon-dark-mode {
     display: flex; /* Asegura que sea visible como flexbox */
 }
+
+
+/* ====================================================
+   NUEVO: Estilos para Formularios de Registro/Login
+   ==================================================== */
+
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 150px); /* Ajusta para que ocupe casi toda la altura de la ventana menos el header/footer */
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.registration-form-section {
+    background-color: var(--card-background); /* Usa el fondo de tarjeta */
+    border: var(--card-border); /* Usa el borde de tarjeta */
+    border-radius: 8px;
+    padding: 40px;
+    box-shadow: var(--section-shadow, 0 4px 10px rgba(0, 0, 0, 0.1)); /* Sombra similar a tus secciones de post */
+    max-width: 500px; /* Limita el ancho del formulario */
+    width: 100%;
+    text-align: center;
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.registration-form-section h2 {
+    font-size: 1.8rem;
+    margin-bottom: 30px;
+    color: var(--text-color-primary);
+}
+
+.styled-form .form-group {
+    margin-bottom: 20px;
+    text-align: left; /* Alinea etiquetas e inputs a la izquierda dentro del grupo */
+}
+
+.styled-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: var(--text-color-primary);
+}
+
+.styled-form input[type="text"],
+.styled-form input[type="email"],
+.styled-form input[type="password"] {
+    width: calc(100% - 20px); /* Ajusta por el padding */
+    padding: 10px;
+    border: 1px solid var(--text-color-secondary); /* Borde sutil que cambie con el tema */
+    border-radius: 5px;
+    background-color: var(--body-background); /* Fondo de input que se adapte al tema */
+    color: var(--text-color-primary);
+    box-sizing: border-box; /* Para que el padding no aumente el ancho total */
+    font-size: 1rem;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.styled-form input[type="text"]::placeholder,
+.styled-form input[type="email"]::placeholder,
+.styled-form input[type="password"]::placeholder {
+    color: var(--text-color-secondary); /* Color del placeholder */
+    opacity: 0.7;
+}
+
+
+.styled-form input[type="text"]:focus,
+.styled-form input[type="email"]:focus,
+.styled-form input[type="password"]:focus {
+    outline: none;
+    border-color: var(--button-background); /* Resalta el borde al enfocar */
+    box-shadow: 0 0 0 2px rgba(var(--button-background-rgb-value, 0, 123, 255), 0.2); /* Sombra de enfoque */
+}
+
+/* Definir RGB de button-background para la sombra si no lo tienes */
+:root {
+    --button-background-rgb-value: 0, 123, 255; /* RGB para #007bff */
+}
+body.dark-mode {
+    --button-background-rgb-value: 74, 74, 110; /* RGB para #4a4a6e */
+}
+
+
+.styled-form small {
+    display: block;
+    margin-top: 5px;
+    color: var(--text-color-secondary);
+    font-size: 0.85rem;
+}
+
+.submit-button {
+    background-color: var(--button-background);
+    color: var(--button-text-color);
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: bold;
+    width: 100%; /* El botón ocupa todo el ancho */
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.submit-button:hover {
+    background-color: var(--button-hover-background);
+}
+
+.login-link {
+    margin-top: 25px;
+    font-size: 0.95rem;
+    color: var(--text-color-primary);
+}
+
+.login-link a {
+    color: var(--button-background); /* Usa el color del botón para los enlaces */
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.login-link a:hover {
+    color: var(--button-hover-background);
+    text-decoration: underline;
+}
+
+/* Media Queries para Responsive Design */
+@media (max-width: 600px) {
+    .registration-form-section {
+        padding: 25px;
+        margin: 20px;
+    }
+    .registration-form-section h2 {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+    .submit-button {
+        padding: 10px 20px;
+        font-size: 1rem;
+    }
+}
