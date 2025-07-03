@@ -1,28 +1,118 @@
+/* css/tutoriales.css */
+
+/*
+   ====================================================
+   Variables CSS para Modo Claro (por defecto)
+   ====================================================
+*/
+:root {
+  /* Colores de fondo */
+  --body-gradient-start: #e0f7fa; /* Gradiente suave inicio */
+  --body-gradient-end: #c2e9f2;   /* Gradiente suave fin */
+  --header-background: #007bfc;
+  --card-background: #fff;       /* Fondo de tarjeta */
+  --button-background: #007bff; /* Fondo de botón */
+  --button-hover-background: #0056b3; /* Fondo de botón al pasar el ratón */
+  --mountain-fill-color: #f4f4f4; /* Color de las montañas en SVG */
+
+  /* Colores de texto */
+  --text-color-primary: #333;    /* Texto general, títulos */
+  --text-color-secondary: #666;  /* Texto de categorías, metadatos */
+  --header-text-color: white;
+  --button-text-color: white;
+
+  /* Bordes y sombras */
+  --card-border: 1px solid #ddd;
+  --card-shadow-hover: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/*
+   ====================================================
+   Variables CSS para Modo Oscuro
+   ====================================================
+*/
+body.dark-mode {
+  /* Colores de fondo */
+  --body-gradient-start: #1a1a2e; /* Fondo oscuro (inicio) */
+  --body-gradient-end: #0f0f1f;   /* Fondo oscuro (fin) */
+  --header-background: #0a0a1a;
+  --card-background: #2a2a4a;     /* Fondo de tarjeta oscuro */
+  --button-background: #4a4a6e; /* Fondo de botón oscuro */
+  --button-hover-background: #5a5a8e; /* Fondo de botón oscuro al pasar el ratón */
+  --mountain-fill-color: #2a2a4a; /* Color de las montañas en SVG (oscuro) */
+
+
+  /* Colores de texto */
+  --text-color-primary: #e0e0e0;  /* Texto claro */
+  --text-color-secondary: #a0a0a0; /* Texto gris claro */
+  --header-text-color: #e0e0e0;
+  --button-text-color: #e0e0e0;
+
+  /* Bordes y sombras */
+  --card-border: 1px solid #444466;
+  --card-shadow-hover: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+/*
+   ====================================================
+   Aplicación de Variables a tus Estilos Existentes
+   ====================================================
+*/
+
 body {
-  background: linear-gradient(135deg, #e0f7fa, #c2e9f2); /* Gradiente suave */
+  background: linear-gradient(135deg, var(--body-gradient-start), var(--body-gradient-end));
   font-family: sans-serif;
   margin: 0;
   padding: 0;
-  position: relative; /* Para el efecto de montañas */
+  position: relative;
+  /* El color del texto principal del body */
+  color: var(--text-color-primary);
+  transition: background 0.5s ease, color 0.5s ease; /* Transición suave para el cambio de tema */
 }
 
+/* Manejo de las montañas SVG */
 body::after {
   content: "";
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 100px; /* Altura de las montañas */
-  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M1200 120L0 120 600 0z" fill="#f4f4f4"/></svg>') repeat-x; /* Patrón de montañas */
+  height: 100px;
+  /* Aquí cambiamos el SVG para que use la variable de color */
+  background: var(--mountain-svg-light) repeat-x; /* Se definirá con JS o con un background en el :root */
   background-size: 1200px 100px;
-  z-index: -1; /* Detrás del contenido */
+  z-index: -1;
+  transition: background 0.5s ease; /* Transición para el fondo de las montañas */
 }
 
+/* SVG de montañas para modo claro */
+:root {
+  --mountain-svg-light: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M1200 120L0 120 600 0z" fill="%23f4f4f4"/></svg>');
+}
+/* SVG de montañas para modo oscuro */
+body.dark-mode {
+  --mountain-svg-dark: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M1200 120L0 120 600 0z" fill="%232a2a4a"/></svg>');
+}
+/* Aplicar el SVG de montañas según el tema */
+body::after {
+  background: var(--mountain-svg-light) repeat-x;
+  background-size: 1200px 100px;
+}
+body.dark-mode::after {
+  background: var(--mountain-svg-dark) repeat-x;
+}
+
+
 header {
-  background-color: #007bfc;
-    color: white;
-    text-align: center;
-    padding: 2em 0;
+  background-color: var(--header-background);
+  color: var(--header-text-color);
+  text-align: center;
+  padding: 2em 0;
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+h1, h2, h3, h4, p {
+  color: var(--text-color-primary); /* Asegura que todos los textos usen el color principal */
 }
 
 .container {
@@ -39,17 +129,17 @@ header {
 
 .tutorials-list__card {
   display: block;
-  background-color: #fff;
-  border: 1px solid #ddd;
+  background-color: var(--card-background);
+  border: var(--card-border);
   border-radius: 8px;
   padding: 20px;
   text-decoration: none;
-  color: #333;
-  transition: box-shadow 0.3s ease;
+  color: var(--card-text); /* Color del texto de la tarjeta */
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .tutorials-list__card:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--card-shadow-hover);
 }
 
 .card-title {
@@ -57,9 +147,18 @@ header {
   margin-bottom: 10px;
 }
 
+.card-title a {
+    color: var(--text-color-primary); /* Los enlaces de título deben mantener el color principal del texto o uno específico */
+    text-decoration: none;
+}
+.card-title a:hover {
+    text-decoration: underline;
+}
+
+
 .card-category {
   font-size: 0.9rem;
-  color: #666;
+  color: var(--text-color-secondary); /* Color secundario */
   margin-bottom: 5px;
 }
 
@@ -84,6 +183,7 @@ header {
   align-items: center;
   margin-right: 15px;
   font-size: 0.9rem;
+  color: var(--text-color-secondary); /* Color secundario para stats */
 }
 
 .card-views img, .card-comments img {
@@ -93,7 +193,7 @@ header {
 .card-meta {
   display: flex;
   font-size: 0.9rem;
-  color: #666;
+  color: var(--text-color-secondary); /* Color secundario para metadatos */
 }
 
 .card-date, .card-author {
@@ -111,16 +211,17 @@ header {
   justify-content: center;
   width: 25px;
   height: 25px;
-  background-color: #007bff;
-  color: white;
+  background-color: var(--button-background);
+  color: var(--button-text-color);
   border-radius: 50%;
   text-decoration: none;
   margin-left: 10px;
   font-size: 1.2em;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .view-more-button:hover {
-  background-color: #0056b3;
+  background-color: var(--button-hover-background);
 }
 
 /* ... (tus estilos existentes) ... */
@@ -135,4 +236,89 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* Estilos para el botón de toggle del tema */
+#theme-toggle {
+    background-color: var(--card-background); /* Usamos el color de fondo de la tarjeta */
+    color: var(--text-color-primary); /* Usamos el color de texto principal */
+    border: 1px solid var(--card-border); /* Usamos el borde de la tarjeta */
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border-radius: 5px;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+#theme-toggle span {
+    font-size: 1.5rem;
+}
+
+/* Controlar la visibilidad de los iconos de sol/luna */
+#theme-toggle .icon-light,
+#theme-toggle .icon-dark {
+    display: inline-block; /* Por defecto ambos pueden ser inline-block */
+}
+
+body:not(.dark-mode) #theme-toggle .icon-dark {
+    display: none; /* En modo claro, oculta el icono de luna */
+}
+
+body.dark-mode #theme-toggle .icon-light {
+    display: none; /* En modo oscuro, oculta el icono de sol */
+}
+
+
+
+/////
+/* ... (Tus variables CSS de modo claro y oscuro) ... */
+
+/* ... (Tus estilos existentes para el botón #theme-toggle) ... */
+
+#theme-toggle {
+    /* ... Tus estilos existentes para el botón ... */
+    display: flex; /* Para que los iconos se alineen si hubiera varios */
+    align-items: center;
+    justify-content: center;
+    /* Puedes ajustar padding y font-size para que el SVG se vea bien */
+    padding: 0.5rem; /* Ajusta este padding */
+    height: 2.5rem; /* Asegura un buen tamaño para el touch target */
+    width: 2.5rem;  /* Asegura un buen tamaño para el touch target */
+}
+
+/* Estilos para los contenedores de los iconos SVG */
+.theme-icon-container {
+    display: flex; /* Para centrar el SVG dentro de él */
+    align-items: center;
+    justify-content: center;
+    width: 100%; /* Ocupa el 100% del contenedor del botón */
+    height: 100%;
+}
+
+/* Estilos para los SVG mismos */
+.bn-svg.switch-icon {
+    width: 1.5rem;   /* O el tamaño que desees para los iconos */
+    height: 1.5rem;
+    transition: fill 0.3s ease; /* Transición suave para el color del icono */
+}
+
+/* Controlar la visibilidad de los contenedores de los iconos */
+body:not(.dark-mode) .icon-dark-mode {
+    display: none; /* En modo claro, oculta el icono de luna */
+}
+
+body.dark-mode .icon-light-mode {
+    display: none; /* En modo oscuro, oculta el icono de sol */
+}
+
+/* En modo claro, el icono de sol está visible */
+body:not(.dark-mode) .icon-light-mode {
+    display: flex; /* Asegura que sea visible como flexbox */
+}
+
+/* En modo oscuro, el icono de luna está visible */
+body.dark-mode .icon-dark-mode {
+    display: flex; /* Asegura que sea visible como flexbox */
 }
