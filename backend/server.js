@@ -16,7 +16,7 @@ const PORT = process.env.PORT || 3000; // El puerto del servidor, usa 3000 si no
 app.use(express.json()); // Permite a Express parsear JSON en el cuerpo de las solicitudes
 
 app.use(cors({
-    origin: 'https://ludwingdiaz.site/' // Tu dominio de frontend
+    origin: 'https://ludwingdiaz.site' // Tu dominio de frontend
 }));
 
 // Conexión a MongoDB
