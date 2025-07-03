@@ -2,7 +2,7 @@
 
 document.addEventListener('DOMContentLoaded', async () => {
     const tutorialCards = document.querySelectorAll('.tutorials-list__card');
-    const backendUrl = 'http://localhost:3000'; // Asegúrate de que esta URL sea correcta
+    const backendUrl = 'https://tutorial-views-api.onrender.com'; // Asegúrate de que esta URL sea correcta
 
     // 1. Función para OBTENER y mostrar las vistas iniciales de todas las tarjetas al cargar la página
     async function fetchAndDisplayInitialViews() {
