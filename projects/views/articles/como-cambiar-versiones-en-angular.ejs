@@ -1,0 +1,44 @@
+
+
+        <div data-article-id="<%= tutorial._id %>"> 
+                <h1><%= tutorial.title %></h1> <p>Vistas: <span id="article-views"><%= tutorial.views %></span></p> 
+
+        <section class="step">
+            <h2>Paso 1: Desinstalar la Versión Actual</h2>
+            <p>Desinstala la versión global de Angular CLI:</p>
+            <pre><code>npm uninstall -g @angular/cli</code></pre>
+        </section>
+        <section class="step">
+            <h2>Paso 2: Limpiar la Caché de npm</h2>
+            <p>Limpia la caché para evitar conflictos:</p>
+            <pre><code>npm cache clean --force</code></pre>
+        </section>
+        <section class="step">
+            <h2>Paso 3: Instalar la Versión Deseada</h2>
+            <div class="version-options">
+                <button class="version-button" data-version="12">Instalar Angular CLI 12</button>
+                <button class="version-button" data-version="18">Instalar Angular CLI 18</button>
+            </div>
+            <pre id="install-command"></pre>
+        </section>
+        <section class="step">
+            <h2>Paso 4: Verificar la Versión</h2>
+            <p>Verifica la versión instalada:</p>
+            <pre><code>ng --version</code></pre>
+            <p id="version-result"></p>
+        </section>
+        <section class="step">
+            <h2>Paso 5: Cambiar Entre Versiones</h2>
+            <p>Para cambiar, repite los pasos 1-4.</p>
+        </section>
+        <section class="summary">
+            <h2>Resumen</h2>
+            <ul>
+                <li>Desinstalar y limpiar la caché.</li>
+                <li>Instalar la versión deseada.</li>
+                <li>Verificar la versión.</li>
+                <li>Repetir para cambiar.</li>
+            </ul>
+        </section>
+ 
+</div>
