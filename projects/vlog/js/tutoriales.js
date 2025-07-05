@@ -1,102 +1,212 @@
-// tutoriales.js (este archivo se enlaza en tutoriales.html)
+// /projects/vlog/js/tutoriales.js
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const tutorialCards = document.querySelectorAll('.tutorials-list__card');
-    const backendUrl = 'https://tutorial-views-api.onrender.com'; // Asegúrate de que esta URL sea correcta
+    const postsContainer = document.getElementById('postsContainer');
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
+    const loadMoreButton = document.getElementById('loadMoreButton');
 
-    // 1. Función para OBTENER y mostrar las vistas iniciales de todas las tarjetas al cargar la página
-    async function fetchAndDisplayInitialViews() {
+    // ¡ELIMINAR ESTAS LÍNEAS! Ya no las necesitamos aquí.
+    // const logoutNavItem = document.getElementById('logoutNavItem');
+    // const logoutButton = document.getElementById('logoutButton');
+
+    let allDynamicPosts = [];
+    let displayedPostsCount = 0;
+    const postsPerPage = 6;
+
+    // ¡ELIMINAR ESTA FUNCIÓN! auth.js se encargará.
+    // function updateAuthUI() {
+    //     const token = localStorage.getItem('jwtToken');
+    //     if (token) {
+    //         logoutNavItem.style.display = 'list-item';
+    //     } else {
+    //         logoutNavItem.style.display = 'none';
+    //     }
+    // }
+
+    // ¡ELIMINAR ESTE BLOQUE! auth.js se encargará del evento click del botón de cerrar sesión.
+    // if (logoutButton) {
+    //     logoutButton.addEventListener('click', (e) => {
+    //         e.preventDefault();
+    //         localStorage.removeItem('jwtToken');
+    //         updateAuthUI();
+    //         alert('Sesión cerrada correctamente.');
+    //     });
+    // }
+
+    // --- Función para formatear la fecha (usada para posts dinámicos) ---
+    function formatPostDate(dateString) {
+        const options = { year: 'numeric', month: 'short', day: 'numeric' };
+        return new Date(dateString).toLocaleDateString('es-ES', options);
+    }
+
+    // --- Función para obtener el número de comentarios de un artículo ---
+    async function getCommentCount(articleId) {
         try {
-            // Realiza una petición GET al endpoint que devuelve todas las vistas
-            const response = await fetch(`${backendUrl}/api/views`);
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(`HTTP error! status: ${response.status}: ${errorData.message || response.statusText}`);
+            const response = await fetch(`http://localhost:3000/api/comments/article/${articleId}/count`);
+            if (response.ok) {
+                const data = await response.json();
+                return data.count;
+            } else {
+                console.error(`Error al obtener el recuento de comentarios para ${articleId}:`, await response.json());
+                return 0;
             }
-            const data = await response.json(); // Array de objetos { path: "ruta/del/tutorial.html", views: 5 }
-
-            // Crea un mapa para acceder fácilmente a las vistas por path
-            const viewsMap = new Map();
-            data.forEach(item => {
-                viewsMap.set(item.path, item.views);
-            });
-
-            // Itera sobre cada tarjeta en el HTML y actualiza su contador con las vistas obtenidas
-            tutorialCards.forEach(card => {
-                const linkElement = card.querySelector('.card-title a');
-                const viewsElement = card.querySelector('.card-views p');
-                if (linkElement && viewsElement) {
-                    const tutorialPath = linkElement.getAttribute('href');
-                    // Obtiene las vistas del mapa, si no existe, usa 0
-                    const currentViews = viewsMap.get(tutorialPath) || 0;
-                    viewsElement.textContent = currentViews;
-                }
-            });
-
         } catch (error) {
-            console.error('Error al obtener las vistas iniciales:', error);
-            // En caso de error, puedes mostrar "N/A" o similar en los contadores
-            tutorialCards.forEach(card => {
-                const viewsElement = card.querySelector('.card-views p');
-                if (viewsElement) viewsElement.textContent = 'N/A';
-            });
+            console.error(`Error de red al obtener el recuento de comentarios para ${articleId}:`, error);
+            return 0;
         }
     }
 
-    // 2. Función para INCREMENTAR la vista de un tutorial específico y luego navegar
-    async function incrementViewAndNavigate(tutorialPath, viewsElement, originalHref) {
+    // --- Función para incrementar las vistas de un post (se llamará cuando se haga click en el enlace) ---
+    async function incrementPostViews(slug) {
         try {
-            // Realiza una petición POST para incrementar la vista
-            const response = await fetch(`${backendUrl}/api/views`, {
+            await fetch(`http://localhost:3000/api/posts/${slug}/views`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ tutorialPath: tutorialPath })
+                headers: { 'Content-Type': 'application/json' }
             });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(`HTTP error! status: ${response.status}: ${errorData.message || response.statusText}`);
-            }
-
-            const data = await response.json();
-            viewsElement.textContent = data.views; // Actualiza el contador en la tarjeta inmediatamente
-
-            // Una vez que la vista se ha actualizado en el backend, navega a la página del tutorial
-            window.location.href = originalHref;
-
         } catch (error) {
-            console.error('Error al incrementar la vista para:', tutorialPath, error);
-            // Si hay un error al incrementar, aún así es importante navegar para no bloquear al usuario
-            window.location.href = originalHref;
+            console.error('Error al incrementar vistas:', error);
         }
     }
 
-    // 3. Ejecutar la obtención de vistas iniciales al cargar la página (solo para mostrar, no para incrementar)
-    await fetchAndDisplayInitialViews();
+    // --- Función para renderizar un post dinámico ---
+    async function renderDynamicPostCard(post) {
+        const commentCount = await getCommentCount(post.slug);
 
-    // 4. Añadir Event Listeners a los enlaces de cada tarjeta para incrementar al hacer clic
-    tutorialCards.forEach(card => {
-        // Selecciona los enlaces dentro de la tarjeta que el usuario podría clicar para ir al tutorial
-        // Esto incluye el enlace en el título y el enlace en el icono 'Web link'
-        const clickableLinks = card.querySelectorAll('.card-title a, .card-web-link a');
+        const card = document.createElement('div');
+        card.className = 'tutorials-list__card';
+        card.innerHTML = `
+            <div class="card-content">
+                <h4 class="card-title">
+                    <a href="./${post.slug}.html" data-slug="${post.slug}">${post.title}</a>
+                </h4>
+                <p class="card-category">${post.category}</p>
+                <p class="card-description">${post.description}</p>
+            </div>
+            <div class="card-footer">
+                <div class="card-stats">
+                    <div class="card-views">
+                        <img src="https://static.thenounproject.com/png/201934-200.png" width="24" height="24" alt="Vistas">
+                        <p>${post.views || 0}</p>
+                    </div>
+                    <div class="card-comments">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1380/1380338.png" width="24" height="24" alt="Comentarios">
+                        <p>${commentCount}</p>
+                    </div>
+                    <div class="card-web-link">
+                        <a href="./${post.slug}.html" data-slug="${post.slug}">
+                            <img src="https://icon-library.com/images/url-icon-png/url-icon-png-7.jpg" width="24" height="24" alt="Enlace Web">
+                        </a>
+                    </div>
+                </div>
+                <div class="card-meta">
+                    <p class="card-date">${formatPostDate(post.createdAt)}</p>
+                    <p class="card-author">Por Ludwing D.</p>
+                </div>
+            </div>
+        `;
+        postsContainer.appendChild(card);
 
-        clickableLinks.forEach(link => {
-            const originalHref = link.getAttribute('href'); // Guarda la URL original a la que se va a navegar
-            const tutorialPath = originalHref; // El 'href' es el path que queremos usar como ID en el backend
-            const viewsElement = card.querySelector('.card-views p'); // El elemento donde se muestra el contador
-
-            link.addEventListener('click', async (event) => {
-                event.preventDefault(); // ¡MUY IMPORTANTE! Previene la navegación por defecto del enlace
-
-                // Llama a la función que incrementa la vista y luego navega
-                await incrementViewAndNavigate(tutorialPath, viewsElement, originalHref);
+        // Añadir evento click al enlace del título y al enlace web para incrementar vistas
+        card.querySelectorAll('a[data-slug]').forEach(link => {
+            link.addEventListener('click', () => {
+                incrementPostViews(link.dataset.slug);
             });
         });
-    });
-});
+    }
 
-// Nota: He eliminado de este archivo toda la lógica de `const tutoriales = [...]`, `ordenarTutoriales`,
-// y `mostrarTutoriales` porque tus tarjetas HTML están definidas estáticamente en `tutoriales.html`
-// y no se generan dinámicamente con JavaScript.
+    // --- Función para mostrar posts (filtrados o todos) ---
+    async function displayPosts(postsToDisplay) {
+        postsContainer.innerHTML = ''; // Limpiar el contenedor COMPLETAMENTE
+
+        const startIndex = displayedPostsCount;
+        const endIndex = Math.min(startIndex + postsPerPage, postsToDisplay.length);
+
+        for (let i = startIndex; i < endIndex; i++) {
+            await renderDynamicPostCard(postsToDisplay[i]);
+        }
+        displayedPostsCount = endIndex;
+
+        // Mostrar u ocultar el botón "Cargar más"
+        if (displayedPostsCount < postsToDisplay.length) {
+            loadMoreButton.style.display = 'block';
+        } else {
+            loadMoreButton.style.display = 'none';
+        }
+
+        if (postsToDisplay.length === 0 && searchInput.value.trim() !== '') {
+            postsContainer.innerHTML = '<p style="text-align: center; color: var(--text-color-secondary);">No se encontraron tutoriales con ese criterio de búsqueda.</p>';
+        } else if (postsToDisplay.length === 0 && allDynamicPosts.length === 0) {
+             postsContainer.innerHTML = '<p style="text-align: center; color: var(--text-color-secondary);">No hay tutoriales disponibles en este momento.</p>';
+        }
+    }
+
+    // --- Función para cargar posts desde el backend ---
+    async function fetchDynamicPosts() {
+        try {
+            const response = await fetch('http://localhost:3000/api/posts');
+            if (response.ok) {
+                const data = await response.json();
+                allDynamicPosts = data;
+                displayedPostsCount = 0;
+                await displayPosts(allDynamicPosts);
+            } else {
+                console.error('Error al cargar posts dinámicos:', await response.json());
+            }
+        } catch (error) {
+            console.error('Error de red al cargar posts dinámicos:', error);
+        }
+    }
+
+    // --- Lógica de búsqueda y filtro ---
+    function filterAndDisplayPosts() {
+        const searchTerm = searchInput.value.toLowerCase().trim();
+        let postsToFilter = allDynamicPosts;
+
+        if (searchTerm) {
+            postsToFilter = allDynamicPosts.filter(post =>
+                post.title.toLowerCase().includes(searchTerm) ||
+                post.description.toLowerCase().includes(searchTerm) ||
+                post.category.toLowerCase().includes(searchTerm)
+            );
+        }
+
+        displayedPostsCount = 0;
+        postsContainer.innerHTML = '';
+        displayPosts(postsToFilter);
+    }
+
+    searchButton.addEventListener('click', filterAndDisplayPosts);
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            filterAndDisplayPosts();
+        }
+    });
+
+    // --- Lógica de cargar más ---
+    loadMoreButton.addEventListener('click', () => {
+        const searchTerm = searchInput.value.toLowerCase().trim();
+        let postsToLoad = allDynamicPosts;
+        if (searchTerm) {
+            postsToLoad = allDynamicPosts.filter(post =>
+                post.title.toLowerCase().includes(searchTerm) ||
+                post.description.toLowerCase().includes(searchTerm) ||
+                post.category.toLowerCase().includes(searchTerm)
+            );
+        }
+        displayPosts(postsToLoad);
+    });
+
+    // --- Inicialización ---
+    // ¡ELIMINAR ESTA LÍNEA! updateAuthUI ya no está en este archivo.
+    // updateAuthUI(); // auth.js se encargará de esto.
+
+    // Enlazar los eventos de incremento de vistas a los posts estáticos YA existentes en el HTML
+    postsContainer.querySelectorAll('.tutorials-list__card a[data-slug]').forEach(link => {
+        link.addEventListener('click', () => {
+            incrementPostViews(link.dataset.slug);
+        });
+    });
+
+    fetchDynamicPosts(); // Cargar los posts dinámicos
+});

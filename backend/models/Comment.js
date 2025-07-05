@@ -2,25 +2,23 @@
 const mongoose = require('mongoose');
 
 const commentSchema = new mongoose.Schema({
-    articleSlug: { // Identificador único del artículo (ej. "generador-contrasenas")
+    text: {
+        type: String,
+        required: true,
+        maxlength: 500
+    },
+    user: { // Referencia al usuario que hizo el comentario
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User', // Asume que tienes un modelo User
+        required: true
+    },
+    username: { // Para mostrar el nombre del usuario sin necesidad de poblar
         type: String,
         required: true
     },
-    author: { // Nombre del autor del comentario
-        type: String,
+    articleId: { // <--- ¡NUEVO CAMPO! ID único del artículo
+        type: String, // Podría ser String si es un slug o ObjectId si tienes un modelo Article
         required: true
-    },
-    commentText: { // Contenido del comentario
-        type: String,
-        required: true
-    },
-    timestamp: { // Fecha y hora de creación del comentario
-        type: Date,
-        default: Date.now // Por defecto, la fecha actual al crear
-    },
-    approved: { // Para moderación (true si es visible, false si necesita revisión)
-        type: Boolean,
-        default: true // Por ahora, asumimos que los comentarios se aprueban automáticamente
     }
 }, { timestamps: true });
 

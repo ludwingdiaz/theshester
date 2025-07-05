@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title> 
+
+    <link rel="shortcut icon" type="image/png" href="/assets/EmoteBulldog 28x28.png">
+
+    <link rel="stylesheet" href="/projects/vlog/css/tutoriales.css"> 
+
+</head>
+<body>
+    <header>
+        <%- include('partials/header') %> 
+    </header>
+
+    <main class="container main-content-area">
+        <%- articleContent %> 
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Ludwing Díaz. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="/projects/vlog/js/auth.js"></script>
+    <script src="/projects/vlog/js/theme-switcher.js"></script>
+    <script src="/projects/vlog/js/articleComments.js"></script> 
+</body>
+</html>

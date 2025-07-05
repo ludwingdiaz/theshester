@@ -1,0 +1,46 @@
+<!-- theshester/projects/views/partials/header.ejs -->
+<div class="header-content">
+    <div class="header-left">
+        <a href="/" class="logo-link"> <!-- CAMBIADO: Antes /projects/vlog/html/tutoriales.html -->
+            <img src="/assets/EmoteBulldog 28x28.png" alt="Ludwing Díaz Logo" class="header-logo">
+            <span class="header-logo-text">Ludwing Díaz</span>
+        </a>
+    </div>
+    <div class="header-right-group">
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Buscar tutoriales...">
+            <button id="searchButton" aria-label="Buscar">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                    <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5a6.5 6.5 0 10-6.5 6.5c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
+                </svg>
+            </button>
+        </div>
+        <nav>
+            <ul class="main-nav-list">
+                <li><a href="/">Inicio</a></li> <!-- CAMBIADO: Antes /projects/vlog/html/tutoriales.html -->
+
+                <li id="nav-login" style="display: none;"><a href="/projects/forms/login.html">Login</a></li>
+                <li id="nav-registro" style="display: none;"><a href="/projects/forms/registro.html">Registro</a></li>
+
+                <li id="nav-profile" style="display: none;">
+                    <a href="/diario" id="profile-link"></a> <!-- CAMBIADO: Antes /projects/forms/diario.html -->
+                </li>
+                <li id="nav-logout" style="display: none;">
+                    <a href="#" id="logout-link">Cerrar Sesión</a>
+                </li>
+            </ul>
+        </nav>
+        <button id="theme-toggle" aria-label="Cambiar tema">
+            <div class="theme-icon-container icon-light-mode">
+                <svg class="bn-svg switch-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M13.5 3h-3v3h3V3zm0 15h-3v3h3v-3zm-6.803-2.818l2.121 2.121-2.121 2.122-2.122-2.122 2.122-2.121zm12.728-8.485l-2.122-2.122-2.12 2.122 2.12 2.121 2.122-2.121zM15.5 12a3.5 3.5 0 11-7 0 3.5 3.5 0 017 0zM6.697 8.818l2.121-2.121-2.121-2.122-2.122 2.122 2.122-2.121zM6 10.5v3H3v-3h3zm15 0v3h-3v-3h3zm-1.576 6.803l-2.12 2.121-2.122-2.12 2.121-2.122 2.121 2.121z"></path>
+                </svg>
+            </div>
+            <div class="theme-icon-container icon-dark-mode" style="display: none;">
+                <svg class="bn-svg switch-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+                    <path d="M20 12.67A6.233 6.233 0 0111.33 4 8.015 8.015 0 1020 12.67z"></path>
+                </svg>
+            </div>
+        </button>
+    </div>
+</div>

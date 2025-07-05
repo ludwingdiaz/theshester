@@ -1,46 +1,50 @@
 // backend/models/User.js
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs'); // Importar bcryptjs
 
-const userSchema = new mongoose.Schema({
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs'); // ¡ASEGÚRATE DE QUE ESTA LÍNEA ESTÉ AQUÍ!
+
+const UserSchema = new mongoose.Schema({
     username: {
         type: String,
         required: true,
-        unique: true, // El nombre de usuario debe ser único
-        trim: true, // Elimina espacios en blanco al inicio y al final
-        minlength: 3 // Mínimo 3 caracteres para el nombre de usuario
+        unique: true
     },
     email: {
         type: String,
         required: true,
-        unique: true, // El correo electrónico debe ser único
-        trim: true,
-        lowercase: true, // Guarda el email en minúsculas
-        match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ // Validación de formato de email simple
+        unique: true
     },
     password: {
         type: String,
-        required: true,
-        minlength: 8 // Mínimo 8 caracteres para la contraseña
+        required: true
     },
-    createdAt: {
+    role: {
+        type: String,
+        default: 'user',
+        enum: ['user', 'admin']
+    },
+    registrationDate: {
         type: Date,
         default: Date.now
     }
 });
 
-// Middleware de Mongoose: Hashear la contraseña antes de guardar el usuario
-userSchema.pre('save', async function(next) {
-    if (!this.isModified('password')) { // Solo hashear si la contraseña ha sido modificada (o es nueva)
+// --- ¡ESTE ES EL HOOK QUE HASHEA LA CONTRASEÑA ANTES DE GUARDAR! ---
+UserSchema.pre('save', async function(next) {
+    // Solo hashear la contraseña si ha sido modificada (o es nueva)
+    if (!this.isModified('password')) {
         return next();
     }
+
     try {
-        const salt = await bcrypt.genSalt(10); // Genera un "salt" para hashear
-        this.password = await bcrypt.hash(this.password, salt); // Hashea la contraseña
-        next();
-    } catch (error) {
-        next(error); // Pasa el error al siguiente middleware de error
+        // Generar un salt
+        const salt = await bcrypt.genSalt(10);
+        // Hashear la contraseña usando el salt
+        this.password = await bcrypt.hash(this.password, salt);
+        next(); // Continuar con el guardado
+    } catch (err) {
+        next(err); // Pasar el error
     }
 });
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('User', UserSchema);

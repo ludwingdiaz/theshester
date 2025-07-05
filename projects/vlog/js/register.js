@@ -1,54 +1,48 @@
-// backend/js/register.js  (Este comentario indica que está en el backend, pero en realidad es un archivo JS del frontend)
-// Debería ser: frontend/js/register.js o public/js/register.js
+// frontend/projects/vlog/js/register.js
 
 document.addEventListener('DOMContentLoaded', () => {
     const registerForm = document.getElementById('registerForm');
+    const usernameInput = document.getElementById('username');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+    // const messageDisplay = document.getElementById('message'); // Asume que tienes un párrafo para mensajes
 
     if (registerForm) {
-        registerForm.addEventListener('submit', async (event) => {
-            event.preventDefault(); // Evita el envío del formulario por defecto
+        registerForm.addEventListener('submit', (event) => {
+            event.preventDefault(); // Evita que el formulario se envíe de la manera tradicional
 
-            const username = document.getElementById('username').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
+            const username = usernameInput.value.trim();
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+            const confirmPassword = confirmPasswordInput.value.trim();
 
-            // Validaciones básicas en el cliente
+            // Validación básica (puedes añadir más validaciones de complejidad de contraseña)
+            if (!username || !email || !password || !confirmPassword) {
+                alert('Por favor, rellena todos los campos.');
+                return;
+            }
+
             if (password !== confirmPassword) {
                 alert('Las contraseñas no coinciden.');
                 return;
             }
 
-            // Validar complejidad de contraseña (ejemplo simple)
-            if (password.length < 8 || !/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password)) {
-                alert('La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas y números.');
-                return;
-            }
+            // Simulación de un registro exitoso
+            // En un caso real, aquí iría tu fetch/axios a la API de registro.
+            // Si la respuesta es exitosa, llamarías a window.login() para iniciar sesión automáticamente.
 
-            try {
-                // *** ESTA ES LA LÍNEA QUE DEBES CAMBIAR ***
-                // ANTES: 'http://localhost:3000/api/register'
-                // AHORA: 'http://localhost:3000/api/auth/register'
-                const response = await fetch('http://localhost:3000/api/auth/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ username, email, password }),
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    alert(data.message); // Por ejemplo: "Usuario registrado exitosamente"
-                    // Opcional: Redirigir al usuario a la página de login o a otra página
-                    window.location.href = 'login.html'; // Necesitarás crear login.html
-                } else {
-                    alert(data.message || 'Error al registrar el usuario.');
-                }
-            } catch (error) {
-                console.error('Error de red o del servidor:', error);
-                alert('Hubo un problema de conexión al intentar registrarte. Inténtalo de nuevo.');
+            // LLAMADA A LA FUNCIÓN GLOBAL DE LOGIN (del auth.js)
+            if (typeof window.login === 'function') { // Asegurarse de que la función login está cargada
+                window.login(username); // Usamos el nombre de usuario para el perfil
+                alert(`¡Cuenta creada y sesión iniciada para ${username}!`);
+                
+                // Redirige al usuario después del registro y login automático
+                //window.location.href = '/projects/vlog/html/tutoriales.html'; // Redirige a tu página principal
+                window.location.href = '/';
+            } else {
+                console.error("Error: window.login no está definida. Asegúrate de que auth.js se carga correctamente.");
+                alert('Error interno al procesar el registro.');
             }
         });
     }

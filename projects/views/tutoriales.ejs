@@ -5,41 +5,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tutoriales y Guías HTML</title>
-    <link rel="stylesheet" href="../css/tutoriales.css">
+    <link rel="stylesheet" href="/projects/vlog/css/tutoriales.css">
     <link rel="shortcut icon" type="image/png" href="/assets/EmoteBulldog 28x28.png">
 </head>
 
 <body>
-    <header>
-        <h1>Tutoriales y Guías De Programacion</h1>
-        <button id="theme-toggle" aria-label="Cambiar tema">
-            <div class="theme-icon-container icon-light-mode">
-                <svg class="bn-svg switch-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M13.5 3h-3v3h3V3zm0 15h-3v3h3v-3zm-6.803-2.818l2.121 2.121-2.121 2.122-2.122-2.122 2.122-2.121zm12.728-8.485l-2.122-2.122-2.12 2.122 2.12 2.121 2.122-2.121zM15.5 12a3.5 3.5 0 11-7 0 3.5 3.5 0 017 0zM6.697 8.818l2.121-2.121-2.121-2.122-2.122 2.122 2.122-2.121zM6 10.5v3H3v-3h3zm15 0v3h-3v-3h3zm-1.576 6.803l-2.12 2.121-2.122-2.12 2.121-2.122 2.121 2.121z"></path>
-                </svg>
-            </div>
-            <div class="theme-icon-container icon-dark-mode" style="display: none;">
-                <svg class="bn-svg switch-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
-                    <path d="M20 12.67A6.233 6.233 0 0111.33 4 8.015 8.015 0 1020 12.67z"></path>
-                </svg>
-            </div>
-        </button>
+ <header>
+        <%- include('partials/header') %> 
     </header>
-    <main class="container">
-        <div class="d-flex justify-content-center flex-column flex-sm-row justify-content-sm-between">
-            <div>
-                <h2 class="text-center text-sm-start">Tutoriales de Ludwing Giovanni Diaz</h2>
-                <p class="text-h-light-gray text-center text-sm-start">Encuentra guías y tutoriales detallados sobre
-                    Angular, JavaScript, instalaciones de software, y recursos de ciberseguridad para desarrolladores y
-                    entusiastas.</p>
-            </div>
-        </div>
+    <div class="main-content-hero">
+        <h1 class="page-main-title text-center">Tutoriales y Guías De Programacion</h1>
+        <p class="text-h-light-gray text-center page-description">Encuentra guías y tutoriales detallados sobre
+            Angular, JavaScript, instalaciones de software, y recursos de ciberseguridad para desarrolladores y
+            entusiastas.</p>
+    </div>
 
-        <div class="tutorials-list__cards-container">
+    <main class="container">
+        <div id="postsContainer" class="tutorials-list__cards-grid">
             <div class="tutorials-list__card">
                 <div class="card-content">
                     <h4 class="card-title">
-                        <a href="./generador-contraseñas.html">Generador de Contraseñas</a>
+                        <a href="/articles/generador-contrasenas/" data-slug="generador-contrasenas">Generador de Contraseñas</a>
                     </h4>
                     <p class="card-category">Desarrollo Web</p>
                     <p class="card-description">Primero, necesitamos crear la interfaz HTML para nuestro generador de
@@ -53,6 +39,7 @@
                                 alt="People visited logo">
                             <p>0</p>
                         </div>
+                        
                         <div class="card-comments">
                             <img src="https://cdn-icons-png.flaticon.com/512/1380/1380338.png" width="24" height="24"
                                 alt="Chat logo">
@@ -60,7 +47,7 @@
                         </div>
 
                         <div class="card-web-link">
-                            <a href="./generador-contraseñas.html">
+                            <a href="/articles/generador-contrasenas" data-slug="generador-contrasenas">
                                 <img src="https://icon-library.com/images/url-icon-png/url-icon-png-7.jpg" width="24"
                                     height="24" alt="Web link logo">
                             </a>
@@ -72,13 +59,11 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="tutorials-list__cards-container">
             <div class="tutorials-list__card">
                 <div class="card-content">
                     <h4 class="card-title">
-                        <a href="./como-instalar-tailwind-css-en-angular.html">Como Instalar Tailwind Css en Angular</a>
+                        <a href="/projects/vlog/html/como-instalar-tailwind-css-en-angular.html" data-slug="como-instalar-tailwind-css-en-angular">Como Instalar Tailwind Css en Angular</a>
                     </h4>
                     <p class="card-category">Desarrollo Web</p>
                     <p class="card-description">Instalar Tailwind CSS en Angular (v3.4.17)....</p>
@@ -98,7 +83,7 @@
                         </div>
 
                         <div class="card-web-link">
-                            <a href="./como-instalar-tailwind-css-en-angular.html">
+                            <a href="/projects/vlog/html/como-instalar-tailwind-css-en-angular.html" data-slug="como-instalar-tailwind-css-en-angular">
                                 <img src="https://icon-library.com/images/url-icon-png/url-icon-png-7.jpg" width="24"
                                     height="24" alt="Web link logo">
                             </a>
@@ -110,13 +95,11 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-                <div class="tutorials-liFst__cards-container">
             <div class="tutorials-list__card">
                 <div class="card-content">
                     <h4 class="card-title">
-                        <a href="./como-instalar-nvm-node.html">Como Instalar NVM node</a>
+                        <a href="/projects/vlog/html/como-instalar-nvm-node.html" data-slug="como-instalar-nvm-node">Como Instalar NVM node</a>
                     </h4>
                     <p class="card-category">Desarrollo Web</p>
                     <p class="card-description">Instalar NMV node....</p>
@@ -136,7 +119,7 @@
                         </div>
 
                         <div class="card-web-link">
-                            <a href="./como-instalar-nvm-node.html">
+                            <a href="/projects/vlog/html/como-instalar-nvm-node.html" data-slug="como-instalar-nvm-node">
                                 <img src="https://icon-library.com/images/url-icon-png/url-icon-png-7.jpg" width="24"
                                     height="24" alt="Web link logo">
                             </a>
@@ -148,13 +131,11 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-            <div class="tutorials-liFst__cards-container">
             <div class="tutorials-list__card">
                 <div class="card-content">
                     <h4 class="card-title">
-                        <a href="./como-cambiar-versiones-en-angular.html">Como Cambiar Versiones en Angular</a>
+                        <a href="/projects/vlog/html/como-cambiar-versiones-en-angular.html" data-slug="como-cambiar-versiones-en-angular">Como Cambiar Versiones en Angular</a>
                     </h4>
                     <p class="card-category">Desarrollo Web</p>
                     <p class="card-description">Como cambiar versiones....</p>
@@ -174,7 +155,7 @@
                         </div>
 
                         <div class="card-web-link">
-                            <a href="./como-cambiar-versiones-en-angular.html">
+                            <a href="/projects/vlog/html/como-cambiar-versiones-en-angular.html" data-slug="como-cambiar-versiones-en-angular">
                                 <img src="https://icon-library.com/images/url-icon-png/url-icon-png-7.jpg" width="24"
                                     height="24" alt="Web link logo">
                             </a>
@@ -187,9 +168,17 @@
                 </div>
             </div>
         </div>
+
+        <button id="loadMoreButton" class="submit-button" style="display:none;">Cargar más</button>
     </main>
+
+    <footer>
+        <p>&copy; 2024 Ludwing Díaz. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="/projects/vlog/js/theme-switcher.js"></script>
     <script src="/projects/vlog/js/tutoriales.js"></script>
-    <script src="../js/theme-switcher.js"></script> 
+    <script src="/projects/vlog/js/auth.js"></script>
 </body>
 
 </html>

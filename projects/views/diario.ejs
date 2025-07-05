@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Diario - Ludwing Díaz</title>
+    <link rel="stylesheet" href="/projects/vlog/css/tutoriales.css">
+    <link rel="shortcut icon" type="image/png" href="/assets/EmoteBulldog 28x28.png">
+</head>
+<body>
+ <header>
+        <%- include('partials/header') %> 
+    </header>
+
+    <main class="container main-content-area">
+           <h1>Mi Diario</h1> <!-- Esto lo moveremos fuera del header en el siguiente paso -->
+        <section class="content-section">
+            <h2>Bienvenido a tu Diario, <span id="usernameDisplay">Usuario</span>!</h2>
+            <p>Aquí verás tus entradas del diario y podrás crear nuevas.</p>
+
+            <button id="fetchProtectedData" class="submit-button">Cargar mis entradas (Protegido)</button>
+            <p id="protectedMessage" style="margin-top: 15px;"></p>
+        </section>
+
+        <section class="content-section">
+            <h3>Tus Últimas Entradas / Comentarios</h3> <div id="commentsList">
+                <p>Cargando comentarios...</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Ludwing Díaz. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="/projects/vlog/js/diario.js"></script>
+    <script src="/projects/vlog/js/auth.js"></script> 
+    <script src="/projects/vlog/js/theme-switcher.js"></script>
+</body>
+</html>
