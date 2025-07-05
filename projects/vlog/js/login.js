@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     setTimeout(() => {
                         //window.location.href = '/projects/vlog/html/tutoriales.html';
-                        window.location.href = '/';
+                        window.location.href = 'https://tutorial-views-api.onrender.com/tutoriales';
                     }, 500);
                 } else { 
                     messageDisplay.textContent = data.message || 'Error al iniciar sesión. Credenciales inválidas.';
