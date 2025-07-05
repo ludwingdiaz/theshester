@@ -51,7 +51,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div id="loginModalOverlay" class="modal-overlay hidden">
                 <div class="modal-content">
                     <button id="closeLoginModal" class="modal-close-button">&times;</button>
+
+                    <a href="https://tutorial-views-api.onrender.com/tutoriales" class="logo-link"> <!-- CAMBIADO: Antes /projects/vlog/html/tutoriales.html -->
                     <img src="/assets/EmoteBulldog 28x28.png" alt="Logo de Ludwing Díaz" class="form-logo">
+        </a>   
                     <h2>Inicia Sesión para Comentar</h2>
                     <form id="modalLoginForm" class="styled-form">
                         <div class="form-group">
