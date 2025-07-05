@@ -182,7 +182,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const password = document.getElementById('modalPassword').value;
 
             try {
-                const response = await fetch('http://localhost:3000/api/auth/login', { // Asume esta es tu ruta de login
+                const response = await fetch('https://tutorial-views-api.onrender.com/api/auth/login', { // Asume esta es tu ruta de login
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
@@ -230,7 +230,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         commentsList.innerHTML = '<p>Cargando comentarios...</p>';
 
         try {
-            const response = await fetch(`http://localhost:3000/api/comments/article/${articleId}`, {
+            const response = await fetch(`https://tutorial-views-api.onrender.com/api/comments/article/${articleId}`, {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' }
             });
@@ -289,7 +289,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             try {
                 // Petición POST para añadir un comentario al artículo específico
-                const response = await fetch(`http://localhost:3000/api/comments/article/${articleId}`, {
+                const response = await fetch(`https://tutorial-views-api.onrender.com/api/comments/article/${articleId}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

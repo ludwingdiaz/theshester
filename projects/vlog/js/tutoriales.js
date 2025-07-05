@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // --- Función para obtener el número de comentarios de un artículo ---
     async function getCommentCount(articleId) {
         try {
-            const response = await fetch(`http://localhost:3000/api/comments/article/${articleId}/count`);
+            const response = await fetch(`https://tutorial-views-api.onrender.com/api/comments/article/${articleId}/count`);
             if (response.ok) {
                 const data = await response.json();
                 return data.count;
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // --- Función para incrementar las vistas de un post (se llamará cuando se haga click en el enlace) ---
     async function incrementPostViews(slug) {
         try {
-            await fetch(`http://localhost:3000/api/posts/${slug}/views`, {
+            await fetch(`https://tutorial-views-api.onrender.com/api/posts/${slug}/views`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' }
             });
@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // --- Función para cargar posts desde el backend ---
     async function fetchDynamicPosts() {
         try {
-            const response = await fetch('http://localhost:3000/api/posts');
+            const response = await fetch('https://tutorial-views-api.onrender.com/api/posts');
             if (response.ok) {
                 const data = await response.json();
                 allDynamicPosts = data;

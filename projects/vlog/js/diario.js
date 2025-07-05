@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             protectedMessage.textContent = 'Cargando...';
             try {
-                const response = await fetch('http://localhost:3000/api/protected-data', {
+                const response = await fetch('https://tutorial-views-api.onrender.com/api/protected-data', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         async function loadUserComments() {
             commentsListDiv.innerHTML = '<p>Cargando tus comentarios...</p>';
             try {
-                const response = await fetch('http://localhost:3000/api/comments/my-comments', {
+                const response = await fetch('https://tutorial-views-api.onrender.com/api/comments/my-comments', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',

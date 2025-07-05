@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             try {
                 // --- ¡AHORA HACEMOS UNA PETICIÓN REAL A TU BACKEND! ---
-                const response = await fetch('http://localhost:3000/api/auth/login', {
+                const response = await fetch('https://tutorial-views-api.onrender.com/api/auth/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
