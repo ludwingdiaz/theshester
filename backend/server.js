@@ -31,39 +31,32 @@ app.use(cors({
 }));
 
 // ====================================================================
-// Configuración de EJS y Archivos Estáticos (¡AJUSTE DE RUTA DE VISTAS AQUÍ!)
+// Configuración de EJS y Archivos Estáticos
 // ====================================================================
 
 // Configurar EJS como motor de plantillas
 app.set('view engine', 'ejs');
 
-// ¡¡¡CORRECCIÓN DE LA RUTA DE VISTAS!!!
-// Si tu Root Directory en Render es '.' (la raíz del repo), entonces:
-// __dirname para server.js (en backend/) es /opt/render/project/src/backend/
-// '../' sube a /opt/render/project/src/
-// 'projects/views' entra en /opt/render/project/src/projects/views/
 const viewsPath = path.join(__dirname, '../projects/views');
 app.set('views', viewsPath);
-console.log('Express está buscando vistas EJS en:', viewsPath); // <--- LOG DE DEPURACIÓN
+console.log('Express está buscando vistas EJS en:', viewsPath);
 
-// Middleware para servir archivos estáticos (CSS, JS, imágenes, etc.)
-// Desde backend/server.js, para servir la carpeta 'projects' como '/projects'
 const projectsStaticPath = path.join(__dirname, '../projects');
 app.use('/projects', express.static(projectsStaticPath));
-console.log('Express está sirviendo /projects desde:', projectsStaticPath); // <--- LOG DE DEPURACIÓN
+console.log('Express está sirviendo /projects desde:', projectsStaticPath);
 
-// Servir la carpeta 'assets' en la raíz de 'theshester/' como '/assets'
 const assetsStaticPath = path.join(__dirname, '../assets');
 app.use('/assets', express.static(assetsStaticPath));
-console.log('Express está sirviendo /assets desde:', assetsStaticPath); // <--- LOG DE DEPURACIÓN
+console.log('Express está sirviendo /assets desde:', assetsStaticPath);
 
 // ====================================================================
-// Importa los routers (después de la configuración de estáticos y EJS)
+// Importa los routers
 // ====================================================================
 const authRouter = require('./routes/auth');
 const commentsRouter = require('./routes/comments');
 const viewsRouter = require('./routes/views'); // Tu router para las páginas EJS
 const tutorialApiRouter = require('./routes/tutorialApi'); // Importa tu archivo tutorialApi.js
+const postsRouter = require('./routes/posts'); // ¡¡¡IMPORTA EL ROUTER DE POSTS!!!
 
 // Conexión a MongoDB
 const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017/tutorialViewsDB';
@@ -79,6 +72,7 @@ mongoose.connect(mongoURI)
 app.use('/api/auth', authRouter);
 app.use('/api/comments', commentsRouter);
 app.use('/api/views', tutorialApiRouter); // Monta tutorialApiRouter bajo /api/views
+app.use('/api/posts', postsRouter); // ¡¡¡MONTA EL ROUTER DE POSTS REAL!!!
 
 // Usar el router de vistas para tus páginas EJS
 app.use('/', viewsRouter); 
