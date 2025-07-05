@@ -160,8 +160,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     text-decoration: underline;
                 }
                 .modal-content .form-logo {
-                    max-width: 60px; /* Tamaño del logo en la modal */
-                    margin-bottom: 15px;
+                   display: block; /* Para que ocupe su propia línea */
+            margin: auto; /* Centra horizontalmente y añade margen inferior */
+            max-width: 100px; /* Ajusta el tamaño máximo del logo */
+            height: 40px; /* M
                 }
             </style>
         `;
