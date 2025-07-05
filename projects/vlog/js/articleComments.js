@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     font-weight: bold;
                 }
                 .modal-content .form-group input {
-                    width: calc(100% - 20px); /* Ajusta si tienes padding */
+                    width: 100%;
                     padding: 10px;
                     margin-bottom: 15px;
                     border: 1px solid #ccc;
