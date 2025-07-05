@@ -2,20 +2,36 @@
 const mongoose = require('mongoose');
 
 // Definir el Schema y el Modelo para los tutoriales
-// Un tutorial tendrá un 'path' (que será la URL relativa, como './generador-contraseñas.html') y un 'views' (contador)
 const tutorialSchema = new mongoose.Schema({
-    path: {
+    // El 'slug' es la parte amigable de la URL para el artículo (ej. 'generador-contrasenas')
+    slug: {
         type: String,
         required: true,
-        unique: true // Cada path debe ser único
+        unique: true // Cada slug debe ser único
+    },
+    // El 'path' puede ser la ruta completa al archivo EJS si lo necesitas,
+    // pero el 'slug' es lo que se usa para buscar en la URL.
+    // Puedes mantener 'path' si lo usas para algo más, o eliminarlo si no.
+    path: { // Mantengo 'path' por si lo usas en otras partes de tu código
+        type: String,
+        unique: true // También debe ser único
+    },
+    title: { // Es buena idea tener el título del tutorial en el modelo
+        type: String,
+        required: true
+    },
+    description: { // Para descripciones cortas en la lista de tutoriales
+        type: String
+    },
+    category: { // Para categorizar tus tutoriales
+        type: String
     },
     views: {
         type: Number,
-        default: 0
+        default: 0 // Inicializa las vistas en 0
     }
 }, { timestamps: true }); // 'timestamps' añade createdAt y updatedAt automáticamente
 
 const Tutorial = mongoose.model('Tutorial', tutorialSchema);
 
-// ¡FALTA ESTA LÍNEA! Exporta el modelo para que pueda ser importado en otros archivos
-module.exports = Tutorial;
+module.exports = Tutorial; // Exporta el modelo
