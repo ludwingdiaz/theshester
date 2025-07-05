@@ -6,33 +6,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     const searchButton = document.getElementById('searchButton');
     const loadMoreButton = document.getElementById('loadMoreButton');
 
-    // ¡ELIMINAR ESTAS LÍNEAS! Ya no las necesitamos aquí.
-    // const logoutNavItem = document.getElementById('logoutNavItem');
-    // const logoutButton = document.getElementById('logoutButton');
+    // ====================================================================
+    // 0. Configuración de la URL del Backend
+    // ====================================================================
+    const BASE_URL_BACKEND = 'https://tutorial-views-api.onrender.com';
+    console.log(`tutoriales.js: Conectando al backend en: ${BASE_URL_BACKEND}`);
 
     let allDynamicPosts = [];
     let displayedPostsCount = 0;
     const postsPerPage = 6;
-
-    // ¡ELIMINAR ESTA FUNCIÓN! auth.js se encargará.
-    // function updateAuthUI() {
-    //     const token = localStorage.getItem('jwtToken');
-    //     if (token) {
-    //         logoutNavItem.style.display = 'list-item';
-    //     } else {
-    //         logoutNavItem.style.display = 'none';
-    //     }
-    // }
-
-    // ¡ELIMINAR ESTE BLOQUE! auth.js se encargará del evento click del botón de cerrar sesión.
-    // if (logoutButton) {
-    //     logoutButton.addEventListener('click', (e) => {
-    //         e.preventDefault();
-    //         localStorage.removeItem('jwtToken');
-    //         updateAuthUI();
-    //         alert('Sesión cerrada correctamente.');
-    //     });
-    // }
 
     // --- Función para formatear la fecha (usada para posts dinámicos) ---
     function formatPostDate(dateString) {
@@ -41,9 +23,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // --- Función para obtener el número de comentarios de un artículo ---
-    async function getCommentCount(articleId) {
+    async function getCommentCount(articleId) { // Ahora espera articleId (el _id)
         try {
-            const response = await fetch(`https://tutorial-views-api.onrender.com/api/comments/article/${articleId}/count`);
+            const response = await fetch(`${BASE_URL_BACKEND}/api/comments/article/${articleId}/count`);
             if (response.ok) {
                 const data = await response.json();
                 return data.count;
@@ -58,27 +40,37 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // --- Función para incrementar las vistas de un post (se llamará cuando se haga click en el enlace) ---
-    async function incrementPostViews(slug) {
+    async function incrementPostViews(postId, viewElement) { // Ahora espera postId (el _id) y el elemento de vistas
         try {
-            await fetch(`https://tutorial-views-api.onrender.com/api/posts/${slug}/views`, {
+            const response = await fetch(`${BASE_URL_BACKEND}/api/views/article/${postId}/increment`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' }
             });
+            if (response.ok) {
+                const data = await response.json();
+                console.log(`Vistas actualizadas para ${postId}: ${data.views}`);
+                if (viewElement) {
+                    viewElement.textContent = data.views; // Actualiza el DOM con el nuevo valor
+                }
+            } else {
+                console.error('Error al incrementar vistas:', await response.json());
+            }
         } catch (error) {
-            console.error('Error al incrementar vistas:', error);
+            console.error('Error de red al incrementar vistas:', error);
         }
     }
 
     // --- Función para renderizar un post dinámico ---
     async function renderDynamicPostCard(post) {
-        const commentCount = await getCommentCount(post.slug);
+        // Usar post._id para obtener el conteo de comentarios
+        const commentCount = await getCommentCount(post._id); 
 
         const card = document.createElement('div');
         card.className = 'tutorials-list__card';
         card.innerHTML = `
             <div class="card-content">
                 <h4 class="card-title">
-                    <a href="./${post.slug}.html" data-slug="${post.slug}">${post.title}</a>
+                    <a href="/articles/${post.slug}" data-article-id="${post._id}" data-slug="${post.slug}">${post.title}</a>
                 </h4>
                 <p class="card-category">${post.category}</p>
                 <p class="card-description">${post.description}</p>
@@ -87,14 +79,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div class="card-stats">
                     <div class="card-views">
                         <img src="https://static.thenounproject.com/png/201934-200.png" width="24" height="24" alt="Vistas">
-                        <p>${post.views || 0}</p>
+                        <p class="view-count">${post.views || 0}</p> <!-- Añadir clase para fácil selección -->
                     </div>
                     <div class="card-comments">
                         <img src="https://cdn-icons-png.flaticon.com/512/1380/1380338.png" width="24" height="24" alt="Comentarios">
                         <p>${commentCount}</p>
                     </div>
                     <div class="card-web-link">
-                        <a href="./${post.slug}.html" data-slug="${post.slug}">
+                        <a href="/articles/${post.slug}" data-article-id="${post._id}" data-slug="${post.slug}">
                             <img src="https://icon-library.com/images/url-icon-png/url-icon-png-7.jpg" width="24" height="24" alt="Enlace Web">
                         </a>
                     </div>
@@ -107,10 +99,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         `;
         postsContainer.appendChild(card);
 
+        // Seleccionar el elemento de vistas dentro de esta tarjeta específica
+        const viewCountElement = card.querySelector('.view-count');
+
         // Añadir evento click al enlace del título y al enlace web para incrementar vistas
-        card.querySelectorAll('a[data-slug]').forEach(link => {
+        card.querySelectorAll('a[data-article-id]').forEach(link => {
             link.addEventListener('click', () => {
-                incrementPostViews(link.dataset.slug);
+                // Pasa el _id del post y el elemento HTML donde se muestra la vista
+                incrementPostViews(link.dataset.articleId, viewCountElement);
             });
         });
     }
@@ -144,7 +140,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     // --- Función para cargar posts desde el backend ---
     async function fetchDynamicPosts() {
         try {
-            const response = await fetch('https://tutorial-views-api.onrender.com/api/posts');
+            // Asegúrate de que tu backend tenga una ruta /api/posts que devuelva los posts con _id y views
+            const response = await fetch(`${BASE_URL_BACKEND}/api/posts`); 
             if (response.ok) {
                 const data = await response.json();
                 allDynamicPosts = data;
@@ -198,15 +195,5 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // --- Inicialización ---
-    // ¡ELIMINAR ESTA LÍNEA! updateAuthUI ya no está en este archivo.
-    // updateAuthUI(); // auth.js se encargará de esto.
-
-    // Enlazar los eventos de incremento de vistas a los posts estáticos YA existentes en el HTML
-    postsContainer.querySelectorAll('.tutorials-list__card a[data-slug]').forEach(link => {
-        link.addEventListener('click', () => {
-            incrementPostViews(link.dataset.slug);
-        });
-    });
-
-    fetchDynamicPosts(); // Cargar los posts dinámicos
+    fetchDynamicPosts(); // Cargar los posts dinámicos al inicio
 });

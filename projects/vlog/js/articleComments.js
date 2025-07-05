@@ -1,9 +1,16 @@
 // frontend/js/articleComments.js
 // Este script maneja la lógica de comentarios para un artículo específico,
-// incluyendo la carga, envío y ahora, una modal de login para usuarios no autenticados.
+// incluyendo la carga, envío, una modal de login para usuarios no autenticados,
+// y el seguimiento de vistas del artículo.
 
 document.addEventListener('DOMContentLoaded', async () => {
-    console.log("articleComments.js: DOMContentLoaded - Inicializando sistema de comentarios.");
+    console.log("articleComments.js: DOMContentLoaded - Inicializando sistema de comentarios y seguimiento de vistas.");
+
+    // ====================================================================
+    // 0. Configuración de la URL del Backend
+    // ====================================================================
+    const BASE_URL_BACKEND = 'https://tutorial-views-api.onrender.com';
+    console.log(`Conectando al backend en: ${BASE_URL_BACKEND}`);
 
     // ====================================================================
     // 1. Referencias a Elementos del DOM
@@ -13,6 +20,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const commentMessage = document.getElementById('comment-message');
     const commentsList = document.getElementById('comments-list');
     const commentsCount = document.getElementById('comments-count');
+
+    // Asumiendo que tienes un elemento en tu HTML para mostrar las vistas (ej. <span id="article-views"></span>)
+    const articleViewsDisplay = document.getElementById('article-views'); 
 
     // Obtener el ID del artículo desde el atributo data-article-id del div principal del artículo
     const articleContainer = document.querySelector('div[data-article-id]');
@@ -51,10 +61,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div id="loginModalOverlay" class="modal-overlay hidden">
                 <div class="modal-content">
                     <button id="closeLoginModal" class="modal-close-button">&times;</button>
-
-                    <a href="https://tutorial-views-api.onrender.com/tutoriales" class="logo-link"> <!-- CAMBIADO: Antes /projects/vlog/html/tutoriales.html -->
                     <img src="/assets/EmoteBulldog 28x28.png" alt="Logo de Ludwing Díaz" class="form-logo">
-        </a>   
                     <h2>Inicia Sesión para Comentar</h2>
                     <form id="modalLoginForm" class="styled-form">
                         <div class="form-group">
@@ -83,17 +90,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                     display: flex;
                     justify-content: center;
                     align-items: center;
-                    z-index: 1000; /* Asegura que esté por encima de todo */
+                    z-index: 1000;
                 }
                 .modal-content {
-                    background-color: #2a2a4a;
+                    background-color: #2a2a4a; /* Color de fondo oscuro */
                     padding: 30px;
                     border-radius: 8px;
                     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
                     position: relative;
                     width: 90%;
-                    max-width: 400px; /* Ancho máximo para la modal */
+                    max-width: 400px;
                     text-align: center;
+                    color: #e0e0e0; /* Color de texto claro */
                 }
                 .modal-close-button {
                     position: absolute;
@@ -103,10 +111,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     background: none;
                     border: none;
                     cursor: pointer;
-                    color: #333;
+                    color: #e0e0e0; /* Color de la X en claro */
                 }
                 .modal-close-button:hover {
-                    color: #000;
+                    color: #fff;
                 }
                 .modal-content h2 {
                     margin-bottom: 20px;
@@ -116,18 +124,20 @@ document.addEventListener('DOMContentLoaded', async () => {
                 .modal-overlay.hidden {
                     display: none;
                 }
-                /* Reutilizando clases del formulario */
                 .modal-content .form-group label {
                     text-align: left;
                     display: block;
                     margin-bottom: 5px;
                     font-weight: bold;
+                    color: #e0e0e0;
                 }
                 .modal-content .form-group input {
-                    width: 100%;
+                    width: calc(100% - 20px);
                     padding: 10px;
                     margin-bottom: 15px;
-                    border: 1px solid #ccc;
+                    border: 1px solid #4a4a6e; /* Borde más oscuro */
+                    background-color: #3a3a5a; /* Fondo del input más oscuro */
+                    color: #e0e0e0; /* Texto del input claro */
                     border-radius: 4px;
                     box-sizing: border-box;
                 }
@@ -142,7 +152,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     font-size: 16px;
                 }
                 .modal-content .submit-button:hover {
-                    background-color: #0056b3;
+                    background-color: #5a5a7e; /* Hover más claro */
                 }
                 .modal-content .message {
                     margin-top: 10px;
@@ -153,17 +163,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                     font-size: 14px;
                 }
                 .modal-content .login-link a {
-                    color: #007bff;
+                    color: #88aaff; /* Enlace más claro */
                     text-decoration: none;
                 }
                 .modal-content .login-link a:hover {
                     text-decoration: underline;
                 }
                 .modal-content .form-logo {
-                   display: block; /* Para que ocupe su propia línea */
-            margin: auto; /* Centra horizontalmente y añade margen inferior */
-            max-width: 100px; /* Ajusta el tamaño máximo del logo */
-            height: 40px; /* M
+                    display: block;
+                    margin: auto;
+                    max-width: 100px;
+                    height: 40px;
                 }
             </style>
         `;
@@ -187,7 +197,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const password = document.getElementById('modalPassword').value;
 
             try {
-                const response = await fetch('https://tutorial-views-api.onrender.com/api/auth/login', { // Asume esta es tu ruta de login
+                const response = await fetch(`${BASE_URL_BACKEND}/api/auth/login`, { // Usar BASE_URL_BACKEND
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
@@ -195,14 +205,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 if (response.ok) {
                     const data = await response.json();
-                    localStorage.setItem('jwtToken', data.token); // Guarda el nuevo token
-                    token = data.token; // Actualiza la variable 'token' en este script
+                    localStorage.setItem('jwtToken', data.token);
+                    token = data.token;
                     showMessage(modalLoginMessage, 'Inicio de sesión exitoso. Enviando comentario...', false);
-                    loginModalOverlay.classList.add('hidden'); // Oculta la modal
+                    loginModalOverlay.classList.add('hidden');
 
                     // Re-intenta enviar el comentario original después del login exitoso
-                    // Esto simula que el usuario no tuvo que hacer clic de nuevo.
-                    // Dispara el evento 'submit' en el formulario de comentarios original
                     commentForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
 
                 } else {
@@ -222,7 +230,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Función para mostrar la modal de login
     function showLoginModal() {
         document.getElementById('loginModalOverlay').classList.remove('hidden');
-        // Opcional: limpiar los campos del formulario de login en la modal
         document.getElementById('modalEmail').value = '';
         document.getElementById('modalPassword').value = '';
         document.getElementById('modalLoginMessage').textContent = '';
@@ -235,7 +242,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         commentsList.innerHTML = '<p>Cargando comentarios...</p>';
 
         try {
-            const response = await fetch(`https://tutorial-views-api.onrender.com/api/comments/article/${articleId}`, {
+            const response = await fetch(`${BASE_URL_BACKEND}/api/comments/article/${articleId}`, {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' }
             });
@@ -273,7 +280,33 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // ====================================================================
-    // 5. Manejo del Envío del Formulario de Comentarios
+    // 5. Lógica para el Seguimiento de Vistas del Artículo (¡NUEVO!)
+    // ====================================================================
+    async function trackArticleView() {
+        try {
+            // Asume que tu backend tiene un endpoint para incrementar vistas
+            const response = await fetch(`${BASE_URL_BACKEND}/api/views/article/${articleId}/increment`, {
+                method: 'POST', // O PUT, dependiendo de tu API
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Vista de artículo registrada:', data.message);
+                if (articleViewsDisplay) {
+                    articleViewsDisplay.textContent = data.views; // Actualiza el número de vistas en el DOM
+                }
+            } else {
+                const errorData = await response.json();
+                console.error('Error al registrar vista del artículo:', errorData.message);
+            }
+        } catch (error) {
+            console.error('Error de red al registrar vista del artículo:', error);
+        }
+    }
+
+    // ====================================================================
+    // 6. Manejo del Envío del Formulario de Comentarios
     // ====================================================================
     if (commentForm) {
         commentForm.addEventListener('submit', async (e) => {
@@ -294,7 +327,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             try {
                 // Petición POST para añadir un comentario al artículo específico
-                const response = await fetch(`https://tutorial-views-api.onrender.com/api/comments/article/${articleId}`, {
+                const response = await fetch(`${BASE_URL_BACKEND}/api/comments/article/${articleId}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -331,7 +364,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // ====================================================================
-    // 6. Cargar Comentarios al Inicio
+    // 7. Acciones al Cargar la Página (Cargar Comentarios y Rastrear Vista)
     // ====================================================================
-    loadArticleComments();
+    await loadArticleComments(); // Cargar comentarios existentes
+    trackArticleView(); // Registrar la vista del artículo
 });

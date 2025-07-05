@@ -31,31 +31,29 @@ app.use(cors({
 }));
 
 // ====================================================================
-// Configuración de EJS y Archivos Estáticos (¡AJUSTE DE RUTA DE VISTAS AQUÍ!)
+// Configuración de EJS y Archivos Estáticos
 // ====================================================================
 
 // Configurar EJS como motor de plantillas
 app.set('view engine', 'ejs');
 // Configurar la ruta donde Express buscará tus archivos .ejs
-// ¡CORRECCIÓN DE LA RUTA DE VISTAS!
-app.set('views', path.join(__dirname, '../', 'projects', 'views')); // <--- ¡ESTA ES LA LÍNEA CORREGIDA!
+app.set('views', path.join(__dirname, '../../projects/views'));
 
-// Middleware para servir archivos estáticos (CSS, JS, imágenes, etc.)
-// Desde backend/server.js, para servir la carpeta 'projects' como '/projects'
-app.use('/projects', express.static(path.join(__dirname, '../', 'projects')));
-// Servir la carpeta 'assets' en la raíz de 'theshester/' como '/assets'
-app.use('/assets', express.static(path.join(__dirname, '../', 'assets'))); // <--- ¡ESTA ES LA LÍNEA CORREGIDA!
+// Middleware para servir archivos estáticos
+app.use('/projects', express.static(path.join(__dirname, '../../projects')));
+app.use('/assets', express.static(path.join(__dirname, '../../assets')));
 
 // ====================================================================
 // Importa los routers (después de la configuración de estáticos y EJS)
 // ====================================================================
 const authRouter = require('./routes/auth');
 const commentsRouter = require('./routes/comments');
-const viewsRouter = require('./routes/views'); 
+const viewsRouter = require('./routes/views'); // Tu router para las páginas EJS
+// ¡¡¡ESTAS SON LAS LÍNEAS CLAVE QUE NECESITAS!!!
+const tutorialApiRouter = require('./routes/tutorialApi'); // Importa tu archivo tutorialApi.js
+// ¡¡¡-------------------------------------!!!
 
-// ====================================================================
 // Conexión a MongoDB
-// ====================================================================
 const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017/tutorialViewsDB';
 
 mongoose.connect(mongoURI)
@@ -68,13 +66,15 @@ mongoose.connect(mongoURI)
 
 app.use('/api/auth', authRouter);
 app.use('/api/comments', commentsRouter);
-app.use('/', viewsRouter); // Monta las rutas de views.js directamente en la raíz
+// ¡¡¡ESTA ES LA LÍNEA CLAVE QUE NECESITAS!!!
+app.use('/api/views', tutorialApiRouter); // Monta tutorialApiRouter bajo /api/views
+// ¡¡¡-----------------------------------!!!
 
 // Usar el router de vistas para tus páginas EJS
 app.use('/', viewsRouter); 
 
 // ====================================================================
-// Rutas Protegidas (Con middleware real)
+// Rutas Protegidas
 // ====================================================================
 
 app.get('/api/protected-data', authMiddleware, authorizeRoles('user'), (req, res) => {
