@@ -608,7 +608,7 @@ pre {
 .styled-form input[type="text"],
 .styled-form input[type="email"],
 .styled-form input[type="password"] {
-    width: calc(100% - 20px);
+    width: 100%;
     padding: 10px;
     border: 1px solid var(--text-color-secondary);
     border-radius: 5px;
