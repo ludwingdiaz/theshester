@@ -7,7 +7,7 @@ const authMiddleware = require('./middleware/authMiddleware');
 const authorizeRoles = require('./middleware/roleMiddleware');
 
 const express = require('express');
-const path = require('path');
+const path = require('path'); // Asegúrate de que 'path' esté importado
 const mongoose = require('mongoose');
 const cors = require('cors');
 
@@ -31,17 +31,31 @@ app.use(cors({
 }));
 
 // ====================================================================
-// Configuración de EJS y Archivos Estáticos
+// Configuración de EJS y Archivos Estáticos (¡AJUSTE DE RUTA DE VISTAS AQUÍ!)
 // ====================================================================
 
 // Configurar EJS como motor de plantillas
 app.set('view engine', 'ejs');
-// Configurar la ruta donde Express buscará tus archivos .ejs
-app.set('views', path.join(__dirname, '../../projects/views'));
 
-// Middleware para servir archivos estáticos
-app.use('/projects', express.static(path.join(__dirname, '../../projects')));
-app.use('/assets', express.static(path.join(__dirname, '../../assets')));
+// ¡¡¡CORRECCIÓN DE LA RUTA DE VISTAS!!!
+// Si tu Root Directory en Render es '.' (la raíz del repo), entonces:
+// __dirname para server.js (en backend/) es /opt/render/project/src/backend/
+// '../' sube a /opt/render/project/src/
+// 'projects/views' entra en /opt/render/project/src/projects/views/
+const viewsPath = path.join(__dirname, '../projects/views');
+app.set('views', viewsPath);
+console.log('Express está buscando vistas EJS en:', viewsPath); // <--- LOG DE DEPURACIÓN
+
+// Middleware para servir archivos estáticos (CSS, JS, imágenes, etc.)
+// Desde backend/server.js, para servir la carpeta 'projects' como '/projects'
+const projectsStaticPath = path.join(__dirname, '../projects');
+app.use('/projects', express.static(projectsStaticPath));
+console.log('Express está sirviendo /projects desde:', projectsStaticPath); // <--- LOG DE DEPURACIÓN
+
+// Servir la carpeta 'assets' en la raíz de 'theshester/' como '/assets'
+const assetsStaticPath = path.join(__dirname, '../assets');
+app.use('/assets', express.static(assetsStaticPath));
+console.log('Express está sirviendo /assets desde:', assetsStaticPath); // <--- LOG DE DEPURACIÓN
 
 // ====================================================================
 // Importa los routers (después de la configuración de estáticos y EJS)
@@ -49,9 +63,7 @@ app.use('/assets', express.static(path.join(__dirname, '../../assets')));
 const authRouter = require('./routes/auth');
 const commentsRouter = require('./routes/comments');
 const viewsRouter = require('./routes/views'); // Tu router para las páginas EJS
-// ¡¡¡ESTAS SON LAS LÍNEAS CLAVE QUE NECESITAS!!!
 const tutorialApiRouter = require('./routes/tutorialApi'); // Importa tu archivo tutorialApi.js
-// ¡¡¡-------------------------------------!!!
 
 // Conexión a MongoDB
 const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017/tutorialViewsDB';
@@ -66,9 +78,7 @@ mongoose.connect(mongoURI)
 
 app.use('/api/auth', authRouter);
 app.use('/api/comments', commentsRouter);
-// ¡¡¡ESTA ES LA LÍNEA CLAVE QUE NECESITAS!!!
 app.use('/api/views', tutorialApiRouter); // Monta tutorialApiRouter bajo /api/views
-// ¡¡¡-----------------------------------!!!
 
 // Usar el router de vistas para tus páginas EJS
 app.use('/', viewsRouter); 
