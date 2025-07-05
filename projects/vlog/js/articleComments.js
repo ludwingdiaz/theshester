@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     z-index: 1000; /* Asegura que esté por encima de todo */
                 }
                 .modal-content {
-                    background-color: #fff;
+                    background-color: #2a2a4a;
                     padding: 30px;
                     border-radius: 8px;
                     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
                 .modal-content h2 {
                     margin-bottom: 20px;
-                    color: #333;
+                    color: #e0e0e0;
                     font-size: 22px;
                 }
                 .modal-overlay.hidden {
@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 .modal-content .submit-button {
                     width: 100%;
                     padding: 10px;
-                    background-color: #007bff; /* Color de botón primario */
+                    background-color: #4a4a6e; /* Color de botón primario */
                     color: white;
                     border: none;
                     border-radius: 4px;
