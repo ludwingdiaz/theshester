@@ -867,10 +867,7 @@ footer{
         font-size: 1.5rem;
         margin-bottom: 20px;
     }
-    .submit-button {
-        padding: 10px 20px;
-        font-size: 1rem;
-    }
+   
     .logo-link {
         font-size: 1.2rem;
     }
@@ -901,3 +898,120 @@ footer{
         text-align: center;
     }
 }
+
+//Registro
+  /* Estilos específicos para la estructura tipo GitHub */
+        
+
+        .github-auth-header {
+            text-align: right;
+            padding: 20px 40px;
+            font-size: 14px;
+            color: #586069;
+        }
+        .github-auth-header a {
+            color: #0366d6;
+            text-decoration: none;
+        }
+        .github-auth-header a:hover {
+            text-decoration: underline;
+        }
+
+        .github-auth-layout {
+            display: flex; /* Habilita el diseño de columna */
+            flex-grow: 1; /* Permite que ocupe el espacio disponible */
+            min-height: calc(100vh - 60px); /* Ajusta si el header tiene altura fija */
+        }
+
+        .github-marketing-column {
+            flex: 1; /* Ocupa una parte del espacio */
+            background-color: #0d1117; /* Fondo oscuro del lado izquierdo */
+            color: #c9d1d9; /* Texto claro */
+            padding: 60px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Centra verticalmente el contenido */
+            position: relative; /* Para las imágenes de fondo */
+            overflow: hidden; /* Oculta partes de las imágenes si se salen */
+        }
+
+        .github-marketing-column h2 {
+            font-size: 40px;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            color: #c9d1d9;
+            font-weight: 600;
+        }
+        .github-marketing-column p {
+            font-size: 18px;
+            line-height: 1.5;
+            margin-bottom: 30px;
+        }
+        .github-marketing-column h3 {
+            font-size: 16px;
+            margin-top: 40px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #8b949e;
+        }
+        .github-marketing-column ul {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 40px;
+        }
+        .github-marketing-column ul li {
+            font-size: 16px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+        .github-marketing-column ul li i.checkmark-icon { /* Para el icono de checkmark */
+            margin-right: 10px;
+            color: #2ea44f; /* Color verde para el check */
+            font-size: 20px;
+            line-height: 1.2;
+        }
+
+
+
+        .github-form-column {
+            flex: 1; /* Ocupa la otra parte del espacio */
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Centra verticalmente el formulario */
+            align-items: center; /* Centra horizontalmente el formulario */
+            padding: 40px;
+        }
+
+        /* Reutilizando tus clases existentes */
+        .styled-form {
+            width: 100%; /* Asegura que el formulario dentro de la sección ocupe todo el ancho */
+        }
+       
+
+        /* Media queries para responsividad (opcional, pero GitHub es responsive) */
+        @media (max-width: 768px) {
+            .github-auth-layout {
+                flex-direction: column; /* Las columnas se apilan en pantallas pequeñas */
+            }
+            .github-marketing-column {
+                padding: 40px 20px;
+                text-align: center; /* Centra el texto en móviles */
+            }
+            .github-marketing-column ul {
+                text-align: left; /* Mantiene la lista alineada a la izquierda */
+                margin-left: auto;
+                margin-right: auto;
+                max-width: 300px; /* Para que no se estire demasiado */
+            }
+            .github-form-column {
+                padding: 20px;
+            }
+        }
+ /* Estilo para el logo encima del formulario */
+        .login-logo{
+            display: block; /* Para que ocupe su propia línea */
+            margin: auto; /* Centra horizontalmente y añade margen inferior */
+            max-width: 100px; /* Ajusta el tamaño máximo del logo */
+            height: 40px; /* Mantiene la proporción */
+        }

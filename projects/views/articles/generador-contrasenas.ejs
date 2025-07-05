@@ -99,51 +99,6 @@
                 <p>Cargando comentarios...</p>
             </div>
         </div>
+        
     </section>
-</div> <script>
-    // Pega aquí todo el JavaScript funcional de tu generador de contraseñas
-    // Es el mismo código que tenías en los <pre><code>, pero ahora se ejecutará.
-
-    const lengthEl = document.getElementById('length');
-    const includeLowerEl = document.getElementById('includeLower');
-    const includeUpperEl = document.getElementById('includeUpper');
-    const includeNumbersEl = document.getElementById('includeNumbers');
-    const includeSymbolsEl = document.getElementById('includeSymbols');
-    const generateBtn = document.getElementById('generateBtn');
-    const passwordOutput = document.getElementById('passwordOutput');
-
-    const lowerChars = 'abcdefghijklmnopqrstuvwxyz';
-    const upperChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const numberChars = '0123456789';
-    const symbolChars = '!@$%^&*()_+"?><{}|';
-
-    function generatePassword(length, includeLower, includeUpper, includeNumber, includeSymbol) {
-        let chars = '';
-        let password = '';
-
-        if (includeLower) chars += lowerChars;
-        if (includeUpper) chars += upperChars;
-        if (includeNumber) chars += numberChars;
-        if (includeSymbol) chars += symbolChars;
-
-        // Asegurarse de que al menos una opción esté seleccionada
-        if (chars.length === 0) {
-            return "Selecciona al menos un tipo de carácter.";
-        }
-
-        for (let i = 0; i < length; i++) {
-            password += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        return password;
-    }
-
-    generateBtn.addEventListener('click', () => {
-        const length = +lengthEl.value; // El '+' convierte a número
-        const includeLower = includeLowerEl.checked;
-        const includeUpper = includeUpperEl.checked;
-        const includeNumber = includeNumbersEl.checked;
-        const includeSymbol = includeSymbolsEl.checked;
-
-        passwordOutput.value = generatePassword(length, includeLower, includeUpper, includeNumber, includeSymbol);
-    });
-</script>
+</div> 

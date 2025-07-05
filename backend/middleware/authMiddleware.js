@@ -21,7 +21,7 @@ module.exports = (req, res, next) => {
         // Verificar el token
          const decoded = jwt.verify(
             token,
-            process.env.JWT_SECRET || 'tu_secreto_muy_seguro_y_largo_aqui' // <-- ¡AÑADE ESTO!
+            process.env.JWT_SECRET || '8uMh2xZbQp7rVnK0sJf4wYtLgD9cXz1oC6iA3eF5bE7dG2jH0qP9rS1tUvW8yZ0' // <-- ¡AÑADE ESTO!
         );
 
         // Adjuntar la información del usuario decodificada al objeto de solicitud (req.user)
