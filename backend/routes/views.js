@@ -15,7 +15,7 @@ const ejs = require('ejs');   // Necesario para renderizar archivos EJS en una c
 // ================================================================
 
 // Ruta para la página de tutoriales (tu home)
-router.get('/', (req, res) => {
+router.get('/tutoriales', (req, res) => {
     // res.render buscará 'tutoriales.ejs' en la carpeta configurada en app.set('views')
     res.render('tutoriales'); 
 });
