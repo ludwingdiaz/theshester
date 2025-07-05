@@ -1,5 +1,5 @@
-<div data-article-id="guia-generador-contrasenas"> 
-    <h1>Guía: Generador de Contraseñas</h1>
+<div data-article-id="<%= tutorial._id %>"> 
+    <h1><%= tutorial.title %></h1> <p>Vistas: <span id="article-views"><%= tutorial.views %></span></p> 
 
     <section class="step">
         <h2>Paso 1: Crear la Interfaz HTML</h2>
@@ -94,11 +94,11 @@
         </div>
 
         <div id="comments-list-container" class="step">
-            <h3>Comentarios (<span id="comments-count">0</span>)</h3> 
+            <h3>Comentarios (<span id="comments-count">0</span>)</h3>
             <div id="comments-list">
                 <p>Cargando comentarios...</p>
             </div>
         </div>
-        
+
     </section>
-</div> 
+</div>
