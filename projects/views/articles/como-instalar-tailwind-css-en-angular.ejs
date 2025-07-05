@@ -1,0 +1,70 @@
+<div data-article-id="<%= tutorial._id %>"> 
+    <h1><%= tutorial.title %></h1> <p>Vistas: <span id="article-views"><%= tutorial.views %></span></p> 
+
+     <section class="step">
+            <h2>Paso 1: Crear tu Proyecto Angular</h2>
+            <p>Crea un nuevo proyecto Angular si no tienes uno:</p>
+            <pre><code>ng new my-project<br>cd my-project</code></pre>
+        </section>
+        <section class="step">
+            <h2>Paso 2: Instalar Tailwind CSS</h2>
+            <p>Instala Tailwind CSS y genera el archivo de configuración:</p>
+            <pre><code>npm install -D tailwindcss@3 postcss autoprefixer<br>npx tailwindcss init</code></pre>
+        </section>
+        <section class="step">
+            <h2>Paso 3: Configurar las Rutas de las Plantillas</h2>
+            <p>Añade las rutas de tus plantillas en <code>tailwind.config.js</code>:</p>
+            <pre><code>/** @type {import('tailwindcss').Config} */<br>module.exports = {<br>  content: [<br>    "./src/**/*.{html,ts}",<br>  ],<br>  theme: {<br>    extend: {},<br>  },<br>  plugins: [],<br>}</code></pre>
+        </section>
+        <section class="step">
+            <h2>Paso 4: Añadir Directivas Tailwind a tu CSS</h2>
+            <p>Añade las directivas <code>@tailwind</code> a <code>./src/styles.css</code>:</p>
+            <pre><code>@tailwind base;<br>@tailwind components;<br>@tailwind utilities;</code></pre>
+        </section>
+        <section class="step">
+            <h2>Paso 5: Iniciar el Proceso de Construcción</h2>
+            <p>Ejecuta el proceso de construcción con <code>ng serve</code>:</p>
+            <pre><code>ng serve</code></pre>
+        </section>
+        <section class="step">
+            <h2>Paso 6: Usar Tailwind en tu Proyecto</h2>
+            <p>Comienza a usar las clases de utilidad de Tailwind:</p>
+            <pre><code>&lt;h1 class="text-3xl font-bold underline"&gt;<br>  Hello world!<br>&lt;/h1&gt;</code></pre>
+        </section>
+        <section class="summary">
+            <h2>Resumen</h2>
+            <ul>
+                <li>Crea un proyecto Angular.</li>
+                <li>Instala Tailwind CSS y genera el archivo de configuración.</li>
+                <li>Configura las rutas de las plantillas.</li>
+                <li>Añade las directivas de Tailwind a tu CSS.</li>
+                <li>Inicia el proceso de construcción con <code>ng serve</code>.</li>
+                <li>Comienza a usar Tailwind en tu proyecto.</li>
+            </ul>
+        </section>
+
+        <section id="comments-section">
+        <h2>Comentarios</h2>
+        <div class="comment-form-container step">
+            <h3>Deja tu comentario</h3>
+            <form id="comment-form">
+                <div class="form-group">
+                </div>
+                <div class="form-group">
+                    <label for="comment-text">Comentario:</label>
+                    <textarea id="comment-text" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="version-button">Enviar Comentario</button>
+                <p id="comment-message" style="margin-top: 10px;"></p>
+            </form>
+        </div>
+
+        <div id="comments-list-container" class="step">
+            <h3>Comentarios (<span id="comments-count">0</span>)</h3>
+            <div id="comments-list">
+                <p>Cargando comentarios...</p>
+            </div>
+        </div>
+
+    </section>
+</div>
