@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const messageDisplay = document.getElementById('message');
 
     if (loginForm) {
-        loginForm.addEventListener('submit', async (event) => { 
+        loginForm.addEventListener('submit', async (event) => {
             event.preventDefault();
 
             const email = emailInput.value.trim();
@@ -29,9 +29,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     body: JSON.stringify({ email, password })
                 });
 
-                const data = await response.json(); 
+                const data = await response.json();
 
-                if (response.ok) { 
+                if (response.ok) {
                     // ¡CRÍTICO! Guardar el token REAL y los datos del usuario recibidos del backend
                     localStorage.setItem('jwtToken', data.token);
                     localStorage.setItem('isLoggedIn', 'true');
@@ -39,12 +39,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     messageDisplay.textContent = data.message || 'Inicio de sesión exitoso.';
                     messageDisplay.style.color = 'green';
-                    
+
                     setTimeout(() => {
-                        //window.location.href = '/projects/vlog/html/tutoriales.html';
-                        window.location.href = 'https://tutorial-views-api.onrender.com/tutoriales';
+                        const redirectToUrl = 'https://tutorial-views-api.onrender.com/tutoriales'; // Declara la URL en una variable
+                        console.log('Intentando redirigir a:', redirectToUrl); // <-- ¡AÑADE ESTA LÍNEA!
+                        window.location.href = redirectToUrl; // Usa la variable aquí
                     }, 500);
-                } else { 
+                } else {
                     messageDisplay.textContent = data.message || 'Error al iniciar sesión. Credenciales inválidas.';
                     messageDisplay.style.color = 'red';
                     localStorage.removeItem('jwtToken');
