@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
                 <div class="card-meta">
                     <p class="card-date">${formatPostDate(post.createdAt)}</p>
-                    <p class="card-author">Por Ludwing D.</p>
+                   <p class="card-author">Por ${post.author || 'Desconocido'}</p> <!-- ¡AHORA ES DINÁMICO! -->
                 </div>
             </div>
         `;

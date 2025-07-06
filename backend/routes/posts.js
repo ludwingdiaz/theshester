@@ -7,26 +7,33 @@ const authorizeRoles = require('../middleware/roleMiddleware'); // Necesario par
 
 // ================================================================
 // RUTA PARA CREAR UN NUEVO TUTORIAL (POST)
-// Protegida: Solo usuarios autenticados y con rol 'admin' (o el que decidas) pueden crear posts
+// Protegida: Solo usuarios autenticados y con rol 'admin' pueden crear posts
 // ================================================================
 router.post('/', authMiddleware, authorizeRoles('admin'), async (req, res) => {
-    // Extrae los datos del cuerpo de la petición
+    // Extrae los datos del cuerpo de la petición.
+    // ¡Ya NO extraemos 'author' de req.body, se tomará del token!
     const { slug, path, title, category, description, views } = req.body;
 
-    // Validación básica de los datos recibidos
+    // El nombre del autor se toma directamente del usuario autenticado
+    // Asegúrate de que tu authMiddleware adjunte req.user.username
+    const authorName = req.user.username || req.user.email || 'Autor Desconocido'; // Fallback por si acaso
+
+    // Validación básica de los datos recibidos (sin 'author' en el body)
     if (!slug || !path || !title || !category || !description) {
         return res.status(400).json({ message: 'Todos los campos principales (slug, path, title, category, description) son requeridos.' });
     }
 
     try {
         // Crea una nueva instancia del modelo Tutorial
+        // Se ha eliminado la duplicación de la declaración de newTutorial
         const newTutorial = new Tutorial({
             slug,
             path,
             title,
             category,
             description,
-            views: views || 0 // Asegura que 'views' se inicialice en 0 si no se proporciona
+            views: views || 0, // Asegura que 'views' se inicialice en 0 si no se proporciona
+            author: authorName // ¡Asigna el nombre del autor desde el token!
             // Mongoose añadirá automáticamente 'createdAt' y 'updatedAt' debido a 'timestamps: true'
         });
 
@@ -35,7 +42,7 @@ router.post('/', authMiddleware, authorizeRoles('admin'), async (req, res) => {
 
         res.status(201).json({
             message: 'Tutorial creado exitosamente.',
-            tutorial: savedTutorial // Devuelve el tutorial completo guardado (con _id y fechas)
+            tutorial: savedTutorial // Devuelve el tutorial completo guardado (con _id, fechas y autor)
         });
 
     } catch (error) {
@@ -61,9 +68,5 @@ router.get('/', async (req, res) => {
         res.status(500).json({ message: 'Error interno del servidor al obtener los tutoriales.' });
     }
 });
-
-// Puedes añadir otras rutas aquí, como router.get('/:slug') para un post individual
-// (aunque views.js ya maneja la renderización de artículos individuales EJS,
-// esta ruta sería para obtener los datos JSON de un tutorial por slug si fuera necesario para una API)
 
 module.exports = router;
