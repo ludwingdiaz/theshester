@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <button type="submit" class="submit-button">Iniciar Sesión</button>
                     </form>
                     <p id="modalLoginMessage" class="message"></p>
-                    <p class="login-link">¿No tienes una cuenta? <a href="/projects/forms/registro.html">Regístrate aquí</a></p>
+                    <p class="login-link">¿No tienes una cuenta? <a href="${BASE_URL_BACKEND}/projects/forms/registro.html">Regístrate aquí</a></p>
                 </div>
             </div>
             <style>
@@ -197,7 +197,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const password = document.getElementById('modalPassword').value;
 
             try {
-                const response = await fetch(`${BASE_URL_BACKEND}/api/auth/login`, { // Usar BASE_URL_BACKEND
+                const response = await fetch(`${BASE_URL_BACKEND}/api/auth/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
@@ -283,23 +283,33 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 5. Lógica para el Seguimiento de Vistas del Artículo (¡NUEVO!)
     // ====================================================================
     async function trackArticleView() {
+        console.log(`[DEBUG] trackArticleView() llamado para articleId: ${articleId}`); // <-- AÑADE ESTA LÍNEA
+
         try {
             // Asume que tu backend tiene un endpoint para incrementar vistas
+            console.log(`[DEBUG] Enviando solicitud POST para incrementar vistas a: ${BASE_URL_BACKEND}/api/views/article/${articleId}/increment`); // <-- AÑADE ESTA LÍNEA
             const response = await fetch(`${BASE_URL_BACKEND}/api/views/article/${articleId}/increment`, {
                 method: 'POST', // O PUT, dependiendo de tu API
                 headers: { 'Content-Type': 'application/json' }
             });
 
+            // --- INICIO DEL CAMBIO ---
             if (response.ok) {
                 const data = await response.json();
                 console.log('Vista de artículo registrada:', data.message);
                 if (articleViewsDisplay) {
                     articleViewsDisplay.textContent = data.views; // Actualiza el número de vistas en el DOM
                 }
-            } else {
+            } else if (response.status === 429) { // Manejo específico del Too Many Requests
+                console.warn('Vista de artículo: Solicitud ignorada por el servidor (demasiadas peticiones).');
+                // No es un error grave, simplemente la vista ya se contó.
+                // No actualizamos el contador de vistas en el frontend aquí, ya que la primera solicitud lo hizo.
+            }
+            else {
                 const errorData = await response.json();
                 console.error('Error al registrar vista del artículo:', errorData.message);
             }
+            // --- FIN DEL CAMBIO ---
         } catch (error) {
             console.error('Error de red al registrar vista del artículo:', error);
         }
