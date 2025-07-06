@@ -10,7 +10,7 @@
     --body-gradient-end: #c2e9f2;   /* Gradiente suave fin para el Body general */
 
     --text-color-primary: #333;
-    --text-color-secondary: #666; 
+    --text-color-secondary: #666;
 
     /* Header */
     --header-background: #007bfc; /* Color de fondo del header */
@@ -41,7 +41,7 @@
     --card-background: #fff;
     --card-border: 1px solid #ddd;
     --card-shadow-hover: 0 4px 8px rgba(0, 0, 0, 0.1);
-    
+
     /* Colores para formulario/diario */
     --background-color-secondary: #f8f8f8; /* Un fondo ligeramente diferente */
     --border-color: #e0e0e0;
@@ -100,7 +100,7 @@ body.dark-mode {
     --card-background: #2a2a4a;
     --card-border: 1px solid #444466;
     --card-shadow-hover: 0 6px 12px rgba(0, 0, 0, 0.3);
-    
+
     /* Colores para formulario/diario */
     --background-color-secondary: #3a3a5a;
     --border-color: #4a4a6e;
@@ -123,9 +123,8 @@ body.dark-mode {
 */
 
 body {
-    /* Estilos del body de header.css, ya que tiene el gradiente y las montañas */
     background: linear-gradient(135deg, var(--body-gradient-start), var(--body-gradient-end));
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Usamos la fuente de articulos.css */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
     position: relative;
@@ -151,11 +150,11 @@ body.dark-mode::after {
     background: var(--mountain-svg-dark) repeat-x;
 }
 
-/* Estilos para el HEADER (de header.css, ya que es más completo para fijo) */
+/* Estilos para el HEADER */
 header {
     background-color: var(--header-background);
     color: var(--header-text-color);
-    padding: 1em 20px;
+    padding: 1em 0;
     transition: background-color 0.5s ease, color 0.5s ease;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     position: fixed;
@@ -172,7 +171,10 @@ header {
     align-items: center;
     max-width: 1200px;
     margin: 0 auto;
-    flex-wrap: wrap;
+    flex-wrap: nowrap; /* No envuelve en desktop */
+    position: relative;
+    box-sizing: border-box;
+    padding: 0 20px;
 }
 
 .header-left {
@@ -193,17 +195,20 @@ header {
     height: 40px;
     margin-right: 10px;
 }
-
-/* .header-logo-text { ... } */
-
-.header-right-group {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    flex-wrap: wrap;
-    justify-content: flex-end;
+.header-logo-text {
+    display: block; /* Asegura que el texto se muestre */
 }
 
+
+/* --- header-right-group (Contenedor principal del lado derecho) --- */
+.header-right-group {
+    display: flex; /* En desktop, mostrar como flex para alinear nav, search y toggle */
+    align-items: center;
+    gap: 20px; /* Espacio entre los elementos */
+    position: relative; /* Importante para el posicionamiento absoluto del menú móvil */
+}
+
+/* Contenedor del buscador */
 .search-container {
     display: flex;
     border-radius: 5px;
@@ -220,7 +225,7 @@ header {
     outline: none;
     background: transparent;
     color: var(--text-color-primary);
-    width: 200px;
+    width: 100%;
     transition: width 0.3s ease;
 }
 
@@ -248,6 +253,7 @@ header {
     fill: var(--button-text-color);
 }
 
+/* Navegación principal (desktop) */
 .main-nav-list {
     list-style: none;
     margin: 0;
@@ -268,11 +274,10 @@ header {
     color: rgba(255, 255, 255, 0.8);
 }
 
-/* El botón de tema está en ambos, tomamos la versión del header ya que es para el header */
 #theme-toggle {
-    background-color: var(--card-background); /* Usamos --card-background del header.css */
+    background-color: var(--card-background);
     color: var(--text-color-primary);
-    border: 1px solid var(--card-border); /* Usamos --card-border del header.css */
+    border: 1px solid var(--card-border);
     padding: 0.5rem;
     height: 40px;
     width: 40px;
@@ -298,46 +303,57 @@ header {
     transition: fill 0.3s ease;
 }
 
-body:not(.dark-mode) .icon-dark-mode {
-    display: none;
+/* Estilos del botón de hamburguesa */
+.hamburger-menu {
+    display: none; /* Oculto por defecto en desktop */
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    z-index: 1001; /* Asegura que esté por encima del menú */
 }
 
-body.dark-mode .icon-light-mode {
-    display: none;
+.hamburger-menu .bar {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background-color: var(--header-text-color);
+    margin: 5px auto;
+    transition: all 0.3s ease-in-out;
+    border-radius: 2px;
 }
 
-body:not(.dark-mode) .icon-light-mode {
-    display: flex;
+/* Animación de la hamburguesa a X */
+.hamburger-menu.active .bar:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
 }
 
-body.dark-mode .icon-dark-mode {
-    display: flex;
+.hamburger-menu.active .bar:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger-menu.active .bar:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
 }
 
 /*
    ====================================================
-   Estilos de Contenido General y Artículos (de articulos.css)
+   Estilos de Contenido General y Artículos
    ====================================================
 */
 
-main.container.main-content-area { /* Selector más específico para main del layout */
-    width: 80%; /* De articulos.css */
-    margin: 2em auto; /* De articulos.css */
-    /* Estas reglas de main de articulos.css se aplican al contenido inyectado */
-
-    /* Asegúrate de que el padding-top del body es suficiente */
-    padding-top: 20px; /* Ya tienes padding en el body, esto es para el main-content-area */
-    box-sizing: border-box; /* Para incluir padding en el ancho */
-    max-width: 1200px; /* Del header.css container */
+main.container.main-content-area {
+    width: 80%;
+    margin: 2em auto;
+    padding-top: 20px;
+    box-sizing: border-box;
+    max-width: 1200px;
 }
 
-
-/* Estos h1, h2, p son para el contenido inyectado, como los artículos */
 h1, h2, h3, h4, p {
-  color: var(--text-color-primary); /* Unificado */
+  color: var(--text-color-primary);
 }
 
-/* Estilos específicos de artículos */
 .step {
     background-color: var(--section-background);
     padding: 1.5em;
@@ -354,7 +370,7 @@ h1, h2, h3, h4, p {
 }
 
 .version-button {
-    background-color: var(--version-button-background); /* Usa la variable específica de botón de versión */
+    background-color: var(--version-button-background);
     color: var(--version-button-text-color);
     padding: 1em 1.5em;
     border: none;
@@ -385,13 +401,11 @@ pre {
     transition: background-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
 }
 
-/* Estilos para el TÍTULO PRINCIPAL y DESCRIPCIÓN (de header.css para la página principal) */
 .main-content-hero {
     max-width: 800px;
     margin: 30px auto 40px auto;
     padding: 0 20px;
     text-align: center;
-    /* Ajuste para el header fijo ya lo hicimos en body padding-top */
 }
 
 .page-main-title {
@@ -413,7 +427,7 @@ pre {
 }
 
 /* ESTILOS PARA LOS POSTS EN MÚLTIPLES COLUMNAS (CUADRÍCULA) */
-.tutorials-list__cards-container {
+.tutorials-list__cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 20px;
@@ -515,7 +529,7 @@ pre {
 /* ====================================================
    Estilos de paginación o botón "Cargar más"
    ==================================================== */
-.submit-button { /* Se usará para #loadMoreButton y botones de formulario */
+.submit-button {
     background-color: var(--button-background);
     color: var(--button-text-color);
     padding: 12px 25px;
@@ -671,12 +685,12 @@ footer{
    Estilos para la Página del Diario (diario.html)
    ==================================================== */
 
-.main-content-area { /* Ya definido arriba, pero asegúrate que este es el principal */
+.main-content-area {
     display: flex;
     flex-direction: column;
     gap: 30px;
     padding: 30px 20px;
-    max-width: 900px; /* Aquí se ajusta el ancho principal para el diario/artículos */
+    max-width: 900px;
     margin: 0 auto;
     box-sizing: border-box;
 }
@@ -737,7 +751,6 @@ footer{
 /* ====================================================
    Estilos para Comentarios (global, aplicable a artículos también)
    ==================================================== */
-/* Estos estilos ya estaban en articulos.css y los dejé ahí. */
 .form-group {
     margin-bottom: 15px;
 }
@@ -794,68 +807,239 @@ footer{
     color: var(--text-color-primary);
 }
 
-/* Los estilos de comentarios duplicados que tenías en header.css son eliminados,
-   ya que los de articulos.css son más completos y ya están en este archivo fusionado. */
-
 
 /* ====================================================
    Media Queries para Responsive Design (unificados)
    ==================================================== */
+
+/* === Media query para pantallas hasta 900px (Tablets y móviles grandes) === */
 @media (max-width: 900px) {
-    .header-content {
-        flex-direction: column;
-        text-align: center;
-        gap: 15px;
-    }
-    .header-left, .header-right-group {
-        width: 100%;
-        justify-content: center;
-    }
-    .main-nav-list {
-        flex-direction: column;
-        gap: 5px;
-        margin-top: 10px;
-    }
-    #searchInput {
-        width: 100%;
-    }
-    .search-container {
-        width: 100%;
-        max-width: 300px;
-    }
     body {
-        padding-top: 150px;
+        padding-top: 100px; /* Ajuste para el header fijo en pantallas medianas */
     }
+
+    .header-content {
+        flex-direction: row; /* Mantener en fila en tablets */
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: nowrap; /* Evita que el logo envuelva si el menú está cerrado */
+        position: relative;
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        padding: 0 20px;
+    }
+
+    .header-left {
+        width: auto;
+        margin-bottom: 0;
+    }
+
+    .header-right-group {
+        flex-grow: 1; /* Permite que este grupo ocupe el espacio restante */
+        justify-content: flex-end; /* Alinea los elementos a la derecha */
+        gap: 0; /* Elimina el gap en móvil, los elementos se apilarán */
+        position: relative; /* Para el posicionamiento absoluto del menú desplegable */
+        flex-wrap: nowrap; /* Asegura que los elementos no se envuelvan en la fila superior */
+    }
+
+    /* Mostrar el botón de hamburguesa */
+    .hamburger-menu {
+        display: block; /* Visible en estas pantallas */
+        margin-left: 15px; /* Espacio a la izquierda del botón de tema */
+        order: 3; /* Asegura que la hamburguesa esté al final en la fila */
+    }
+
+    /* Ocultar elementos en móvil por defecto */
+    .header-right-group .search-container,
+    .header-right-group .main-nav,
+    .header-right-group #theme-toggle {
+        display: none;
+    }
+
+    /* Cuando header-right-group está activo (menú abierto) */
+    .header-right-group.active {
+        flex-direction: column; /* Apila los elementos */
+        position: absolute;
+        top: 100%; /* Debajo del header-right-group */
+        right: 0; /* Alineado a la derecha */
+        width: 100%; /* Ocupa todo el ancho */
+        background-color: var(--header-background);
+        box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+        padding: 20px 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        animation: slideDown 0.3s ease-out forwards;
+        z-index: 999; /* Asegura que esté por encima del contenido principal */
+        gap: 15px; /* Espacio entre los elementos apilados */
+        align-items: center; /* Centra los elementos apilados */
+    }
+
+    /* Mostrar elementos cuando header-right-group.active */
+    .header-right-group.active .search-container,
+    .header-right-group.active .main-nav,
+    .header-right-group.active #theme-toggle {
+        display: flex; /* O block, dependiendo de cómo quieras que se comporten */
+        width: 80%; /* Ajusta el ancho para los elementos en el menú móvil */
+        max-width: 300px; /* Limita el ancho para que no sea demasiado grande */
+    }
+
+    .header-right-group.active .main-nav-list {
+        flex-direction: column;
+        width: 100%;
+        align-items: center;
+        gap: 10px;
+    }
+    .header-right-group.active .main-nav-list li {
+        width: 100%;
+        text-align: center;
+    }
+    .header-right-group.active .main-nav-list a {
+        padding: 10px 0;
+        display: block;
+        width: 100%;
+    }
+
+    /* Asegura que el botón de tema se vea bien en el menú móvil */
+    .header-right-group.active #theme-toggle {
+        margin-top: 15px;
+        align-self: center;
+    }
+
+    /* Animación del menú móvil */
+    @keyframes slideDown {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Ajustes generales de contenido */
     .main-content-hero {
         margin-top: 20px;
     }
+    .tutorials-list__cards-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
 }
 
-@media (max-width: 768px) { /* Media query de articulos.css */
-    main {
-        width: 95%;
+/* === Media query para móviles pequeños (hasta 767px de ancho) === */
+@media (max-width: 767px) {
+    body {
+        font-size: 15px;
+        padding-top: 120px;
+    }
+
+    .header-logo-text {
+        display: none; /* Oculta el texto del logo en móviles muy pequeños */
+    }
+
+    .header-content {
+        padding: 0 15px; /* Ajusta el padding horizontal */
+    }
+
+    .main-content-hero {
+        margin: 20px auto 30px auto;
+        padding: 0 15px;
+    }
+
+    .page-main-title {
+        font-size: 2rem;
+    }
+
+    .page-description {
+        font-size: 1rem;
+    }
+
+    .main-content-area {
+        width: 100%;
+        padding: 20px 15px;
+        gap: 15px;
+    }
+    .content-section {
+        padding: 15px;
+    }
+    .content-section h2,
+    .content-section h3 {
+        font-size: 1.4rem;
+    }
+
+    .tutorials-list__cards-grid {
+        grid-template-columns: 1fr; /* Una sola columna en móviles */
+        gap: 15px;
+    }
+    .tutorials-list__card {
+        padding: 15px;
+    }
+    .card-title {
+        font-size: 1.1rem;
+    }
+    .card-description {
+        font-size: 0.95rem;
+    }
+    .card-stats, .card-meta {
+        font-size: 0.85rem;
+    }
+    .card-views img, .card-comments img {
+        width: 20px;
+        height: 20px;
     }
 
     .version-options {
         flex-direction: column;
         align-items: center;
     }
-
     .version-button {
         margin-bottom: 1em;
-        width: 80%;
+        width: 90%;
     }
-    .main-content-area { /* Diario/Artículos */
-        padding: 20px 15px;
-        gap: 20px;
-    }
-    .content-section {
+
+    .registration-form-section {
         padding: 20px;
+        margin: 15px;
     }
-    .content-section h2,
-    .content-section h3 {
-        font-size: 1.5rem;
+    .registration-form-section h2 {
+        font-size: 1.6rem;
     }
+    .styled-form input {
+        font-size: 0.95rem;
+    }
+    .submit-button {
+        padding: 10px 20px;
+        font-size: 1rem;
+    }
+    #loadMoreButton {
+        max-width: 180px;
+    }
+
+    /* === REFUERZO PARA LA PÁGINA DE REGISTRO/LOGIN EN MÓVIL === */
+    .github-auth-layout {
+        flex-direction: column; /* Forzar apilamiento vertical */
+        min-height: auto; /* Permitir que la altura se ajuste al contenido */
+        width: 100%; /* Asegurar que ocupe todo el ancho */
+    }
+
+    .github-form-column,
+    .github-marketing-column {
+        flex: none; /* Desactivar el crecimiento/encogimiento flexible */
+        width: 100%; /* Ocupar el 100% del ancho del padre */
+        max-width: 100%; /* Asegurar que no se limite el ancho */
+        padding: 20px; /* Ajustar padding para móviles */
+        box-sizing: border-box; /* Incluir padding en el ancho */
+    }
+
+    /* Si el HTML tiene la columna de marketing primero y quieres el formulario arriba */
+    .github-form-column {
+        order: 1; /* Hace que el formulario aparezca primero */
+    }
+    .github-marketing-column {
+        order: 2; /* Hace que el contenido de marketing aparezca segundo */
+    }
+
+    /* Asegúrate de que el contenedor principal del formulario no interfiera */
+    .form-container {
+        display: block; /* Cambiar a block para evitar conflictos de flexbox si envuelve el layout */
+        min-height: auto; /* Resetear el min-height */
+        padding: 0; /* Eliminar padding extra si es excesivo */
+    }
+    /* === FIN REFUERZO === */
 }
 
 @media (max-width: 600px) {
@@ -867,7 +1051,7 @@ footer{
         font-size: 1.5rem;
         margin-bottom: 20px;
     }
-   
+
     .logo-link {
         font-size: 1.2rem;
     }
@@ -883,135 +1067,111 @@ footer{
 }
 
 @media (max-width: 500px) {
-    .header-right-group {
-        flex-direction: column;
-        align-items: center;
-    }
-    .search-container {
-        width: 100%;
-    }
-    .main-nav-list {
-        width: 100%;
-    }
-    .main-nav-list li {
-        width: 100%;
+    .github-marketing-column {
+        padding: 40px 20px;
         text-align: center;
+    }
+    .github-marketing-column ul {
+        text-align: left;
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 300px;
+    }
+    .github-form-column {
+        width: auto; /* Se ajustará al 100% por la regla de 767px */
+        padding: 20px;
+    }
+    .form-container {
+        min-height: auto !important;
     }
 }
 
-//Registro
-  /* Estilos específicos para la estructura tipo GitHub */
-        
+/* Estilos específicos para la estructura tipo GitHub */
+.github-auth-header {
+    text-align: right;
+    padding: 20px 40px;
+    font-size: 14px;
+    color: #586069;
+}
+.github-auth-header a {
+    color: #0366d6;
+    text-decoration: none;
+}
+.github-auth-header a:hover {
+    text-decoration: underline;
+}
 
-        .github-auth-header {
-            text-align: right;
-            padding: 20px 40px;
-            font-size: 14px;
-            color: #586069;
-        }
-        .github-auth-header a {
-            color: #0366d6;
-            text-decoration: none;
-        }
-        .github-auth-header a:hover {
-            text-decoration: underline;
-        }
+.github-auth-layout {
+    display: flex;
+    flex-grow: 1;
+    min-height: calc(100vh - 60px);
+}
 
-        .github-auth-layout {
-            display: flex; /* Habilita el diseño de columna */
-            flex-grow: 1; /* Permite que ocupe el espacio disponible */
-            min-height: calc(100vh - 60px); /* Ajusta si el header tiene altura fija */
-        }
+.github-marketing-column {
+    flex: 1;
+    background-color: #0d1117;
+    color: #c9d1d9;
+    padding: 60px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
 
-        .github-marketing-column {
-            flex: 1; /* Ocupa una parte del espacio */
-            background-color: #0d1117; /* Fondo oscuro del lado izquierdo */
-            color: #c9d1d9; /* Texto claro */
-            padding: 60px 40px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center; /* Centra verticalmente el contenido */
-            position: relative; /* Para las imágenes de fondo */
-            overflow: hidden; /* Oculta partes de las imágenes si se salen */
-        }
+.github-marketing-column h2 {
+    font-size: 40px;
+    line-height: 1.2;
+    margin-bottom: 20px;
+    color: #c9d1d9;
+    font-weight: 600;
+}
+.github-marketing-column p {
+    font-size: 18px;
+    line-height: 1.5;
+    margin-bottom: 30px;
+}
+.github-marketing-column h3 {
+    font-size: 16px;
+    margin-top: 40px;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #8b949e;
+}
+.github-marketing-column ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 40px;
+}
+.github-marketing-column ul li {
+    font-size: 16px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: flex-start;
+}
+.github-marketing-column ul li i.checkmark-icon {
+    margin-right: 10px;
+    color: #2ea44f;
+    font-size: 20px;
+    line-height: 1.2;
+}
 
-        .github-marketing-column h2 {
-            font-size: 40px;
-            line-height: 1.2;
-            margin-bottom: 20px;
-            color: #c9d1d9;
-            font-weight: 600;
-        }
-        .github-marketing-column p {
-            font-size: 18px;
-            line-height: 1.5;
-            margin-bottom: 30px;
-        }
-        .github-marketing-column h3 {
-            font-size: 16px;
-            margin-top: 40px;
-            margin-bottom: 10px;
-            font-weight: 600;
-            color: #8b949e;
-        }
-        .github-marketing-column ul {
-            list-style: none;
-            padding: 0;
-            margin-bottom: 40px;
-        }
-        .github-marketing-column ul li {
-            font-size: 16px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: flex-start;
-        }
-        .github-marketing-column ul li i.checkmark-icon { /* Para el icono de checkmark */
-            margin-right: 10px;
-            color: #2ea44f; /* Color verde para el check */
-            font-size: 20px;
-            line-height: 1.2;
-        }
+.github-form-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+}
 
+.styled-form {
+    width: 100%;
+}
 
-
-        .github-form-column {
-            flex: 1; /* Ocupa la otra parte del espacio */
-            display: flex;
-            flex-direction: column;
-            justify-content: center; /* Centra verticalmente el formulario */
-            align-items: center; /* Centra horizontalmente el formulario */
-            padding: 40px;
-        }
-
-        /* Reutilizando tus clases existentes */
-        .styled-form {
-            width: 100%; /* Asegura que el formulario dentro de la sección ocupe todo el ancho */
-        }
-       
-
-        /* Media queries para responsividad (opcional, pero GitHub es responsive) */
-        @media (max-width: 768px) {
-            .github-auth-layout {
-                flex-direction: column; /* Las columnas se apilan en pantallas pequeñas */
-            }
-            .github-marketing-column {
-                padding: 40px 20px;
-                text-align: center; /* Centra el texto en móviles */
-            }
-            .github-marketing-column ul {
-                text-align: left; /* Mantiene la lista alineada a la izquierda */
-                margin-left: auto;
-                margin-right: auto;
-                max-width: 300px; /* Para que no se estire demasiado */
-            }
-            .github-form-column {
-                padding: 20px;
-            }
-        }
- /* Estilo para el logo encima del formulario */
-        .login-logo{
-            display: block; /* Para que ocupe su propia línea */
-            margin: auto; /* Centra horizontalmente y añade margen inferior */
-            max-width: 100px; /* Ajusta el tamaño máximo del logo */
-            height: 40px; /* Mantiene la proporción */
-        }
+.login-logo{
+    display: block;
+    margin: auto;
+    max-width: 100px;
+    height: 40px;
+}

@@ -38,5 +38,52 @@
     <script src="/projects/vlog/js/tutoriales.js"></script>
     <script src="/projects/vlog/js/auth.js"></script>
 </body>
+<script>document.addEventListener('DOMContentLoaded', () => {
+    const hamburgerMenu = document.querySelector('.hamburger-menu');
+    const mainNavAndToggleWrapper = document.querySelector('.main-nav-and-toggle-wrapper');
+    const body = document.body;
+    const themeToggle = document.getElementById('theme-toggle'); // Asegúrate de que este ID exista en tu HTML
 
+    // Toggle del menú de hamburguesa
+    hamburgerMenu.addEventListener('click', () => {
+        mainNavAndToggleWrapper.classList.toggle('active');
+        hamburgerMenu.classList.toggle('active');
+        body.classList.toggle('menu-open'); // Para evitar el scroll del body
+    });
+
+    // Cerrar menú al hacer clic en un enlace (opcional, pero buena práctica)
+    mainNavAndToggleWrapper.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            mainNavAndToggleWrapper.classList.remove('active');
+            hamburgerMenu.classList.remove('active');
+            body.classList.remove('menu-open');
+        });
+    });
+
+    // Toggle del tema (Modo Claro/Oscuro)
+    // Asegúrate de que esta lógica ya esté presente y funcione con el nuevo HTML
+    themeToggle.addEventListener('click', () => {
+        body.classList.toggle('dark-mode');
+        // Guardar preferencia en localStorage (opcional)
+        if (body.classList.contains('dark-mode')) {
+            localStorage.setItem('theme', 'dark');
+        } else {
+            localStorage.setItem('theme', 'light');
+        }
+    });
+
+    // Cargar preferencia de tema al inicio
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        body.classList.add('dark-mode');
+    } else if (savedTheme === 'light') {
+        body.classList.remove('dark-mode');
+    } else {
+        // Si no hay preferencia guardada, usar la preferencia del sistema
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            body.classList.add('dark-mode');
+        }
+    }
+});
+</script>
 </html>

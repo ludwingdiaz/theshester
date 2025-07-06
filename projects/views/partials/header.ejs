@@ -1,12 +1,13 @@
-<!-- theshester/projects/views/partials/header.ejs -->
 <div class="header-content">
     <div class="header-left">
-        <a href="/" class="logo-link"> <!-- CAMBIADO: Antes /projects/vlog/html/tutoriales.html -->
+        <a href="/" class="logo-link">
             <img src="/assets/EmoteBulldog 28x28.png" alt="Ludwing Díaz Logo" class="header-logo">
-            <span class="header-logo-text">Ludwing Díaz</span>
         </a>
     </div>
+    
+    <!-- Este es el contenedor principal del lado derecho. Ahora será el objetivo de la clase 'active' para móvil. -->
     <div class="header-right-group">
+        <!-- El buscador se mantiene aquí -->
         <div class="search-container">
             <input type="text" id="searchInput" placeholder="Buscar tutoriales...">
             <button id="searchButton" aria-label="Buscar">
@@ -15,21 +16,23 @@
                 </svg>
             </button>
         </div>
-        <nav>
+        
+        <!-- La navegación se mantiene aquí, con la clase 'main-nav' -->
+        <nav class="main-nav">
             <ul class="main-nav-list">
-                <li><a href="https://tutorial-views-api.onrender.com/tutoriales">Inicio</a></li> <!-- CAMBIADO: Antes /projects/vlog/html/tutoriales.html -->
-
+                <li><a href="https://tutorial-views-api.onrender.com/tutoriales">Inicio</a></li>
                 <li id="nav-login" style="display: none;"><a href="/projects/forms/login.html">Login</a></li>
                 <li id="nav-registro" style="display: none;"><a href="/projects/forms/registro.html">Registro</a></li>
-
                 <li id="nav-profile" style="display: none;">
-                    <a href="/diario" id="profile-link"></a> <!-- CAMBIADO: Antes /projects/forms/diario.html -->
+                    <a href="/diario" id="profile-link"></a>
                 </li>
                 <li id="nav-logout" style="display: none;">
                     <a href="#" id="logout-link">Cerrar Sesión</a>
                 </li>
             </ul>
         </nav>
+
+        <!-- El botón de tema se mantiene aquí, como hermano directo -->
         <button id="theme-toggle" aria-label="Cambiar tema">
             <div class="theme-icon-container icon-light-mode">
                 <svg class="bn-svg switch-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
@@ -41,6 +44,13 @@
                     <path d="M20 12.67A6.233 6.233 0 0111.33 4 8.015 8.015 0 1020 12.67z"></path>
                 </svg>
             </div>
+        </button>
+
+        <!-- El botón de hamburguesa se añade aquí, como hermano de los demás elementos -->
+        <button class="hamburger-menu" aria-label="Toggle navigation">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
         </button>
     </div>
 </div>
