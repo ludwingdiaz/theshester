@@ -1,5 +1,3 @@
-// frontend/projects/forms/js/diario.js
-
 document.addEventListener('DOMContentLoaded', async () => {
     const usernameDisplay = document.getElementById('usernameDisplay');
     const fetchProtectedDataButton = document.getElementById('fetchProtectedData');
@@ -9,10 +7,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     const token = localStorage.getItem('jwtToken');
     const usernameFromLocalStorage = localStorage.getItem('username');
 
+    // Define la URL base del backend para desarrollo local
+    const BASE_URL_BACKEND = 'http://localhost:3000'; // <-- Aquí está el cambio clave
+    console.log(`diario.js: Conectando al backend en: ${BASE_URL_BACKEND}`);
+
     // --- Lógica de protección de ruta para diario.html ---
     if (!token || !usernameFromLocalStorage) {
         alert('Necesitas iniciar sesión para acceder a tu diario personal.');
-        window.location.href = '/projects/forms/login.html';
+        // Redirección a la página de login local
+        window.location.href = `${BASE_URL_BACKEND}/projects/forms/login.html`; // <-- CAMBIO AQUÍ
         return;
     }
 
@@ -27,11 +30,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             localStorage.removeItem('isLoggedIn');
             localStorage.removeItem('username');
             alert('Sesión cerrada correctamente.'); 
-            window.location.href = '/projects/vlog/html/tutoriales.html';
+            // Redirección a la página de tutoriales local
+            window.location.href = `${BASE_URL_BACKEND}/tutoriales`; // <-- CAMBIO AQUÍ
         });
     }
 
-    // --- Cargar datos protegidos (¡DESCOMENTADO!) ---
+    // --- Cargar datos protegidos ---
     if (fetchProtectedDataButton) {
         fetchProtectedDataButton.disabled = false; // Habilitar el botón
         protectedMessage.textContent = ''; // Limpiar mensaje de deshabilitado
@@ -42,7 +46,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             protectedMessage.textContent = 'Cargando...';
             try {
-                const response = await fetch('https://tutorial-views-api.onrender.com/api/protected-data', {
+                // Usa la URL base local para la petición de datos protegidos
+                const response = await fetch(`${BASE_URL_BACKEND}/api/protected-data`, { // <-- CAMBIO AQUÍ
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -61,7 +66,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     localStorage.removeItem('jwtToken');
                     localStorage.removeItem('isLoggedIn');
                     localStorage.removeItem('username');
-                    setTimeout(() => { window.location.href = '/projects/forms/login.html'; }, 1500);
+                    setTimeout(() => { 
+                        // Redirección a la página de login local
+                        window.location.href = `${BASE_URL_BACKEND}/projects/forms/login.html`; // <-- CAMBIO AQUÍ
+                    }, 1500);
                 } else {
                     protectedMessage.style.color = 'red';
                     const errorData = await response.json();
@@ -76,12 +84,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // --- Función para cargar y mostrar los comentarios del usuario (¡DESCOMENTADO!) ---
+    // --- Función para cargar y mostrar los comentarios del usuario ---
     if (commentsListDiv) {
         async function loadUserComments() {
             commentsListDiv.innerHTML = '<p>Cargando tus comentarios...</p>';
             try {
-                const response = await fetch('https://tutorial-views-api.onrender.com/api/comments/my-comments', {
+                // Usa la URL base local para la petición de comentarios
+                const response = await fetch(`${BASE_URL_BACKEND}/api/comments/my-comments`, { // <-- CAMBIO AQUÍ
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -116,7 +125,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     localStorage.removeItem('jwtToken');
                     localStorage.removeItem('isLoggedIn');
                     localStorage.removeItem('username');
-                    setTimeout(() => { window.location.href = '/projects/forms/login.html'; }, 1500);
+                    setTimeout(() => { 
+                        // Redirección a la página de login local
+                        window.location.href = `${BASE_URL_BACKEND}/projects/forms/login.html`; // <-- CAMBIO AQUÍ
+                    }, 1500);
                 } else {
                     const errorData = await response.json();
                     commentsListDiv.innerHTML = `<p style="color:red;">Error al cargar tus comentarios: ${errorData.message || response.statusText}</p>`;

@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ====================================================================
     // 0. Configuración de la URL del Backend
     // ====================================================================
-    const BASE_URL_BACKEND = 'https://tutorial-views-api.onrender.com';
+    const BASE_URL_BACKEND = 'http://localhost:3000';
     console.log(`Conectando al backend en: ${BASE_URL_BACKEND}`);
 
     // ====================================================================

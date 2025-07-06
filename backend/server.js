@@ -7,7 +7,7 @@ const authMiddleware = require('./middleware/authMiddleware');
 const authorizeRoles = require('./middleware/roleMiddleware');
 
 const express = require('express');
-const path = require('path'); // Asegúrate de que 'path' esté importado
+const path = require('path');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
@@ -23,10 +23,11 @@ app.use(cors({
     origin: [
         'https://ludwingdiaz.site',
         'https://ludwingdiaz.site/',
-        'http://127.0.0.1:5500',
-        'http://localhost:5500' 
+        'http://127.0.0.1:5500', // Para desarrollo local del frontend si lo abres con Live Server
+        'http://localhost:5500', // Otro puerto común para Live Server
+        'http://localhost:3000'  // Si tu frontend se sirve desde el mismo puerto del backend en desarrollo
     ],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Añadido 'OPTIONS' para preflight requests
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
@@ -48,6 +49,26 @@ console.log('Express está sirviendo /projects desde:', projectsStaticPath);
 const assetsStaticPath = path.join(__dirname, '../assets');
 app.use('/assets', express.static(assetsStaticPath));
 console.log('Express está sirviendo /assets desde:', assetsStaticPath);
+
+// ====================================================================
+// Definir la URL base del frontend dinámicamente
+// ====================================================================
+let FRONTEND_BASE_URL;
+if (process.env.NODE_ENV === 'production') {
+    // En producción, usa tu dominio real o el de Render si el frontend está ahí
+    FRONTEND_BASE_URL = 'https://ludwingdiaz.site'; // O 'https://tutorial-views-api.onrender.com' si el frontend se sirve desde Render
+} else {
+    // En desarrollo, usa localhost y el puerto de tu backend
+    FRONTEND_BASE_URL = `http://localhost:${PORT}`; // O 'http://localhost:5500' si tu frontend se abre con Live Server en ese puerto
+}
+console.log(`FRONTEND_BASE_URL configurada como: ${FRONTEND_BASE_URL}`);
+
+// Middleware para hacer la URL base disponible en todas las vistas
+app.use((req, res, next) => {
+    res.locals.FRONTEND_BASE_URL = FRONTEND_BASE_URL;
+    next();
+});
+
 
 // ====================================================================
 // Importa los routers

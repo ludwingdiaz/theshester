@@ -38,8 +38,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert(`¡Cuenta creada y sesión iniciada para ${username}!`);
                 
                 // Redirige al usuario después del registro y login automático
-                //window.location.href = '/projects/vlog/html/tutoriales.html'; // Redirige a tu página principal
-                window.location.href = 'https://tutorial-views-api.onrender.com/tutoriales';
+                // CAMBIADO PARA LOCAL
+                window.location.href = 'http://localhost:3000/tutoriales'; // Redirige a tu página principal en local
             } else {
                 console.error("Error: window.login no está definida. Asegúrate de que auth.js se carga correctamente.");
                 alert('Error interno al procesar el registro.');

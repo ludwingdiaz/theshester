@@ -1,10 +1,13 @@
-// frontend/projects/vlog/js/login.js
-
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
     const messageDisplay = document.getElementById('message');
+
+    // Define la URL base del backend para desarrollo local
+    const BASE_URL_BACKEND = 'http://localhost:3000'; // <-- Aquí está el cambio clave
+    console.log(`login.js: Conectando al backend en: ${BASE_URL_BACKEND}`);
+
 
     if (loginForm) {
         loginForm.addEventListener('submit', async (event) => {
@@ -20,8 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             try {
-                // --- ¡AHORA HACEMOS UNA PETICIÓN REAL A TU BACKEND! ---
-                const response = await fetch('https://tutorial-views-api.onrender.com/api/auth/login', {
+                // Usa la URL base local para la petición de login
+                const response = await fetch(`${BASE_URL_BACKEND}/api/auth/login`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -32,18 +35,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await response.json();
 
                 if (response.ok) {
-                    // ¡CRÍTICO! Guardar el token REAL y los datos del usuario recibidos del backend
                     localStorage.setItem('jwtToken', data.token);
                     localStorage.setItem('isLoggedIn', 'true');
-                    localStorage.setItem('username', data.user.email); // Usamos el email del objeto 'user'
+                    localStorage.setItem('username', data.user.email);
 
                     messageDisplay.textContent = data.message || 'Inicio de sesión exitoso.';
                     messageDisplay.style.color = 'green';
 
                     setTimeout(() => {
-                        const redirectToUrl = 'https://tutorial-views-api.onrender.com/tutoriales'; // Declara la URL en una variable
-                        console.log('Intentando redirigir a:', redirectToUrl); // <-- ¡AÑADE ESTA LÍNEA!
-                        window.location.href = redirectToUrl; // Usa la variable aquí
+                        // Usa la URL base local para la redirección
+                        const redirectToUrl = `${BASE_URL_BACKEND}/tutoriales`;
+                        console.log('Intentando redirigir a:', redirectToUrl);
+                        window.location.href = redirectToUrl;
                     }, 500);
                 } else {
                     messageDisplay.textContent = data.message || 'Error al iniciar sesión. Credenciales inválidas.';

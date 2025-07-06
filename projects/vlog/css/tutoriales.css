@@ -343,7 +343,7 @@ header {
 */
 
 main.container.main-content-area {
-    width: 80%;
+    width: 100%;
     margin: 2em auto;
     padding-top: 20px;
     box-sizing: border-box;
@@ -1178,3 +1178,5 @@ footer{
     max-width: 100px;
     height: 40px;
 }
+
+
