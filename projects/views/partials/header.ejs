@@ -18,8 +18,11 @@
         <nav class="main-nav">
             <ul class="main-nav-list">
                 <li><a href="<%= FRONTEND_BASE_URL %>/tutoriales">Inicio</a></li>
-                <li><a href="<%= FRONTEND_BASE_URL %>/projects/forms/login.html">Login</a></li>
-                <li><a href="<%= FRONTEND_BASE_URL %>/projects/forms/registro.html">Registro</a></li>
+                <!-- ¡CRÍTICO! ESTAS LÍNEAS NO DEBEN TENER style="..." -->
+                <li id="nav-login"><a href="<%= FRONTEND_BASE_URL %>/projects/forms/login.html">Login</a></li>
+                <li id="nav-registro"><a href="<%= FRONTEND_BASE_URL %>/projects/forms/registro.html">Registro</a></li>
+                
+                <!-- Estos LI son los que se mostrarán/ocultarán con el login -->
                 <li id="nav-profile" style="display: none;">
                     <a href="<%= FRONTEND_BASE_URL %>/diario" id="profile-link"></a>
                 </li>

@@ -95,6 +95,7 @@ app.use('/api/comments', commentsRouter);
 app.use('/api/views', tutorialApiRouter); // Monta tutorialApiRouter bajo /api/views
 app.use('/api/posts', postsRouter); // ¡¡¡MONTA EL ROUTER DE POSTS REAL!!!
 
+
 // Usar el router de vistas para tus páginas EJS
 app.use('/', viewsRouter); 
 

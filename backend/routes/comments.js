@@ -56,7 +56,38 @@ router.get('/my-comments', authMiddleware, async (req, res) => { // ¡ESTA RUTA 
     }
 });
 
+// NUEVA RUTA: Obtener comentarios de UN USUARIO ESPECÍFICO por su ID (PROTEGIDA)
+router.get('/user/:userId', authMiddleware, async (req, res) => {
+    const { userId } = req.params; // Captura el userId de la URL
 
+    // --- AÑADE ESTOS CONSOLE.LOGS ---
+    console.log('--- Depuración de /api/comments/user/:userId ---');
+    console.log('req.user.id (del token autenticado):', req.user.id);
+    console.log('userId (de la URL - req.params):', userId);
+    console.log('req.user.role:', req.user.role);
+    // --- FIN DE CONSOLE.LOGS ---
+
+    if (req.user.id !== userId && req.user.role !== 'admin') {
+         console.log('Acceso denegado: ID de usuario no coincide y no es admin.'); // Log adicional
+         return res.status(403).json({ message: 'No tienes permiso para ver los comentarios de este usuario.' });
+    }
+
+    try {
+        const limit = req.query.limit ? parseInt(req.query.limit) : 0;
+        let query = Comment.find({ user: userId }).sort({ createdAt: -1 });
+
+        if (limit > 0) {
+            query = query.limit(limit);
+        }
+
+        const comments = await query.exec();
+
+        res.status(200).json({ comments });
+    } catch (error) {
+        console.error(`Error al obtener comentarios del usuario ${userId}:`, error);
+        res.status(500).json({ message: 'Error del servidor al obtener los comentarios del usuario.' });
+    }
+});
 console.log('Router de comentarios cargado y rutas definidas.');
 
 module.exports = router;

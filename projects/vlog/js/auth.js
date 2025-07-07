@@ -25,55 +25,53 @@ function updateHeaderNav() {
     const navLogin = document.getElementById('nav-login');
     const navRegistro = document.getElementById('nav-registro');
     const navDiario = document.getElementById('nav-diario');
-    const navAcerca = document.getElementById('nav-acerca');   // Nuevo elemento de tu HTML
-    const navContacto = document.getElementById('nav-contacto'); // Nuevo elemento de tu HTML
+    const navAcerca = document.getElementById('nav-acerca');
+    const navContacto = document.getElementById('nav-contacto');
 
-    const navProfile = document.getElementById('nav-profile'); // Li que contiene el enlace al perfil
-    const profileLink = document.getElementById('profile-link'); // El enlace <a> dentro de nav-profile
+    const navProfile = document.getElementById('nav-profile');
+    const profileLink = document.getElementById('profile-link');
 
-    const navLogout = document.getElementById('nav-logout'); // Li que contiene el enlace de logout
-    const logoutLink = document.getElementById('logout-link'); // El enlace <a> dentro de nav-logout
+    const navLogout = document.getElementById('nav-logout');
+    const logoutLink = document.getElementById('logout-link');
 
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     const username = localStorage.getItem('username');
 
     if (isLoggedIn) {
         // Ocultar elementos de no logueado
-        if (navLogin) navLogin.style.display = 'none';
-        if (navRegistro) navRegistro.style.display = 'none';
+        if (navLogin) navLogin.style.cssText = 'display: none !important;';
+        if (navRegistro) navRegistro.style.cssText = 'display: none !important;';
 
         // Mostrar elementos de logueado
         if (navProfile) {
-            navProfile.style.display = 'list-item';
+            navProfile.style.cssText = 'display: list-item !important;';
             if (profileLink) {
-                // ¡CRÍTICO! Insertar el texto directamente en el <a>
                 profileLink.textContent = `${username || 'Perfil'}!`;
                 profileLink.href = '/diario';
             }
         }
-        if (navDiario) navDiario.style.display = 'list-item';
+        if (navDiario) navDiario.style.cssText = 'display: list-item !important;';
         if (navLogout) {
-            navLogout.style.display = 'list-item';
+            navLogout.style.cssText = 'display: list-item !important;';
             if (logoutLink) {
-                // Asignar la función global de logout al click del enlace de cerrar sesión
                 logoutLink.onclick = window.logout;
             }
         }
         // Asegurarse de que estos estén visibles si son para logueados o siempre
-        if (navAcerca) navAcerca.style.display = 'list-item'; // O 'block' si no es list-item
-        if (navContacto) navContacto.style.display = 'list-item'; // O 'block'
+        if (navAcerca) navAcerca.style.cssText = 'display: list-item !important;';
+        if (navContacto) navContacto.style.cssText = 'display: list-item !important;';
 
     } else { // No logueado
         // Mostrar elementos de no logueado
-        if (navLogin) navLogin.style.display = 'list-item';
-        if (navRegistro) navRegistro.style.display = 'list-item';
+        if (navLogin) navLogin.style.cssText = 'display: list-item !important;';
+        if (navRegistro) navRegistro.style.cssText = 'display: list-item !important;';
 
         // Ocultar elementos de logueado
-        if (navProfile) navProfile.style.display = 'none';
-        if (navDiario) navDiario.style.display = 'none';
-        if (navLogout) navLogout.style.display = 'none';
+        if (navProfile) navProfile.style.cssText = 'display: none !important;';
+        if (navDiario) navDiario.style.cssText = 'display: none !important;';
+        if (navLogout) navLogout.style.cssText = 'display: none !important;';
         // Asegurarse de que estos estén visibles si son para no logueados o siempre
-        if (navAcerca) navAcerca.style.display = 'list-item';
-        if (navContacto) navContacto.style.display = 'list-item';
+        if (navAcerca) navAcerca.style.cssText = 'display: list-item !important;';
+        if (navContacto) navContacto.style.cssText = 'display: list-item !important;';
     }
 }

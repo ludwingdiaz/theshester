@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const messageDisplay = document.getElementById('message');
 
     // Define la URL base del backend para desarrollo local
-    const BASE_URL_BACKEND = 'http://localhost:3000'; // <-- Aquí está el cambio clave
+    const BASE_URL_BACKEND = 'http://localhost:3000';
     console.log(`login.js: Conectando al backend en: ${BASE_URL_BACKEND}`);
 
 
@@ -37,15 +37,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (response.ok) {
                     localStorage.setItem('jwtToken', data.token);
                     localStorage.setItem('isLoggedIn', 'true');
-                    localStorage.setItem('username', data.user.email);
+                    
+                    // --- ¡CORRECCIÓN CLAVE AQUÍ! Usar data.user.id en lugar de data.user._id ---
+                    localStorage.setItem('userId', data.user.id); // El backend envía 'id', no '_id'
+                    // ----------------------------------------------------------------------
+                    localStorage.setItem('username', data.user.username); // Para el nombre de usuario
+                    localStorage.setItem('userEmail', data.user.email);   // Para el correo electrónico
 
                     messageDisplay.textContent = data.message || 'Inicio de sesión exitoso.';
                     messageDisplay.style.color = 'green';
 
+                    // --- CONSOLE.LOGS DE DEPURACIÓN AÑADIDOS ---
+                    console.log('login.js: Token guardado:', localStorage.getItem('jwtToken'));
+                    console.log('login.js: Username guardado:', localStorage.getItem('username'));
+                    console.log('login.js: userId guardado:', localStorage.getItem('userId')); // ¡VERIFICACIÓN CRÍTICA!
+                    // ------------------------------------------
+
                     setTimeout(() => {
-                        // Usa la URL base local para la redirección
-                        const redirectToUrl = `${BASE_URL_BACKEND}/tutoriales`;
-                        console.log('Intentando redirigir a:', redirectToUrl);
+                        // Usa la URL base local para la redirección al diario
+                        const redirectToUrl = `${BASE_URL_BACKEND}/diario`; // Redirige directamente al diario
+                        console.log('login.js: Redirigiendo a:', redirectToUrl);
                         window.location.href = redirectToUrl;
                     }, 500);
                 } else {
@@ -54,6 +65,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     localStorage.removeItem('jwtToken');
                     localStorage.removeItem('isLoggedIn');
                     localStorage.removeItem('username');
+                    localStorage.removeItem('userId');    // Limpia también userId en caso de error
+                    localStorage.removeItem('userEmail'); // Limpia también userEmail en caso de error
                 }
             } catch (error) {
                 console.error('Error de red o del servidor:', error);
