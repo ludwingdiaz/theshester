@@ -66,7 +66,7 @@ let FRONTEND_BASE_URL;
 if (process.env.NODE_ENV === 'production') {
     // En producción, usa la URL de tu frontend desplegado
     // Si tu frontend está en ludwingdiaz.site:
-    FRONTEND_BASE_URL = 'https://ludwingdiaz.site';
+    FRONTEND_BASE_URL = 'https://tutorial-views-api.onrender.com';
     // O si tu frontend está en Render con su propia URL:
     // FRONTEND_BASE_URL = 'https://tu-frontend-app.onrender.com'; 
 } else {
