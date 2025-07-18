@@ -57,6 +57,11 @@ let FRONTEND_BASE_URL;
 if (process.env.NODE_ENV === 'production') {
     // En producción, usa tu dominio real o el de Render si el frontend está ahí
     FRONTEND_BASE_URL = 'https://ludwingdiaz.site'; // O 'https://tutorial-views-api.onrender.com' si el frontend se sirve desde Render
+
+
+}else if(process.env.NODE_ENV === 'production'){
+
+ FRONTEND_BASE_URL ='https://tutorial-views-api.onrender.com'
 } else {
     // En desarrollo, usa localhost y el puerto de tu backend
     FRONTEND_BASE_URL = `http://localhost:${PORT}`; // O 'http://localhost:5500' si tu frontend se abre con Live Server en ese puerto

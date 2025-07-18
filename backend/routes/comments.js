@@ -31,11 +31,11 @@ router.post('/article/:articleId', authMiddleware, async (req, res) => {
 });
 
 // Ruta para OBTENER comentarios de un artículo específico (PÚBLICA)
-router.get('/article/:articleId', async (req, res) => { // ¡ESTA ES LA RUTA QUE NECESITA ESTAR COMPLETA!
+router.get('/article/:articleId', async (req, res) => {
     const { articleId } = req.params;
     try {
         const comments = await Comment.find({ articleId })
-                                    .sort({ createdAt: -1 }); // Ordena por los más recientes primero
+                                    .sort({ createdAt: -1 });
         res.status(200).json({ comments });
     } catch (error) {
         console.error('Error al obtener comentarios del artículo:', error);
@@ -44,11 +44,11 @@ router.get('/article/:articleId', async (req, res) => { // ¡ESTA ES LA RUTA QUE
 });
 
 // Ruta para OBTENER TODOS los comentarios del USUARIO logueado (PROTEGIDA - para el dashboard)
-router.get('/my-comments', authMiddleware, async (req, res) => { // ¡ESTA RUTA TAMBIÉN NECESITA ESTAR COMPLETA!
+router.get('/my-comments', authMiddleware, async (req, res) => {
     const userId = req.user.id;
     try {
         const comments = await Comment.find({ user: userId })
-                                    .sort({ createdAt: -1 }); // Los más recientes primero
+                                    .sort({ createdAt: -1 });
         res.status(200).json({ comments });
     } catch (error) {
         console.error('Error al obtener los comentarios del usuario:', error);
@@ -56,24 +56,26 @@ router.get('/my-comments', authMiddleware, async (req, res) => { // ¡ESTA RUTA 
     }
 });
 
-// NUEVA RUTA: Obtener comentarios de UN USUARIO ESPECÍFICO por su ID (PROTEGIDA)
+// Ruta: Obtener comentarios de UN USUARIO ESPECÍFICO por su ID (PROTEGIDA)
 router.get('/user/:userId', authMiddleware, async (req, res) => {
-    const { userId } = req.params; // Captura el userId de la URL
+    const { userId } = req.params;
 
-    // --- AÑADE ESTOS CONSOLE.LOGS ---
+    // Logs de depuración
     console.log('--- Depuración de /api/comments/user/:userId ---');
     console.log('req.user.id (del token autenticado):', req.user.id);
     console.log('userId (de la URL - req.params):', userId);
     console.log('req.user.role:', req.user.role);
-    // --- FIN DE CONSOLE.LOGS ---
+    console.log('Límite solicitado (req.query.limit):', req.query.limit);
+    
+    const limit = req.query.limit ? parseInt(req.query.limit) : 0;
+    console.log('Límite PARSEADO (variable "limit"):', limit);
 
     if (req.user.id !== userId && req.user.role !== 'admin') {
-         console.log('Acceso denegado: ID de usuario no coincide y no es admin.'); // Log adicional
+         console.log('Acceso denegado: ID de usuario no coincide y no es admin.');
          return res.status(403).json({ message: 'No tienes permiso para ver los comentarios de este usuario.' });
     }
 
     try {
-        const limit = req.query.limit ? parseInt(req.query.limit) : 0;
         let query = Comment.find({ user: userId }).sort({ createdAt: -1 });
 
         if (limit > 0) {
@@ -81,6 +83,8 @@ router.get('/user/:userId', authMiddleware, async (req, res) => {
         }
 
         const comments = await query.exec();
+        console.log('Número de comentarios encontrados para este usuario con/sin límite:', comments.length);
+        console.log('Primeros 3 comentarios encontrados (para inspección):', comments.slice(0, 3));
 
         res.status(200).json({ comments });
     } catch (error) {
@@ -88,6 +92,40 @@ router.get('/user/:userId', authMiddleware, async (req, res) => {
         res.status(500).json({ message: 'Error del servidor al obtener los comentarios del usuario.' });
     }
 });
+
+// ================================================================
+// NUEVA RUTA: Obtener resumen de estadísticas del usuario (PROTEGIDA)
+// Ruta: /api/comments/user-summary
+// ================================================================
+router.get('/user-summary', authMiddleware, async (req, res) => {
+    try {
+        const userId = req.user.id; // ID del usuario autenticado desde el token
+
+        // 1. Contar comentarios publicados
+        const commentsCount = await Comment.countDocuments({ user: userId });
+
+        // 2. Obtener la última actividad (fecha del último comentario)
+        const latestComment = await Comment.findOne({ user: userId })
+                                            .sort({ createdAt: -1 }) // Ordena por fecha de creación descendente
+                                            .limit(1); // Obtiene solo el más reciente
+        const lastActivity = latestComment ? latestComment.createdAt : null;
+
+        // 3. Contar artículos únicos comentados (como proxy de "Artículos Vistos")
+        const distinctArticlesCommented = await Comment.distinct('articleId', { user: userId });
+        const articlesViewed = distinctArticlesCommented.length; 
+
+        res.status(200).json({
+            commentsPublished: commentsCount,
+            lastActivity: lastActivity, 
+            articlesViewed: articlesViewed
+        });
+
+    } catch (error) {
+        console.error('Error al obtener el resumen de estadísticas del usuario:', error);
+        res.status(500).json({ message: 'Error interno del servidor al obtener las estadísticas.' });
+    }
+});
+
 console.log('Router de comentarios cargado y rutas definidas.');
 
 module.exports = router;
