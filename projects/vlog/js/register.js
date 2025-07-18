@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const messageDisplay = document.getElementById('messageDisplayRegister'); // Asegúrate de tener este ID en tu HTML de registro
     
     // Define la URL base del backend para desarrollo local
-    const BASE_URL_BACKEND = 'http://localhost:3000'; 
+    const BASE_URL_BACKEND = 'https://tutorial-views-api.onrender.com'; 
     console.log(`register.js: Conectando al backend en: ${BASE_URL_BACKEND}`);
 
     if (registerForm) {
