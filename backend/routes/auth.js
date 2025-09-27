@@ -4,7 +4,9 @@ const router = express.Router();
 const User = require('../models/User'); 
 const bcrypt = require('bcryptjs');     
 const jwt = require('jsonwebtoken');
-const authMiddleware = require('../middleware/authMiddleware'); // Asegúrate de que esta línea esté aquí
+const authMiddleware = require('../middleware/authMiddleware'); 
+const upload = require('../middleware/upload'); 
+const cloudinary = require('../config/cloudinaryConfig'); 
 
 
 // --- Middleware de Validación para Registro (sin cambios) ---
@@ -23,8 +25,9 @@ const validateRegister = (req, res, next) => {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         return res.status(400).json({ message: 'El formato del correo electrónico no es válido.' });
     }
-    if (!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password)) {
-        return res.status(400).json({ message: 'La contraseña debe incluir mayúsculas, minúsculas y números.' });
+    // Asegúrate de que esta validación de complejidad de contraseña sea consistente con la de cambio de contraseña
+    if (!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password) || !/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+        return res.status(400).json({ message: 'La contraseña debe incluir mayúsculas, minúsculas, números y al menos un símbolo.' });
     }
 
     next(); 
@@ -43,14 +46,15 @@ router.post('/register', validateRegister, async (req, res) => {
         const newUser = new User({ username, email, password }); 
         await newUser.save(); 
 
-        console.log('Usuario guardado exitosamente en la base de datos:', newUser._id); // Log de depuración
+        console.log('Usuario guardado exitosamente en la base de datos:', newUser._id);
         
         res.status(201).json({
             message: 'Usuario registrado exitosamente. Ya puedes iniciar sesión.',
             user: {
                 id: newUser._id,
                 username: newUser.username,
-                email: newUser.email
+                email: newUser.email,
+                profilePicture: newUser.profilePicture // Incluye la URL por defecto
             }
         });
 
@@ -78,11 +82,10 @@ router.post('/login', async (req, res) => {
     try {
         const user = await User.findOne({ email });
         if (!user) {
-            console.log('Login Fallido: Usuario no encontrado para email:', email); // Log de depuración
+            console.log('Login Fallido: Usuario no encontrado para email:', email); 
             return res.status(400).json({ message: 'Credenciales inválidas.' });
         }
 
-        // Logs de depuración para bcrypt.compare en login
         console.log('Depuración de Login:');
         console.log('  Email recibido:', email);
         console.log('  Contraseña recibida (texto plano):', password);
@@ -93,7 +96,7 @@ router.post('/login', async (req, res) => {
         console.log('  Resultado de bcrypt.compare (isMatch):', isMatch);
 
         if (!isMatch) {
-            console.log('Login Fallido: Contraseña no coincide para usuario:', user.username); // Log de depuración
+            console.log('Login Fallido: Contraseña no coincide para usuario:', user.username); 
             return res.status(400).json({ message: 'Credenciales inválidas.' });
         }
 
@@ -122,7 +125,8 @@ router.post('/login', async (req, res) => {
                         id: user.id,
                         username: user.username,
                         email: user.email,
-                        role: user.role
+                        role: user.role,
+                        profilePicture: user.profilePicture // Incluye la URL de la foto de perfil
                     }
                 });
             }
@@ -134,14 +138,26 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// --- RUTA DE ACTUALIZAR PERFIL ---
-router.put('/profile/:userId', authMiddleware, async (req, res) => {
+// --- RUTA: Obtener el perfil del usuario autenticado ---
+router.get('/profile', authMiddleware, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select('-password'); 
+        if (!user) {
+            return res.status(404).json({ message: 'Usuario no encontrado.' });
+        }
+        res.json(user); 
+    } catch (error) {
+        console.error('Error al obtener el perfil del usuario:', error);
+        res.status(500).json({ message: 'Error interno del servidor al obtener el perfil.' });
+    }
+});
+
+// Ruta para actualizar el perfil del usuario (incluyendo la foto de perfil)
+router.put('/profile/:userId', authMiddleware, upload.single('profilePicture'), async (req, res) => {
     const { userId } = req.params;
-    const { username, currentPassword, newPassword } = req.body;
+    const { username, currentPassword, newPassword } = req.body; 
 
     try {
-        // 1. Verificar si el usuario autenticado tiene permiso para editar este perfil
-        // Asegúrate de que req.user esté definido por authMiddleware
         if (!req.user || (req.user.id !== userId && req.user.role !== 'admin')) {
             return res.status(403).json({ message: 'No tienes permiso para editar este perfil o token inválido.' });
         }
@@ -151,19 +167,17 @@ router.put('/profile/:userId', authMiddleware, async (req, res) => {
             return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
 
-        // 2. Verificar la contraseña actual (¡CRÍTICO para seguridad!)
-        console.log('Depuración de Contraseña Actual:');
-        console.log('  Contraseña actual recibida (currentPassword):', currentPassword);
-        console.log('  Hash de contraseña del usuario en DB (user.password):', user.password);
-        
-        const isMatch = await bcrypt.compare(currentPassword, user.password);
-        
-        console.log('  Resultado de bcrypt.compare (isMatch):', isMatch);
-
-        if (!isMatch) {
-            console.log('  Error: Contraseña actual incorrecta detectada.');
-            return res.status(400).json({ message: 'Contraseña actual incorrecta.' });
-        }
+        // 2. Verificar la contraseña actual CONDICIONALMENTE (solo si se cambia la contraseña)
+        if (newPassword) { 
+            if (!currentPassword) {
+                return res.status(400).json({ message: 'La contraseña actual es requerida para cambiar la contraseña.' });
+            }
+            const isMatch = await bcrypt.compare(currentPassword, user.password);
+            if (!isMatch) {
+                return res.status(400).json({ message: 'Contraseña actual incorrecta.' });
+            }
+            user.password = newPassword; 
+        } 
 
         // 3. Actualizar el nombre de usuario si se proporcionó y es diferente
         if (username && username !== user.username) {
@@ -174,28 +188,67 @@ router.put('/profile/:userId', authMiddleware, async (req, res) => {
             user.username = username;
         }
 
-        // 4. Actualizar la contraseña si se proporcionó una nueva
-        if (newPassword) {
-            if (newPassword.length < 8 || !/[A-Z]/.test(newPassword) || !/[a-z]/.test(newPassword) || !/[0-9]/.test(newPassword)) {
-                return res.status(400).json({ message: 'La nueva contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas y números.' });
+        // 4. Lógica para subir/cambiar la foto de perfil
+        if (req.file) { 
+            const defaultPublicId = '70bba0a0431785d3f86227e24e48e023'; 
+            
+            if (user.profilePicturePublicId && user.profilePicturePublicId !== defaultPublicId) {
+                try {
+                    await cloudinary.uploader.destroy(user.profilePicturePublicId);
+                    console.log(`Antigua imagen de Cloudinary eliminada: ${user.profilePicturePublicId}`);
+                } catch (deleteError) {
+                    console.error('Error al eliminar la imagen antigua de Cloudinary:', deleteError);
+                }
             }
-            // Asigna la NUEVA CONTRASEÑA EN TEXTO PLANO al campo user.password.
-            // El pre('save') hook de Mongoose se encargará de hashearla.
-            user.password = newPassword; 
+
+            // --- CORRECCIÓN CLAVE AQUÍ ---
+            // Construye la cadena Data URI para pasarla a Cloudinary
+            const result = await cloudinary.uploader.upload(`data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`, { 
+                folder: 'profile_pictures', 
+                resource_type: 'auto', 
+            });
+
+            user.profilePicture = result.secure_url;
+            user.profilePicturePublicId = result.public_id;
         }
 
-        await user.save(); // Guarda los cambios en la base de datos
+        await user.save(); 
 
-        console.log('Usuario actualizado y guardado en DB:', user._id, 'Nuevo Username:', user.username);
-        console.log('Nuevo hash de contraseña (si se actualizó):', user.password); 
-
-        res.json({ message: 'Perfil actualizado exitosamente.', user: { id: user._id, username: user.username, email: user.email } });
+        const { password: _, ...userWithoutPassword } = user.toObject(); 
+        res.json({ 
+            message: 'Perfil actualizado exitosamente.', 
+            user: userWithoutPassword 
+        });
 
     } catch (error) {
-        console.error('Error al actualizar el perfil del usuario (capturado en catch):', error);
+        console.error('Error al actualizar el perfil del usuario:', error);
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({ message: error.message });
+        }
         res.status(500).json({ message: 'Error interno del servidor al actualizar perfil.' });
     }
 });
 
+// --- Rutas de 2FA (Ejemplo - Necesitarías implementar la lógica real) ---
+router.get('/2fa/status', authMiddleware, async (req, res) => {
+    res.json({ enabled: false, message: '2FA functionality is under development.' });
+});
+
+router.post('/2fa/enable', authMiddleware, async (req, res) => {
+    res.status(200).json({ message: '2FA activation is under development.' });
+});
+
+router.post('/2fa/disable', authMiddleware, async (req, res) => {
+    res.status(200).json({ message: '2FA deactivation is under development.' });
+});
+
+// --- Rutas de Sesiones (Ejemplo - Necesitarías implementar la lógica real) ---
+router.get('/sessions', authMiddleware, async (req, res) => {
+    res.json({ sessions: [{ device: 'Current Device', location: 'Unknown', lastActivity: new Date() }], message: 'Session management is under development.' });
+});
+
+router.post('/sessions/logout-all-others', authMiddleware, async (req, res) => {
+    res.status(200).json({ message: 'Logout all other sessions functionality is under development.' });
+});
 
 module.exports = router;

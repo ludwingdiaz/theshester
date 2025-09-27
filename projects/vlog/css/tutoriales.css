@@ -198,8 +198,8 @@ header {
 }
 
 .header-logo {
-    height: 40px;
-    margin-right: 10px;
+    height: 35px;
+    margin-right: 20px;
 }
 .header-logo-text {
     display: block; /* Asegura que el texto se muestre */
@@ -1501,3 +1501,44 @@ footer{
         font-size: 1.5rem;
     }
 }
+
+//Tablas Tutoriales
+.step table { /* Si tu tabla está dentro de un '.step' */
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5em 0;
+    border-radius: 8px;
+    overflow: hidden; /* Importante para que los bordes redondeados funcionen con el desbordamiento */
+    background-color: var(--card-background); /* Usamos la variable de card-background para el fondo */
+    box-shadow: var(--section-shadow); /* Usamos la variable de section-shadow para la sombra */
+    color: var(--text-color-primary); /* Color de texto general de la tabla */
+}
+
+.step th, /* Estilos para las cabeceras de la tabla */
+.step td { /* Estilos para las celdas de la tabla */
+    border: 1px solid var(--border-color); /* Borde usando tu variable --border-color */
+    padding: 12px;
+    text-align: left;
+}
+
+.step th { /* Estilos específicos para los encabezados */
+    background-color: var(--header-background); /* Podrías usar una variable más específica como --code-background o --section-background si no quieres el color del header principal */
+    font-weight: bold;
+    color: var(--header-text-color); /* Color de texto del encabezado */
+}
+
+/* Puedes añadir un estilo para filas pares si quieres un efecto "cebra" */
+.step tr:nth-child(even) {
+    background-color: var(--background-color-secondary); /* Usa una de tus variables para un fondo ligeramente diferente */
+}
+
+/* Estilo para el código inline `<code>` dentro de las celdas de la tabla */
+.step td code {
+    background-color: var(--code-background);
+    color: var(--code-text-color);
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-family: 'Fira Code', 'Consolas', monospace; /* Asegúrate de que esta fuente esté cargada o usa una fallback */
+}
+
+

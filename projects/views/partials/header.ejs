@@ -3,6 +3,17 @@
         <a href="/" class="logo-link">
             <img src="/assets/EmoteBulldog 28x28.png" alt="Ludwing Díaz Logo" class="header-logo">
         </a>
+        
+        <!-- PRODUCTO Y TIENDA: AHORA CON IDs Y OCULTOS POR DEFECTO PARA USUARIOS LOGUEADOS -->
+        <nav class="main-nav product-shop-nav"> 
+            <ul class="main-nav-list">
+                <!-- Por defecto, estos se mostrarán si el usuario no está logueado. -->
+                <!-- Si quieres que se oculten si el usuario *está* logueado, necesitas JS. -->
+                <!-- Los IDs son para que JavaScript los pueda manipular -->
+                <li id="nav-producto"><a href="<%= FRONTEND_BASE_URL %>/products">Producto</a></li>
+                <li id="nav-tienda"><a href="/tienda">Tienda</a></li>
+            </ul>
+        </nav>
     </div>
     
     <div class="header-right-group">
@@ -18,11 +29,12 @@
         <nav class="main-nav">
             <ul class="main-nav-list">
                 <li><a href="<%= FRONTEND_BASE_URL %>/tutoriales">Inicio</a></li>
-                <!-- ¡CRÍTICO! ESTAS LÍNEAS NO DEBEN TENER style="..." -->
+                
+                <!-- LOGIN Y REGISTRO: CON IDs para JS, ocultos por defecto para logueados -->
                 <li id="nav-login"><a href="<%= FRONTEND_BASE_URL %>/projects/forms/login.html">Login</a></li>
                 <li id="nav-registro"><a href="<%= FRONTEND_BASE_URL %>/projects/forms/registro.html">Registro</a></li>
                 
-                <!-- Estos LI son los que se mostrarán/ocultarán con el login -->
+                <!-- PERFIL Y CERRAR SESIÓN: CON IDs para JS, ocultos por defecto para no logueados -->
                 <li id="nav-profile" style="display: none;">
                     <a href="<%= FRONTEND_BASE_URL %>/diario" id="profile-link"></a>
                 </li>
@@ -35,7 +47,7 @@
         <button id="theme-toggle" aria-label="Cambiar tema">
             <div class="theme-icon-container icon-light-mode">
                 <svg class="bn-svg switch-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M13.5 3h-3v3h3V3zm0 15h-3v3h3v-3zm-6.803-2.818l2.121 2.121-2.121 2.122-2.122-2.122 2.122-2.121zm12.728-8.485l-2.122-2.122-2.12 2.122 2.12 2.121 2.122-2.121zM15.5 12a3.5 3.5 0 11-7 0 3.5 3.5 0 017 0zM6.697 8.818l2.121-2.121-2.121-2.122-2.122 2.122 2.122-2.121zM6 10.5v3H3v-3h3zm15 0v3h-3v-3h3zm-1.576 6.803l-2.12 2.121-2.122-2.12 2.121-2.122 2.121 2.121z"></path>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M13.5 3h-3v3h3V3zm0 15h-3v3h3v-3zm-6.803-2.818l2.121 2.121-2.121 2.122-2.122-2.122 2.122-2.121zm12.728-8.485l-2.122-2.122-2.12 2.122 2.12 2.121 2.122-2.121zM15.5 12a3.5 3.5 0 11-7 0 3.5 3.5 0 017 0zM6.697 8.818l2.121-2.121-2.121-2.122-2.122-2.122 2.122-2.121zM6 10.5v3H3v-3h3zm15 0v3h-3v-3h3zm-1.576 6.803l-2.12 2.121-2.122-2.12 2.121-2.122 2.121 2.121z"></path>
                 </svg>
             </div>
             <div class="theme-icon-container icon-dark-mode" style="display: none;">

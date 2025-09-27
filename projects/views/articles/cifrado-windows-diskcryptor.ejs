@@ -1,0 +1,104 @@
+<div data-article-id="<%= tutorial._id %>"> 
+    <h1><%= tutorial.title %></h1> 
+    <p>Vistas: <span id="article-views"><%= tutorial.views %></span></p> 
+
+    <section class="step">
+        <h2>🔒 Introducción: Protege tu Partición de Windows con Cifrado</h2>
+        <p>En la era digital, la seguridad de la información es primordial. Cifrar tus particiones de disco es una medida esencial para proteger tus datos de accesos no autorizados. Con esta práctica, aprenderás a cifrar una partición en Windows, asegurando que la información contenida en ella solo sea accesible para quienes conozcan la clave.</p>
+        <p>Para llevar a cabo esta actividad, utilizaremos **DiskCryptor**, un programa de código abierto conocido por su robustez y facilidad de uso.</p>
+    </section>
+
+    <section class="step">
+        <h2>🛠️ Paso 1: Descarga e Instalación de DiskCryptor</h2>
+        <p>El primer paso es obtener DiskCryptor.Es recomendable buscar la última versión estable disponible en su sitio oficial o repositorios de confianza para asegurar las últimas mejoras y correcciones de seguridad.</p>
+        <p>Una vez descargado, descomprime el archivo (si es necesario) y haz doble clic en el instalador (ej. <code>NGH15.MULTI Setup - DiskCryptor</code> o <code>dcrypt setup</code>) para iniciar el asistente de instalación.</p>
+        <p>Sigue las instrucciones del asistente. Se recomienda cerrar otras aplicaciones antes de continuar. Al finalizar la instalación, el asistente te preguntará si deseas reiniciar el equipo. Es aconsejable reiniciar en este momento para que la instalación se complete correctamente.</p>
+        <p></p>
+        <p>Una vez completada la instalación y reiniciado el sistema (si lo hiciste), ejecuta la aplicación DiskCryptor.</p>
+    </section>
+
+    <section class="step">
+        <h2>💻 Paso 2: Seleccionar la Partición a Cifrar</h2>
+        <p>Al abrir DiskCryptor, verás una interfaz que muestra las unidades de disco y particiones disponibles en tu sistema. Deberás seleccionar la partición que deseas cifrar. En la mayoría de los casos, si quieres proteger tus archivos personales, será el disco principal donde se almacenan tus datos (a menudo la partición <code>C:</code>, aunque el PDF muestra una partición de 59.9 GB que es la principal).</p>
+        <p>Selecciona la partición deseada (por ejemplo, <code>C:</code>) y luego haz clic en el botón **"Encrypt"** (Cifrar) en el panel derecho.</p>
+        <p></p>
+    </section>
+
+    <section class="step">
+        <h2>🔑 Paso 3: Configuración de la Contraseña de Cifrado</h2>
+        <p>Después de seleccionar la partición y hacer clic en "Encrypt", se abrirá una ventana de configuración. Aquí, deberás elegir el algoritmo de cifrado y, lo más importante, establecer tu contraseña.</p>
+        <h3>Configuración del Algoritmo (Encryption Settings)</h3>
+        <p>Esta ventana te permitirá seleccionar el algoritmo de cifrado. DiskCryptor ofrece varias opciones robustas. El PDF muestra un ejemplo donde el algoritmo es **AES** y el modo de cifrado es **XTS** con **Pkcs5.2 prf HMAC-SHA-512**. Estos son algoritmos fuertes y recomendados. Generalmente, puedes dejar las opciones por defecto si no estás seguro.</p>
+        <p></p>
+        <p>Haz clic en **"Next"** para continuar.</p>
+
+        <h3>Establecer Contraseña (Volume Password)</h3>
+        <p>En la siguiente pantalla, se te pedirá que establezcas una contraseña para la partición. Esta será la clave para acceder a tus datos cifrados. Es crucial elegir una contraseña fuerte y segura, combinando letras mayúsculas, minúsculas, números y símbolos.</p>
+        <ul>
+            <li>Introduce tu contraseña en el campo **"Password"**.</li>
+            <li>Confirma la contraseña en el campo **"Confirm"**.</li>
+            <li>Verifica que el "Status" indique **"Correct"**.</li>
+            <li>Puedes seleccionar el "Layout" de tu teclado (ej. QWERTY).</li>
+            <li>La "Password Rating" te dará una indicación de la fortaleza de tu contraseña.</li>
+            <li>Puedes marcar "Show Password" para ver lo que escribes.</li>
+            <li>La opción "Use Keyfile" es para usar un archivo clave en lugar de una contraseña, o en combinación con ella, para mayor seguridad.</li>
+        </ul>
+        <p></p>
+        <p>Una vez que hayas introducido y confirmado tu contraseña, haz clic en **"OK"**.</p>
+    </section>
+
+    <section class="step">
+        <h2>⏳ Paso 4: Inicio y Finalización del Proceso de Cifrado</h2>
+        <p>Una vez que hagas clic en "OK", DiskCryptor comenzará el proceso de cifrado de la partición. Este proceso puede tardar un tiempo considerable, dependiendo del tamaño de la partición y la velocidad de tu disco duro. Verás una barra de progreso y estadísticas como el porcentaje completado, la velocidad y el tiempo estimado/transcurrido.</p>
+        <p></p>
+        <p>Es fundamental **esperar a que el proceso finalice por completo**. No apagues el ordenador ni interrumpas la operación durante el cifrado, ya que esto podría causar pérdida de datos o corrupción de la partición.</p>
+        <p>Finalmente, una vez que el proceso haya terminado, DiskCryptor te lo indicará. La partición ahora estará cifrada.</p>
+        <p></p>
+    </section>
+
+    <section class="step">
+        <h2>✅ Paso 5: Verificación del Cifrado y Acceso</h2>
+        <p>Después de que el proceso de cifrado haya finalizado, deberás reiniciar tu ordenador. Al iniciar Windows, antes de cargar el sistema operativo, DiskCryptor te pedirá la contraseña de cifrado que estableciste en el Paso 3. Esta es la confirmación de que la partición ha sido cifrada correctamente.</p>
+        <p></p>
+        <p>Introduce la contraseña y presiona Enter. Una vez que la contraseña sea aceptada, Windows cargará normalmente y tendrás acceso completo a tu disco cifrado.</p>
+        <p>¡Felicidades! Has cifrado exitosamente una partición en Windows, protegiendo tu información de accesos no deseados.</p>
+    </section>
+
+    <section class="summary">
+        <h2>🎯 Conclusión Final: Tus Datos Seguros con DiskCryptor</h2>
+        <p>Con esta práctica, has dominado el proceso de cifrado de una partición en Windows utilizando DiskCryptor. Esta herramienta de código abierto te proporciona una capa de seguridad esencial para tus datos más sensibles, asegurando que solo tú y aquellos a quienes les confíes la clave puedan acceder a ellos.</p>
+        <p>Recuerda siempre elegir contraseñas robustas y mantenerlas seguras. El cifrado es una herramienta poderosa en tu arsenal de ciberseguridad. ¡Continúa explorando y fortaleciendo la protección de tu información!</p>
+    </section>
+    
+    <section class="step">
+        <h2>📚 Fuente</h2>
+        <p>Este tutorial se ha basado en la información proporcionada en el documento PDF:</p>
+        <p><a href="https://drive.google.com/file/d/1w0DPlJgRA7RaEYu2h9gxHyFPt0xhIFeD/view?usp=sharing" target="_blank" rel="noopener noreferrer">CIFRADO PARTICIÓN WINDOWS.pdf</a></p>
+    </section>
+
+    <!-- Sección de Comentarios -->
+    <section id="comments-section">
+        <h2>Comentarios</h2>
+        <div class="comment-form-container step">
+            <h3>Deja tu comentario</h3>
+            <form id="comment-form">
+                <div class="form-group">
+                    <!-- Este div está vacío en tu ejemplo, puedes quitarlo si no lo usas -->
+                </div>
+                <div class="form-group">
+                    <label for="comment-text">Comentario:</label>
+                    <textarea id="comment-text" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="version-button">Enviar Comentario</button>
+                <p id="comment-message" style="margin-top: 10px;"></p>
+            </form>
+        </div>
+
+        <div id="comments-list-container" class="step">
+            <h3>Comentarios (<span id="comments-count">0</span>)</h3>
+            <div id="comments-list">
+                <p>Cargando comentarios...</p>
+            </div>
+        </div>
+    </section>
+</div>

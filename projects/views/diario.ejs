@@ -19,9 +19,10 @@
 
         <aside class="profile-sidebar">
             <div class="profile-avatar-display">
-                <img src="https://placehold.co/100x100/cccccc/333333?text=Avatar" alt="Avatar de Usuario" class="profile-avatar-large">
-                <h3 id="usernameDisplaySidebar">Cargando...</h3>
-                <p class="profile-email-sidebar" id="userEmailDisplaySidebar">Cargando...</p>
+               <!-- AÑADIR ID A LA IMAGEN Y UN SRC INICIAL (puede ser vacío o un placeholder) -->
+           <img id="profileAvatarDisplay" src="/assets/default-avatar.png" alt="Avatar de Usuario" class="profile-avatar-large">
+    <h3 id="usernameDisplaySidebar">Cargando...</h3>
+    <p class="profile-email-sidebar" id="userEmailDisplaySidebar">Cargando...</p>
             </div>
             <nav class="profile-sub-nav">
                 <a href="#" class="profile-nav-item" id="visionGeneralLink">
@@ -58,7 +59,6 @@
                     </div>
                 </div>
 
-                <a href="#" id="editProfileMainBtn" class="submit-button edit-profile-main-btn">Editar Perfil</a>
             
                 <div class="card mt-4">
                     <h3>Últimas 10 Entradas/Comentarios</h3>
@@ -73,28 +73,86 @@
                 <div class="edit-profile-container">
                     <form id="editProfileForm">
                         <div class="form-group">
-                            <label for="editUsername">Nuevo Nombre de Usuario:</label>
-                            <input type="text" id="editUsername" class="form-control" required minlength="3" aria-label="Nuevo nombre de usuario">
+                            <label for="editUsername">Nombre de Usuario:</label>
+                            <input type="text" id="editUsername" class="form-control" required minlength="3" aria-label="Nombre de usuario">
                         </div>
+
+                         <!-- CAMPO PARA LA FOTO DE PERFIL -->
                         <div class="form-group">
-                            <label for="currentPassword">Contraseña Actual:</label>
-                            <input type="password" id="currentPassword" class="form-control" required aria-label="Contraseña actual">
-                            <small class="form-text text-muted">Necesario para confirmar cambios.</small>
+                            <label for="profilePictureInput">Foto de Perfil:</label>
+                            <input type="file" id="profilePictureInput" class="form-control" accept="image/*" aria-label="Foto de perfil">
+                            <small class="form-text text-muted">Sube una nueva foto para tu perfil (Max 5MB).</small>
                         </div>
-                        <div class="form-group">
-                            <label for="newPassword">Nueva Contraseña (opcional):</label>
-                            <input type="password" id="newPassword" class="form-control" aria-label="Nueva contraseña">
-                            <small class="form-text text-muted">Mínimo 8 caracteres, incluyendo mayúsculas, minúsculas y números.</small>
-                        </div>
-                        <div class="form-group">
-                            <label for="confirmNewPassword">Confirmar Nueva Contraseña:</label>
-                            <input type="password" id="confirmNewPassword" class="form-control" aria-label="Confirmar nueva contraseña">
-                        </div>
+                        <!-- Los campos de contraseña se han movido a la sección de Seguridad -->
                         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                         <p id="editProfileMessage" class="message-box mt-3" style="display: none;"></p>
                     </form>
                 </div>
             </div>
+
+            <!-- ==================================================================== -->
+            <!-- CONTENIDO DE LA SECCIÓN DE SEGURIDAD (INCLUYE CAMBIO DE CONTRASEÑA) -->
+            <!-- ==================================================================== -->
+            <div id="security-section" class="content-card content-section" style="display: none;">
+                <div class="tutorial-content" data-section-id="security-profile-edit"> 
+                    <h1>🔒 Configuración de Seguridad del Perfil</h1> 
+                    <p>Gestiona las opciones de seguridad de tu cuenta para mantener tu información protegida.</p>
+                    <hr>
+
+                    <section class="step">
+                        <h2>🔑 Cambiar Contraseña</h2>
+                        <p>Es recomendable cambiar tu contraseña regularmente para mejorar la seguridad de tu cuenta.</p>
+                        <form id="change-password-form">
+                            <div class="form-group">
+                                <label for="current-password">Contraseña Actual:</label>
+                                <input type="password" id="current-password" name="currentPassword" required autocomplete="current-password">
+                            </div>
+                            <div class="form-group">
+                                <label for="new-password">Nueva Contraseña:</label>
+                                <input type="password" id="new-password" name="newPassword" required autocomplete="new-password">
+                                <small>La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas, números y símbolos.</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="confirm-new-password">Confirmar Nueva Contraseña:</label>
+                                <input type="password" id="confirm-new-password" name="confirmNewPassword" required autocomplete="new-password">
+                            </div>
+                            <button type="submit" class="version-button">Cambiar Contraseña</button>
+                            <p id="password-message" class="message-box" style="margin-top: 10px;"></p>
+                        </form>
+                    </section>
+
+                    <section class="step">
+                        <h2>📱 Autenticación de Dos Factores (2FA)</h2>
+                        <p>Añade una capa extra de seguridad a tu cuenta. Con 2FA, necesitarás un código de tu teléfono además de tu contraseña para iniciar sesión.</p>
+                        <p><strong>Estado actual:</strong> <span id="2fa-status">Desactivado</span></p>
+                        <button id="toggle-2fa-button" class="version-button">Activar 2FA</button>
+                        <p id="2fa-message" class="message-box" style="margin-top: 10px;"></p>
+                    </section>
+
+                    <section class="step">
+                        <h2>🌐 Sesiones Activas</h2>
+                        <p>Revisa dónde has iniciado sesión con tu cuenta y cierra las sesiones que no reconozcas.</p>
+                        <div id="active-sessions-list">
+                            <p>Cargando sesiones activas...</p>
+                        </div>
+                        <button id="logout-all-sessions-button" class="version-button" style="margin-top: 15px;">Cerrar todas las otras sesiones</button>
+                        <p id="sessions-message" class="message-box" style="margin-top: 10px;"></p>
+                    </section>
+
+                    <section class="summary">
+                        <h2>✅ Consejos de Seguridad Adicionales</h2>
+                        <ul>
+                            <li>Utiliza contraseñas únicas y complejas para cada cuenta.</li>
+                            <li>No compartas tu contraseña con nadie.</li>
+                            <li>Mantén tu software y sistema operativo actualizados.</li>
+                            <li>Ten cuidado con los correos electrónicos y enlaces sospechosos (phishing).</li>
+                        </ul>
+                    </section>
+                </div>
+            </div>
+            <!-- ==================================================================== -->
+            <!-- FIN CONTENIDO DE LA SECCIÓN DE SEGURIDAD -->
+            <!-- ==================================================================== -->
 
             <div id="comments-section" class="content-card content-section" style="display: none;">
                 <h2>Todos Mis Comentarios</h2>

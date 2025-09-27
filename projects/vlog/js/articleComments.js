@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ====================================================================
     // 0. Configuración de la URL del Backend
     // ====================================================================
-    const BASE_URL_BACKEND = 'https://tutorial-views-api.onrender.com';
+    const BASE_URL_BACKEND = 'http://localhost:3000';
     console.log(`Conectando al backend en: ${BASE_URL_BACKEND}`);
 
     // ====================================================================
@@ -282,36 +282,60 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ====================================================================
     // 5. Lógica para el Seguimiento de Vistas del Artículo (¡NUEVO!)
     // ====================================================================
+    // Usaremos un Set para almacenar los IDs de los artículos cuyas vistas
+    // ya hemos intentado incrementar en la sesión actual del navegador.
+    // Esto previene múltiples llamadas rápidas para el mismo artículo
+    // y ayuda a evitar el error 429 de Render.
+    const viewedArticlesCache = new Set();
+    const VIEW_COOLDOWN_MS = 5 * 60 * 1000; // 5 minutos de enfriamiento por artículo por sesión
+
     async function trackArticleView() {
-        console.log(`[DEBUG] trackArticleView() llamado para articleId: ${articleId}`); // <-- AÑADE ESTA LÍNEA
+        console.log(`[DEBUG] trackArticleView() llamado para articleId: ${articleId}`);
+
+        // Si el artículo ya está en la caché de vistas recientes, no enviar la petición.
+        if (viewedArticlesCache.has(articleId)) {
+            console.log(`[INFO] Vista para el artículo ${articleId} ya contada recientemente en esta sesión. Saltando petición.`);
+            return;
+        }
+
+        // Añadir el ID del artículo a la caché para marcarlo como "visto recientemente".
+        viewedArticlesCache.add(articleId);
+
+        // Programar la eliminación del ID de la caché después del período de enfriamiento.
+        // Esto permite que la vista se cuente de nuevo si el usuario regresa después de X minutos.
+        setTimeout(() => {
+            viewedArticlesCache.delete(articleId);
+            console.log(`[INFO] Artículo ${articleId} eliminado de la caché de vistas. Puede ser contado de nuevo.`);
+        }, VIEW_COOLDOWN_MS);
 
         try {
-            // Asume que tu backend tiene un endpoint para incrementar vistas
-            console.log(`[DEBUG] Enviando solicitud POST para incrementar vistas a: ${BASE_URL_BACKEND}/api/views/article/${articleId}/increment`); // <-- AÑADE ESTA LÍNEA
+            console.log(`[DEBUG] Enviando solicitud POST para incrementar vistas a: ${BASE_URL_BACKEND}/api/views/article/${articleId}/increment`);
             const response = await fetch(`${BASE_URL_BACKEND}/api/views/article/${articleId}/increment`, {
-                method: 'POST', // O PUT, dependiendo de tu API
+                method: 'POST',
                 headers: { 'Content-Type': 'application/json' }
             });
 
-            // --- INICIO DEL CAMBIO ---
             if (response.ok) {
                 const data = await response.json();
                 console.log('Vista de artículo registrada:', data.message);
                 if (articleViewsDisplay) {
                     articleViewsDisplay.textContent = data.views; // Actualiza el número de vistas en el DOM
                 }
-            } else if (response.status === 429) { // Manejo específico del Too Many Requests
-                console.warn('Vista de artículo: Solicitud ignorada por el servidor (demasiadas peticiones).');
-                // No es un error grave, simplemente la vista ya se contó.
-                // No actualizamos el contador de vistas en el frontend aquí, ya que la primera solicitud lo hizo.
-            }
-            else {
+            } else if (response.status === 429) {
+                console.warn('Vista de artículo: Solicitud ignorada por el servidor (demasiadas peticiones). Esto es una limitación de Render.com.');
+                // No es un error grave, simplemente la vista no se contó en este intento.
+                // No eliminamos de la caché para evitar reintentos inmediatos.
+            } else {
                 const errorData = await response.json();
                 console.error('Error al registrar vista del artículo:', errorData.message);
+                // Si hay otro tipo de error, podríamos considerar eliminar el ID de la caché
+                // para permitir un reintento si el error no es de limitación de tasa.
+                // viewedArticlesCache.delete(articleId); // Descomentar si quieres reintentar en otros errores
             }
-            // --- FIN DEL CAMBIO ---
         } catch (error) {
             console.error('Error de red al registrar vista del artículo:', error);
+            // Si hay un error de red (ej. sin internet), también podríamos querer reintentar.
+            // viewedArticlesCache.delete(articleId); // Descomentar si quieres reintentar en errores de red
         }
     }
 

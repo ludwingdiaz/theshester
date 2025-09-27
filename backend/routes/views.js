@@ -16,6 +16,8 @@ router.get('/', (req, res) => {
     res.redirect('/tutoriales');
 });
 
+
+
 // Ruta para la página de tutoriales
 router.get('/tutoriales', (req, res) => {
     console.log('Acceso a /tutoriales. Renderizando tutoriales.ejs');
@@ -27,6 +29,14 @@ router.get('/diario', (req, res) => {
     console.log('Acceso a /diario. Renderizando diario.ejs');
     res.render('diario');
 });
+
+router.get('/products', (req, res) => {
+    console.log('Acceso a /products. Renderizando products.ejs');
+    res.render('products');
+});
+
+
+
 
 // ================================================================
 // RUTA PARA ARTÍCULOS INDIVIDUALES (DINÁMICOS DESDE ARCHIVOS EJS)

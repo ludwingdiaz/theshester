@@ -10,7 +10,7 @@ window.login = function(username) {
 
 // Definir la función global 'logout'
 window.logout = function() {
-    localStorage.removeItem('jwtToken');
+    localStorage.removeItem('jwtToken'); // Aunque auth.js no usa jwtToken directamente, es buena práctica limpiarlo
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('username');
     console.log('Sesión cerrada. Estado eliminado.');
@@ -34,6 +34,10 @@ function updateHeaderNav() {
     const navLogout = document.getElementById('nav-logout');
     const logoutLink = document.getElementById('logout-link');
 
+    // ¡NUEVOS ELEMENTOS A CONTROLAR!
+    const navProducto = document.getElementById('nav-producto');
+    const navTienda = document.getElementById('nav-tienda');
+
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     const username = localStorage.getItem('username');
 
@@ -41,6 +45,9 @@ function updateHeaderNav() {
         // Ocultar elementos de no logueado
         if (navLogin) navLogin.style.cssText = 'display: none !important;';
         if (navRegistro) navRegistro.style.cssText = 'display: none !important;';
+        // Ocultar Producto y Tienda cuando el usuario está logueado
+        if (navProducto) navProducto.style.cssText = 'display: none !important;';
+        if (navTienda) navTienda.style.cssText = 'display: none !important;';
 
         // Mostrar elementos de logueado
         if (navProfile) {
@@ -65,6 +72,9 @@ function updateHeaderNav() {
         // Mostrar elementos de no logueado
         if (navLogin) navLogin.style.cssText = 'display: list-item !important;';
         if (navRegistro) navRegistro.style.cssText = 'display: list-item !important;';
+        // Mostrar Producto y Tienda cuando el usuario NO está logueado
+        if (navProducto) navProducto.style.cssText = 'display: list-item !important;';
+        if (navTienda) navTienda.style.cssText = 'display: list-item !important;';
 
         // Ocultar elementos de logueado
         if (navProfile) navProfile.style.cssText = 'display: none !important;';

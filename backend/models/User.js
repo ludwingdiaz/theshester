@@ -1,7 +1,7 @@
 // backend/models/User.js
 
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs'); // ¡ASEGÚRATE DE QUE ESTA LÍNEA ESTÉ AQUÍ!
+const bcrypt = require('bcryptjs');
 
 const UserSchema = new mongoose.Schema({
     username: {
@@ -26,24 +26,28 @@ const UserSchema = new mongoose.Schema({
     registrationDate: {
         type: Date,
         default: Date.now
+    },
+    profilePicture: { // URL de la imagen en Cloudinary
+        type: String,
+        // Sugerencia: Usa una URL de Cloudinary para tu imagen por defecto también
+        default: 'https://asset.cloudinary.com/dvulqsi0o/70bba0a0431785d3f86227e24e48e023' 
+    },
+    profilePicturePublicId: { // Public ID de la imagen en Cloudinary, para su eliminación
+        type: String,
+        default: null
     }
 });
 
-// --- ¡ESTE ES EL HOOK QUE HASHEA LA CONTRASEÑA ANTES DE GUARDAR! ---
 UserSchema.pre('save', async function(next) {
-    // Solo hashear la contraseña si ha sido modificada (o es nueva)
     if (!this.isModified('password')) {
         return next();
     }
-
     try {
-        // Generar un salt
         const salt = await bcrypt.genSalt(10);
-        // Hashear la contraseña usando el salt
         this.password = await bcrypt.hash(this.password, salt);
-        next(); // Continuar con el guardado
+        next();
     } catch (err) {
-        next(err); // Pasar el error
+        next(err);
     }
 });
 

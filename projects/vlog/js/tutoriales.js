@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ====================================================================
     // 0. Configuración de la URL del Backend
     // ====================================================================
-    const BASE_URL_BACKEND = 'https://tutorial-views-api.onrender.com';
+    const BASE_URL_BACKEND = 'http://localhost:3000';
     console.log(`tutoriales.js: Conectando al backend en: ${BASE_URL_BACKEND}`);
 
     let allDynamicPosts = [];
@@ -23,21 +23,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // --- Función para obtener el número de comentarios de un artículo ---
-    async function getCommentCount(articleId) { // Ahora espera articleId (el _id)
-        try {
-            const response = await fetch(`${BASE_URL_BACKEND}/api/comments/article/${articleId}/count`);
-            if (response.ok) {
-                const data = await response.json();
-                return data.count;
-            } else {
-                console.error(`Error al obtener el recuento de comentarios para ${articleId}:`, await response.json());
-                return 0;
-            }
-        } catch (error) {
-            console.error(`Error de red al obtener el recuento de comentarios para ${articleId}:`, error);
-            return 0;
-        }
-    }
+    // ¡ESTA FUNCIÓN YA NO ES NECESARIA SI EL CONTEO VIENE EN EL OBJETO POST!
+    // async function getCommentCount(articleId) { 
+    //     try {
+    //         const response = await fetch(`${BASE_URL_BACKEND}/api/comments/article/${articleId}/count`);
+    //         if (response.ok) {
+    //             const data = await response.json();
+    //             return data.count;
+    //         } else {
+    //             console.error(`Error al obtener el recuento de comentarios para ${articleId}:`, await response.json());
+    //             return 0;
+    //         }
+    //     } catch (error) {
+    //         console.error(`Error de red al obtener el recuento de comentarios para ${articleId}:`, error);
+    //         return 0;
+    //     }
+    // }
 
     // --- Función para incrementar las vistas de un post (se llamará cuando se haga click en el enlace) ---
     async function incrementPostViews(postId, viewElement) { // Ahora espera postId (el _id) y el elemento de vistas
@@ -62,8 +63,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // --- Función para renderizar un post dinámico ---
     async function renderDynamicPostCard(post) {
-        // Usar post._id para obtener el conteo de comentarios
-        const commentCount = await getCommentCount(post._id); 
+        // console.log(post); // Puedes dejar este log si quieres seguir viendo el objeto post
+
+        // ¡ELIMINAR LA LLAMADA A getCommentCount! El conteo ya está en post.commentCount.
+        // const commentCount = await getCommentCount(post._id); 
 
         const card = document.createElement('div');
         card.className = 'tutorials-list__card';
@@ -83,11 +86,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </div>
                     <div class="card-comments">
                         <img src="https://cdn-icons-png.flaticon.com/512/1380/1380338.png" width="24" height="24" alt="Comentarios">
-                        <p>${commentCount}</p>
+                         <p>${post.commentCount || 0}</p> <!-- ¡USAR post.commentCount DIRECTAMENTE! -->
                     </div>
                     <div class="card-web-link">
                         <a href="/articles/${post.slug}" data-article-id="${post._id}" data-slug="${post.slug}">
-                            <img src="https://icon-library.com/images/url-icon-png/url-icon-png-7.jpg" width="24" height="24" alt="Enlace Web">
+                            <img src="https://img.icons8.com/?size=100&id=3685&format=png&color=000000" width="24" height="24" alt="Enlace Web">
                         </a>
                     </div>
                 </div>

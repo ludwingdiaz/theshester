@@ -1,0 +1,277 @@
+<div data-article-id="<%= tutorial._id %>"> 
+    <h1><%= tutorial.title %></h1> 
+    <p>Vistas: <span id="article-views"><%= tutorial.views %></span></p> 
+
+    <section class="step">
+        <h2>💡 Introducción: Construyendo tu Laboratorio de Seguridad con Vagrant</h2>
+        <p>En el ámbito de la ciberseguridad, disponer de un entorno de laboratorio controlado es crucial para la práctica, experimentación y prueba de herramientas sin comprometer sistemas de producción. Vagrant se posiciona como una herramienta excepcional para automatizar la creación y gestión de entornos virtualizados de desarrollo y prueba.</p>
+        <p>En esta guía exhaustiva, te mostraremos cómo configurar un laboratorio de seguridad robusto y adaptable utilizando Vagrant y VirtualBox. Desplegaremos múltiples máquinas virtuales con roles y sistemas operativos diversos, incluyendo un Sistema de Detección de Intrusos (IDS), un Sistema de Gestión de Información y Eventos de Seguridad (SIEM), un Endpoint de prueba, y, como novedad, máquinas con Ubuntu, Windows y un host Docker.</p>
+        <h3>Requisitos Previos:</h3>
+        <ul>
+            <li>✅ <a href="https://www.vagrantup.com/downloads" target="_blank">Vagrant</a> instalado.</li>
+            <li>✅ <a href="https://www.virtualbox.org/wiki/Downloads" target="_blank">VirtualBox</a> instalado.</li>
+            <li>✅ Plugin <code>vagrant-disksize</code> para modificar el tamaño del disco (opcional pero altamente recomendado):
+                <pre><code>vagrant plugin install vagrant-disksize</code></pre>
+            </li>
+            <li>✅ Conexión a internet para descargar las "boxes" de Vagrant.</li>
+        </ul>
+    </section>
+
+    <section class="step">
+        <h2>⚙️ El Vagrantfile: Orquestando tu Laboratorio</h2>
+        <p>El <code>Vagrantfile</code> es el cerebro de tu configuración. Aquí se definen las máquinas virtuales, sus propiedades (nombre de host, IP, memoria, CPUs) y los scripts de aprovisionamiento que se ejecutarán al iniciar cada máquina. A continuación, te presentamos un <code>Vagrantfile</code> ampliado para tu laboratorio de seguridad:</p>
+        <pre><code>VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  # Configuración global para todas las VMs si no se sobrescribe
+  config.vm.box_check_update = true # Verifica actualizaciones de boxes al iniciar
+
+  # IDS (Sistema de Detección de Intrusos) - Rocky Linux 9
+  config.vm.define "ids" do |ids|
+    ids.vm.box = "rockylinux/9" # Box base para IDS
+    ids.vm.hostname = "ids"
+    ids.vm.network "private_network", ip: "192.168.56.10"
+    ids.vm.provision "shell", path: "scripts/setup_ids.sh" # Script de aprovisionamiento para IDS
+    ids.disksize.size = '100GB' # Asigna un disco grande para logs de IDS
+    ids.vm.provider "virtualbox" do |vb|
+      vb.memory = 2048 # 2GB de RAM
+      vb.cpus = 2 # 2 CPUs
+      vb.name = "IDS_Lab" # Nombre de la VM en VirtualBox
+    end
+  end
+
+  # SIEM (Sistema de Gestión de Información y Eventos de Seguridad) - Rocky Linux 9
+  config.vm.define "siem" do |siem|
+    siem.vm.box = "rockylinux/9" # Box base para SIEM
+    siem.vm.hostname = "siem"
+    siem.vm.network "private_network", ip: "192.168.56.20"
+    siem.vm.provision "shell", path: "scripts/setup_siem.sh" # Script de aprovisionamiento para SIEM
+    siem.disksize.size = '30GB' # Suficiente para el SIEM y sus datos
+    siem.vm.provider "virtualbox" do |vb|
+      vb.memory = 4096 # 4GB de RAM
+      vb.cpus = 2 # 2 CPUs
+      vb.name = "SIEM_Lab" # Nombre de la VM en VirtualBox
+    end
+  end
+
+  # Endpoint (Máquina de prueba/víctima) - Rocky Linux 9
+  config.vm.define "endpoint" do |ep|
+    ep.vm.box = "rockylinux/9" # Box base para el Endpoint
+    ep.vm.hostname = "endpoint"
+    ep.vm.network "private_network", ip: "192.168.56.30"
+    ep.vm.provision "shell", path: "scripts/setup_endpoint.sh" # Script de aprovisionamiento para Endpoint
+    ep.disksize.size = '20GB' # Suficiente para un sistema base
+    ep.vm.provider "virtualbox" do |vb|
+      vb.memory = 1024 # 1GB de RAM
+      vb.cpus = 1 # 1 CPU
+      vb.name = "Endpoint_Lab" # Nombre de la VM en VirtualBox
+    end
+  end
+
+  # Ubuntu Server (Servidor adicional/Web/DB)
+  config.vm.define "ubuntu" do |ubuntu|
+    ubuntu.vm.box = "hashicorp/bionic64" # Box de Ubuntu Server 18.04 LTS (o "ubuntu/focal64" para 20.04)
+    ubuntu.vm.hostname = "ubuntu"
+    ubuntu.vm.network "private_network", ip: "192.168.56.40"
+    ubuntu.vm.provision "shell", path: "scripts/setup_ubuntu.sh" # Script de aprovisionamiento para Ubuntu
+    ubuntu.disksize.size = '40GB'
+    ubuntu.vm.provider "virtualbox" do |vb|
+      vb.memory = 2048
+      vb.cpus = 2
+      vb.name = "Ubuntu_Lab"
+    end
+  end
+
+  # Windows 10 (Requiere box específica y licencia/evaluación)
+  # NOTA: Las boxes de Windows suelen ser muy grandes y requieren más recursos.
+  # Asegúrate de tener suficiente espacio en disco y RAM.
+  # Puedes encontrar boxes de Windows en Vagrant Cloud o crearlas tú mismo.
+  # Ejemplo de box: "gusztavvargadr/windows-10" o "StefanScherer/windows_10"
+  # La descarga puede tardar mucho.
+  config.vm.define "windows" do |windows|
+    windows.vm.box = "gusztavvargadr/windows-10" # O la box de Windows que prefieras (ej. "StefanScherer/windows_10")
+    windows.vm.hostname = "windows"
+    windows.vm.network "private_network", ip: "192.168.56.50"
+    windows.vm.provision "shell", path: "scripts/setup_windows.ps1" # Script de aprovisionamiento para Windows (PowerShell)
+    windows.disksize.size = '80GB' # Windows necesita un disco grande
+    windows.vm.provider "virtualbox" do |vb|
+      vb.memory = 4096 # Windows necesita al menos 4GB de RAM
+      vb.cpus = 2
+      vb.name = "Windows_Lab"
+      # Opcional: Deshabilitar la interfaz gráfica si no la necesitas para ahorrar recursos
+      # vb.gui = false
+    end
+  end
+
+  # Docker Host (Máquina para ejecutar contenedores) - Rocky Linux 9
+  # Aquí puedes desplegar un host Docker y luego usar scripts para instalar Docker y Docker Compose
+  config.vm.define "docker-host" do |docker_host|
+    docker_host.vm.box = "rockylinux/9" # O "ubuntu/focal64" si prefieres Ubuntu para Docker
+    docker_host.vm.hostname = "docker-host"
+    docker_host.vm.network "private_network", ip: "192.168.56.60"
+    docker_host.vm.provision "shell", path: "scripts/setup_docker.sh" # Script para instalar Docker
+    docker_host.disksize.size = '50GB' # Suficiente para imágenes y contenedores
+    docker_host.vm.provider "virtualbox" do |vb|
+      vb.memory = 2048
+      vb.cpus = 2
+      vb.name = "Docker_Host_Lab"
+    end
+  end
+
+end
+</code></pre>
+    </section>
+
+    <section class="step">
+        <h2>📁 Estructura de Directorios para los Scripts</h2>
+        <p>Para que el <code>Vagrantfile</code> pueda encontrar y ejecutar tus scripts de aprovisionamiento, es fundamental que organices tus archivos de la siguiente manera. Debes crear una carpeta llamada <code>scripts</code> en el mismo directorio donde resides tu <code>Vagrantfile</code>. Dentro de esta carpeta, guardarás todos los archivos <code>.sh</code> (para Linux) y <code>.ps1</code> (para Windows) que Vagrant ejecutará automáticamente.</p>
+        <pre><code>.
+├── Vagrantfile
+└── scripts/
+    ├── setup_ids.sh
+    ├── setup_siem.sh
+    ├── setup_endpoint.sh
+    ├── setup_ubuntu.sh
+    ├── setup_windows.ps1 <span class="comment"># ¡Importante: extensión .ps1 para PowerShell!</span>
+    └── setup_docker.sh
+                </code></pre>
+        <h3>Ejemplos de Scripts de Aprovisionamiento:</h3>
+        <p><strong><code>scripts/setup_ids.sh</code> (para Rocky Linux):</strong></p>
+        <pre><code>#!/bin/bash
+<span class="comment"># Script de aprovisionamiento para la máquina IDS (Rocky Linux)</span>
+echo "Actualizando sistema IDS y preparando para Suricata..."
+sudo dnf update -y
+sudo dnf install -y epel-release
+sudo dnf install -y suricata # Ejemplo de instalación de Suricata
+sudo systemctl enable suricata
+sudo systemctl start suricata
+echo "IDS configurado y Suricata iniciado."
+                </code></pre>
+        <p><strong><code>scripts/setup_ubuntu.sh</code>:</strong></p>
+        <pre><code>#!/bin/bash
+<span class="comment"># Script de aprovisionamiento para la máquina Ubuntu Server</span>
+echo "Actualizando sistema Ubuntu..."
+sudo apt update -y
+sudo apt upgrade -y
+echo "Ubuntu configurado."
+                </code></pre>
+        <p><strong><code>scripts/setup_docker.sh</code>:</strong></p>
+        <pre><code>#!/bin/bash
+<span class="comment"># Script de aprovisionamiento para el host Docker (Rocky Linux)</span>
+echo "Instalando Docker en el host..."
+sudo dnf install -y dnf-plugins-core # Para Rocky Linux
+sudo dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+sudo dnf install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo usermod -aG docker vagrant # Añadir usuario vagrant al grupo docker para ejecutar docker sin sudo
+echo "Docker instalado y configurado. Reinicia la sesión SSH para aplicar cambios de grupo."
+                </code></pre>
+        <p><strong>Para <code>scripts/setup_windows.ps1</code>:</strong></p>
+        <p>Los scripts de aprovisionamiento para máquinas Windows se escriben en PowerShell y deben tener la extensión <code>.ps1</code>. Vagrant los detecta automáticamente. La configuración de Windows puede ser más compleja y requerir la descarga de paquetes o la ejecución de comandos de PowerShell para instalar software o ajustar configuraciones.</p>
+        <pre><code><span class="comment"># scripts/setup_windows.ps1</span>
+<span class="comment"># Ejemplo de script de aprovisionamiento para Windows (PowerShell)</span>
+Write-Host "Iniciando aprovisionamiento de Windows..."
+
+<span class="comment"># Ejemplo: Instalar Chocolatey (gestor de paquetes para Windows)</span>
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+
+<span class="comment"># Ejemplo: Instalar Notepad++ con Chocolatey</span>
+choco install notepadplusplus -y
+
+Write-Host "Aprovisionamiento de Windows completado."
+                </code></pre>
+    </section>
+
+    <section class="step">
+        <h2>🚀 Comandos Esenciales de Vagrant</h2>
+        <p>Una vez que hayas configurado tu <code>Vagrantfile</code> y los scripts de aprovisionamiento, puedes gestionar tu laboratorio de seguridad utilizando estos comandos clave en la terminal, desde el directorio donde se encuentra tu <code>Vagrantfile</code>:</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Comando</th>
+                    <th>Función</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>vagrant up</code></td>
+                    <td>Inicia y aprovisiona todas las máquinas definidas en el <code>Vagrantfile</code>.</td>
+                </tr>
+                <tr>
+                    <td><code>vagrant up [nombre_maquina]</code></td>
+                    <td>Inicia y aprovisiona una máquina específica (ej. <code>vagrant up siem</code>).</td>
+                </tr>
+                <tr>
+                    <td><code>vagrant ssh [nombre_maquina]</code></td>
+                    <td>Conéctate por SSH a una máquina específica (ej. <code>vagrant ssh ids</code>).</td>
+                </tr>
+                <tr>
+                    <td><code>vagrant halt</code></td>
+                    <td>Apaga todas las máquinas virtuales de forma segura.</td>
+                </tr>
+                <tr>
+                    <td><code>vagrant halt [nombre_maquina]</code></td>
+                    <td>Apaga una máquina específica.</td>
+                </tr>
+                <tr>
+                    <td><code>vagrant suspend</code></td>
+                    <td>Suspende el estado de todas las máquinas (guarda la RAM y el estado actual).</td>
+                </tr>
+                <tr>
+                    <td><code>vagrant resume</code></td>
+                    <td>Reanuda las máquinas suspendidas.</td>
+                </tr>
+                <tr>
+                    <td><code>vagrant destroy</code></td>
+                    <td>Elimina todas las máquinas virtuales y sus datos del disco.</td>
+                </tr>
+                <tr>
+                    <td><code>vagrant destroy [nombre_maquina]</code></td>
+                    <td>Elimina una máquina específica.</td>
+                </tr>
+                <tr>
+                    <td><code>vagrant status</code></td>
+                    <td>Muestra el estado actual de todas las máquinas.</td>
+                </tr>
+                <tr>
+                    <td><code>vagrant reload</code></td>
+                    <td>Reinicia las máquinas virtuales, aplicando cambios en el <code>Vagrantfile</code> o scripts.</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section class="summary">
+        <h2>🎯 Conclusión Final: Tu Laboratorio de Seguridad a un Comando de Distancia</h2>
+        <p>Con esta configuración de Vagrant, ahora posees un laboratorio de ciberseguridad flexible, potente y completamente reproducible. La capacidad de definir múltiples sistemas operativos y roles te permite simular escenarios complejos y probar diversas herramientas de seguridad.</p>
+        <p>Puedes adaptar y expandir los scripts de aprovisionamiento para instalar software específico (como el ELK Stack, agentes EDR, herramientas forenses, etc.) en cada máquina, creando un entorno de pruebas a medida para tus necesidades de aprendizaje, investigación o desarrollo. ¡Experimenta, aprende y fortalece tus habilidades en ciberseguridad con tu nuevo laboratorio virtual!</p>
+        <p>¿Tienes alguna pregunta sobre la configuración, necesitas ayuda con un script de aprovisionamiento específico, o quieres compartir tus propias ideas para el laboratorio? ¡Déjame un comentario!</p>
+    </section>
+    
+    <!-- Sección de Comentarios -->
+    <section id="comments-section">
+        <h2>Comentarios</h2>
+        <div class="comment-form-container step">
+            <h3>Deja tu comentario</h3>
+            <form id="comment-form">
+                <div class="form-group">
+                    <!-- Este div está vacío en tu ejemplo, puedes quitarlo si no lo usas -->
+                </div>
+                <div class="form-group">
+                    <label for="comment-text">Comentario:</label>
+                    <textarea id="comment-text" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="version-button">Enviar Comentario</button>
+                <p id="comment-message" style="margin-top: 10px;"></p>
+            </form>
+        </div>
+
+        <div id="comments-list-container" class="step">
+            <h3>Comentarios (<span id="comments-count">0</span>)</h3>
+            <div id="comments-list">
+                <p>Cargando comentarios...</p>
+            </div>
+        </div>
+    </section>
+</div>

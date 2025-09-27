@@ -1,0 +1,311 @@
+<div data-article-id="<%= tutorial._id %>">
+    <h1><%= tutorial.title %></h1>
+    <p>Vistas: <span id="article-views"><%= tutorial.views %></span></p>
+    <hr>
+
+    <section class="step">
+        <h2>🚀 Introducción: Gestión de Copias de Seguridad y Servidores FTP en Linux</h2>
+        <p>En el ámbito de la administración de sistemas Linux, la **gestión de copias de seguridad** y la **transferencia de archivos** son tareas fundamentales. Este tutorial te guiará a través de la configuración de copias de seguridad automatizadas utilizando <strong>Crontab</strong> y <strong>Tar</strong>, y la implementación de un **servidor FTP** con <strong>vsftpd</strong> para facilitar la transferencia de archivos de manera eficiente y controlada.</p>
+        <p>Aprenderás a instalar las herramientas necesarias, configurar scripts de respaldo, programar tareas periódicas y asegurar tu servidor FTP, junto con la verificación de su funcionamiento desde el lado del cliente.</p>
+    </section>
+
+    <section class="step">
+        <h2>💾 Copias de Seguridad con Crontab y Tar</h2>
+        <h3>🔍 ¿Qué es Crontab?</h3>
+        <p><strong>Crontab</strong> (del inglés "cron table") es una utilidad de Linux que permite a los usuarios **programar comandos o scripts para que se ejecuten automáticamente** en un momento o intervalo determinado en el futuro. Es un archivo de texto especial que contiene una lista de todos los scripts a ejecutar. Generalmente, cada usuario del sistema posee su propio fichero crontab.</p>
+
+        <h3>🛠️ Instalación de Cron</h3>
+        <p>Para poder programar tareas, primero debemos asegurarnos de que el servicio `cron` está instalado en nuestro servidor. Utiliza el siguiente comando en tu terminal de Ubuntu:</p>
+        <pre><code class="language-bash">root@ubuntu18:~# apt-get install cron</code></pre>
+        <p>Si ya está instalado, verás un mensaje similar a este:</p>
+        <pre><code class="language-bash">Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias
+Leyendo la información de estado... Hecho
+cron ya está en su versión más reciente (3.0p11-128.lubuntul)
+0 actualizados, 0 nuevos se instalarán, 0 para eliminar y 12 no actualizados.
+root@ubuntu18:~#</code></pre>
+
+        <h3>📝 Creación del Script de Copia de Seguridad (`sc.sh`)</h3>
+        <p>En primer lugar, vamos a configurar un script para nuestra copia de seguridad. Como la mayoría, será un archivo `.sh`. Crea un archivo llamado `sc.sh` en tu directorio home (o donde prefieras) usando `nano`:</p>
+        <pre><code class="language-bash">nano sc.sh</code></pre>
+        <p>Pega el siguiente contenido dentro del editor `nano`:</p>
+        <pre><code class="language-bash">#!/bin/bash
+umount /shester
+tar -cvf "backups.tar" /proyecto
+mount -t cifs //172.16.2.9/CopiastroGrupo /shester -o username=invitado -o password=invitado
+date >> /log.txt
+"/backups.tar" /shester
+</code></pre>
+        <p>Para **guardar y salir** de `nano`, presiona `Ctrl + O` (para guardar), luego `Enter` para confirmar el nombre del archivo, y finalmente `Ctrl + X` (para salir).</p>
+        <h4>Explicación del Script:</h4>
+        <ul>
+            <li>`#!/bin/bash`: Indica que el script debe ejecutarse con Bash.</li>
+            <li>`umount /shester`: Desmonta el directorio `/shester`. Esto es útil si ya estaba montado de una ejecución anterior.</li>
+            <li>`tar -cvf "backups.tar" /proyecto`: Crea un archivo comprimido (`.tar`) llamado `backups.tar` que contiene todo el contenido del directorio `/proyecto`.
+                <ul>
+                    <li>`-c`: Crea un nuevo archivo.</li>
+                    <li>`-v`: Muestra el progreso detallado (verboso).</li>
+                    <li>`-f`: Especifica el nombre del archivo de salida.</li>
+                </ul>
+            </li>
+            <li>`mount -t cifs //172.16.2.9/CopiastroGrupo /shester -o username=invitado -o password=invitado`: Monta un recurso compartido de red (CIFS) ubicado en la IP `172.16.2.9` y la carpeta `CopiastroGrupo` en tu directorio local `/shester`. Utiliza el usuario `invitado` y la contraseña `invitado` para la autenticación. Este paso es crucial para enviar la copia a tu compañero.</li>
+            <li>`date >> /log.txt`: Añade la fecha y hora actual al final del archivo `/log.txt`. Esto te permite llevar un registro de cuándo se ejecutaron las copias.</li>
+            <li>`"/backups.tar" /shester`: Esta línea parece ser un comentario o una nota, ya que no es un comando ejecutable por sí mismo en este contexto. Asumimos que la intención es confirmar que `backups.tar` se guardará en el directorio montado `/shester`.</li>
+        </ul>
+        <p>Dale permisos de ejecución al script para que pueda ser ejecutado:</p>
+        <pre><code class="language-bash">root@ubuntu18:/ chmod +x sc.sh</code></pre>
+        <p>Puedes ejecutar el script manualmente para probarlo. Mostrará las rutas de los directorios de los que hará la copia:</p>
+        <pre><code class="language-bash">root@ubuntu18://sc.sh
+car: Removing leading / from member names
+/proyecto/
+/proyecto/departamentos/
+/proyecto/profesores-documentacion/
+/proyecto/alumnos/</code></pre>
+        <p>Una vez ejecutado, deberías ver los directorios listados por el script en tu directorio actual (o donde hayas guardado `backups.tar`):</p>
+        <pre><code class="language-bash">root@ubuntu18:/ ls
+backups.tar  log.txt  sc.sh  shester  ... (otros archivos y directorios)</code></pre>
+        <p>Y el contenido del log debería mostrar las horas de las ejecuciones:</p>
+        <pre><code class="language-bash">root@ubuntu18:/ cat log.txt
+lun mar 11 12:39:04 UTC 2019
+lun mar 11 12:58:51 UTC 2019
+lun mar 11 13:11:09 UTC 2019
+</code></pre>
+
+        <h3>⏰ Programación de la Copia con Crontab</h3>
+        <p>Para programar tu copia, edita el crontab del usuario actual con `crontab -e`:</p>
+        <pre><code class="language-bash">crontab -e</code></pre>
+        <p>Esto abrirá el editor `nano` (o tu editor predeterminado). Añade una línea al final del archivo para ejecutar tu script `sc.sh` a la hora deseada. Por ejemplo, para ejecutarlo todos los días a las 18:40:</p>
+        <pre><code class="language-bash"># m h dom mon dow command
+40 18 * * * /ruta/completa/a/sc.sh 2>&1</code></pre>
+        <p>**Importante:** Reemplaza `/ruta/completa/a/sc.sh` con la ruta real donde guardaste tu script (por ejemplo, `/home/tu_usuario/sc.sh` o `/root/sc.sh` si lo hiciste como root).</p>
+        <p>La parte `2>&1` redirige la salida de errores (stderr) al mismo lugar que la salida estándar (stdout), lo cual es útil para depuración.</p>
+        <p>Para **guardar y salir** de `nano`, presiona `Ctrl + O`, luego `Enter`, y finalmente `Ctrl + X`.</p>
+        <p>Aquí tienes una tabla con los campos de Crontab para que puedas programar tus tareas:</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Campo</th>
+                    <th>Descripción</th>
+                    <th>Valores</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>`m` (Minute)</td>
+                    <td>Minuto de la hora</td>
+                    <td>0-59</td>
+                </tr>
+                <tr>
+                    <td>`h` (Hour)</td>
+                    <td>Hora del día</td>
+                    <td>0-23</td>
+                </tr>
+                <tr>
+                    <td>`dom` (Day of month)</td>
+                    <td>Día del mes</td>
+                    <td>1-31</td>
+                </tr>
+                <tr>
+                    <td>`mon` (Month)</td>
+                    <td>Mes del año</td>
+                    <td>1-12</td>
+                </tr>
+                <tr>
+                    <td>`dow` (Day of week)</td>
+                    <td>Día de la semana</td>
+                    <td>0-6 (0=domingo, 6=sábado)</td>
+                </tr>
+                <tr>
+                    <td>`command`</td>
+                    <td>Comando a ejecutar</td>
+                    <td>Cualquier comando o script</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>✅ Verificación de la Copia de Seguridad</h3>
+        <p>Para comprobar si la copia de seguridad ha llegado a tu compañero, puedes acceder a la ruta compartida usando la IP, carpeta, contraseña y nombre de usuario que él te ha proporcionado. Deberías ver los archivos de copia, como `backups.tar`. Por ejemplo, si accedes a la carpeta compartida desde un explorador de archivos en Windows, verías algo similar a esto:</p>
+        <pre><code class="language-text">Red \\172.16.2.9\CopiastroGrupo
+
+Contenido:
+- backup_diario (Archivo WinRAR, 20 KB, 24/03/2019 19:12)
+- backups (Archivo WinRAR, 10 KB, 24/03/2019 18:46)</code></pre>
+        <p>Si es un compañero quien te envía su copia, debes crearle una carpeta, usuario y contraseña con los permisos adecuados en tu sistema.</p>
+    </section>
+
+    <section class="step">
+        <h2>🌐 Configuración de Servidor FTP (vsftpd)</h2>
+        <p>El **Protocolo de Transferencia de Archivos (FTP)** es esencial para mover archivos entre ordenadores. Está basado en una arquitectura cliente-servidor, permitiendo subir y descargar archivos de un servidor remoto.</p>
+
+        <h3>🤔 ¿Qué es FTP?</h3>
+        <ul>
+            <li>**File Transfer Protocol** (protocolo de transferencia de archivos).</li>
+            <li>Utiliza el **Puerto 21** para conectarse de forma remota y autenticarse, y el **Puerto 20** para la transferencia de archivos.</li>
+        </ul>
+
+        <h3>💻 ¿Qué es FileZilla?</h3>
+        <p>Es un programa **cliente FTP** que permite conectarse a un ordenador remoto mediante el protocolo FTP para intercambiar archivos. Es multiplataforma, de código abierto y soporta protocolos FTP, SFTP y FTPS.</p>
+
+        <h3>🔗 Herramientas Adicionales</h3>
+        <ul>
+            <li><strong>`smbclient`</strong>: Funciona de forma similar a FTP, permitiendo intercambiar ficheros con comandos como `get` y `put` con servidores SMB. Se instala con `apt-get install smbclient`.</li>
+            <li><strong>`cifs-utils`</strong>: Sirve para montar recursos de redes CIFS compartidos en máquinas remotas en nuestro sistema de archivos Linux local. Se instala con `apt-get install cifs-utils`.</li>
+        </ul>
+
+        <h3>🛠️ Instalación y Verificación de vsftpd</h3>
+        <p>Para configurar un servidor FTP, instalaremos `vsftpd` (Very Secure FTP Daemon), un servidor FTP muy popular por su seguridad y robustez. Instálalo con:</p>
+        <pre><code class="language-bash">root@ubuntu18:/ apt-get install vsftpd</code></pre>
+        <p>Una vez instalado, verifica que funciona conectándote a la IP de tu servidor FTP desde la terminal. Si la instalación fue exitosa, verás un mensaje de bienvenida:</p>
+        <pre><code class="language-bash">root@ubuntu18:// ftp 172.16.2.11
+Connected to 172.16.2.11.
+220 haz accedido al servidor FTP de shester.
+Name (172.16.2.11:stucom):</code></pre>
+        <p>Luego, puedes autenticarte con un usuario creado en el sistema (por ejemplo, `shester`) y listar el contenido del directorio con `ls`:</p>
+        <pre><code class="language-bash">Name (172.16.2.1l:stucom): shester
+331 Please specify the password.
+Password: [introduce_tu_contraseña]
+230 Login successful.
+Remote system type is UNIX.
+Using binary mode to transfer files.
+ftp> cd
+250 Directory successfully changed.
+ftp> ls
+200 PORT command successful. Consider using PASV.
+150 Here comes the directory listing.
+-rw-r--r--    1 10       0            0 Mar 05 11:13 archivo-mar mar 5 11:13:06 UTC 2019
+-rw-r--r--    1 10       0            0 Mar 05 11:37 archivo-mar mar 5 11:37:46 UTC 2019
+-rw-r--r--    1 10       0            0 Mar 05 11:38 archivo-mar mar 5 11:38:37 UTC 2019
+-rw-r--r--    1 10       0            0 Mar 05 11:53 archivo-mar mar 5 11:53:04 UTC 2019
+-rw-r--r--    1 10       0            0 Mar 05 12:00 archivo-mar mar 5 12:00:24 UTC 2019
+-rw-r--r--    1 10       0        10240 Mar 05 10:53 archivo mar mar 5 10:53:37 UTC 2019
+-rw-r--r--    1 10       0        10240 Mar 05 11:03 archivo mar mar 5 11:03:15 UTC 2019
+ftp> bye
+221 Goodbye.</code></pre>
+
+        <h3>🔒 Configuración Avanzada de `vsftpd.conf`</h3>
+        <p>El fichero principal de configuración de vsftpd se encuentra en `/etc/vsftpd.conf`. Edítalo con `nano`:</p>
+        <pre><code class="language-bash">root@ubuntu18:/etc# nano vsftpd.conf</code></pre>
+        <p>Dentro de este archivo, buscarás y modificarás (comentarás o descomentarás) las líneas para definir los permisos y comportamientos de tu servidor FTP. Asegúrate de **guardar y salir** (`Ctrl + O`, `Enter`, `Ctrl + X`) después de cada edición.</p>
+        <ul>
+            <li>**Mensaje de bienvenida:** Personaliza el banner de inicio de sesión. Busca la línea `#ftpd_banner=Welcome to blah FTP service.` y modifícala:
+                <pre><code>ftpd_banner=haz accedido al servidor FTP de shester.</code></pre>
+            </li>
+            <li>**Permitir usuarios anónimos y locales:** Para permitir el acceso de usuarios anónimos (sin cuenta) y usuarios locales del servidor. Busca las líneas correspondientes y asegúrate de que estén configuradas así:
+                <pre><code>anonymous_enable=YES
+local_enable=YES</code></pre>
+            </li>
+            <li>**Permitir escritura:** Para que los usuarios puedan escribir (subir archivos) y no solo descargar. Busca la línea `#write_enable=YES` y descoméntala:
+                <pre><code>write_enable=YES</code></pre>
+            </li>
+            <li>**Enjaular usuarios (chroot):** Para que los usuarios locales queden restringidos a su directorio home (o a un directorio específico) y no puedan navegar por todo el sistema de archivos del servidor. Para permitir a ciertos usuarios navegar "hacia arriba" (fuera de su directorio enjaulado), se usa una lista. Asegúrate de que las siguientes líneas estén configuradas:
+                <pre><code>chroot_local_user=YES
+chroot_list_enable=YES
+chroot_list_file=/etc/vsftpd.chroot_list
+allow_writeable_chroot=YES</code></pre>
+                <p>Ahora, crea el fichero `/etc/vsftpd.chroot_list` y lista los usuarios que **no** serán enjaulados (es decir, podrán navegar por todo el árbol de directorios). Recuerda que estos usuarios deben ser creados previamente en el sistema. Abre el archivo con `nano`:</p>
+                <pre><code class="language-bash">nano /etc/vsftpd.chroot_list</code></pre>
+                <p>Añade los nombres de usuario, uno por línea:</p>
+                <pre><code class="language-text">shester
+jordi
+fran
+alex
+carles
+# Estos usuarios tienen que ser creados antes de que sean enjaulados.</code></pre>
+                <p>Para **guardar y salir** de `nano`, presiona `Ctrl + O`, luego `Enter`, y finalmente `Ctrl + X`.</p>
+            </li>
+            <li>**Permitir crear directorios anónimos:** Para que los usuarios FTP anónimos puedan crear nuevos directorios. Busca la línea `#anon_mkdir_write_enable=YES` y descoméntala:
+                <pre><code>anon_mkdir_write_enable=YES</code></pre>
+            </li>
+            <li>**Permitir cargar archivos anónimos:** Para que los usuarios anónimos puedan subir archivos a un directorio writable (necesitarás crear uno). Busca la línea `#anon_upload_enable=YES` y descoméntala:
+                <pre><code>anon_upload_enable=YES</code></pre>
+            </li>
+            <li>**Directorio raíz local:** Define un directorio raíz para que los usuarios sean dirigidos automáticamente a un directorio específico al iniciar sesión. Añade esta línea al inicio o en una sección lógica del archivo `vsftpd.conf`:
+                <pre><code>local_root=/proyecto</code></pre>
+            </li>
+        </ul>
+
+        <h3>🔄 Reiniciar y Comprobar el Servicio FTP</h3>
+        <p>Después de realizar todos los cambios en `vsftpd.conf` y `vsftpd.chroot_list`, guarda los archivos y reinicia el servicio `vsftpd` para que los cambios surtan efecto. Luego, comprueba su estado:</p>
+        <pre><code class="language-bash">root@ubuntu18:/etc# service vsftpd restart
+root@ubuntu18:/etc# service vsftpd status</code></pre>
+        <p>Deberías ver que el servicio está activo (`active (running)`):</p>
+        <pre><code class="language-bash">vsftpd.service - vsftpd FTP server
+   Loaded: loaded (/lib/systemd/system/vsftpd.service; enabled; vendor preset: e
+   Active: active (running) since Mon 2019-03-18 19:29:52 UTC; 4s ago
+   ...
+   mar 18 19:29:52 ubuntu18 systemd[1]: Starting vsftpd FTP server.
+   mar 18 19:29:52 ubuntu18 systemd[1]: Started vsftpd FTP server.</code></pre>
+
+        <h3>✅ Comprobación de Conexión FTP desde un Cliente</h3>
+        <p>Para verificar la conexión desde un cliente, primero puedes usar `nslookup` en Windows para asegurarte de que tu DNS funciona correctamente y resuelve el nombre de tu servidor FTP (ej. `shester.local`) a su IP:</p>
+        <pre><code class="language-text">Microsoft Windows [Versión 6.1.7601]
+Copyright (c) 2009 Microsoft Corporation. Reservados todos los derechos.
+
+C:\Users\ludwing>nslookup
+Servidor predeterminado: shester.local
+Address: 172.16.2.11
+
+> shester.local
+Servidor: shester.local
+Address: 172.16.2.11
+Nombre: shester.local
+Address: 172.16.2.11
+
+></code></pre>
+        <p>Finalmente, instala un cliente FTP como **FileZilla**. Conéctate usando el nombre de usuario de uno de los usuarios enjaulados y la DNS de tu servidor FTP en lugar de la IP. Una vez conectado, deberías ver el contenido del directorio al que el usuario tiene acceso (en este caso, `/proyecto` si configuraste `local_root=/proyecto`):</p>
+        <pre><code class="language-text">Estado: Conexión establecida, esperando el mensaje de bienvenida...
+Estado: Servidor no seguro, no soporta FTP sobre TLS.
+Estado: Servidor shester.local
+Estado: Registrado en
+Estado: Recuperando el listado del directorio...
+Estado: Directorio "/proyecto" listado correctamente
+
+Sitio local: C:\Users\ludwing
+Sitio remoto: /proyecto
+
+Contenido del directorio remoto:
+- alumnos (Carpeta de archivos, 28/01/2019 13:00)
+- departamentos (Carpeta de archivos, 18/01/2019 20:00)
+- pas (Carpeta de archivos, 28/01/2019 13:00)
+- profesores-documentacion (Carpeta de archivos, 28/01/2019 13:00)
+4 directorios</code></pre>
+    </section>
+
+    <section class="summary">
+        <h2>🎯 Conclusión Final: Automatización y Transferencia Segura</h2>
+        <p>Con esta guía, has aprendido a establecer un sistema robusto de copias de seguridad automatizadas en Linux utilizando **Crontab** y **Tar**, asegurando la integridad y disponibilidad de tus datos. Además, has configurado un **servidor FTP** con **vsftpd**, permitiendo la transferencia eficiente y controlada de archivos, y comprendiendo cómo gestionar usuarios y permisos.</p>
+        <p>La combinación de estas herramientas te proporciona un control completo sobre la gestión de datos y la comunicación en tus entornos Linux. ¡Continúa explorando y aplicando estos conocimientos para fortalecer tus habilidades en administración de sistemas!</p>
+    </section>
+
+     <section class="step">
+        <h2>📚 Fuente</h2>
+        <p>Este tutorial se ha basado en la información proporcionada en el documento PDF:</p>
+        <p><a href="https://drive.google.com/file/d/1c0KKNTykubG6yrxn0OOFJo8bXb3VLatA/view?usp=sharing" target="_blank" rel="noopener noreferrer">CIFRADO PARTICIÓN WINDOWS.pdf</a></p>
+    </section>
+
+    <!-- Sección de Comentarios -->
+    <section id="comments-section">
+        <h2>Comentarios</h2>
+        <div class="comment-form-container step">
+            <h3>Deja tu comentario</h3>
+            <form id="comment-form">
+                <div class="form-group">
+                    <!-- Este div está vacío en tu ejemplo, puedes quitarlo si no lo usas -->
+                </div>
+                <div class="form-group">
+                    <label for="comment-text">Comentario:</label>
+                    <textarea id="comment-text" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="version-button">Enviar Comentario</button>
+                <p id="comment-message" style="margin-top: 10px;"></p>
+            </form>
+        </div>
+
+        <div id="comments-list-container" class="step">
+            <h3>Comentarios (<span id="comments-count">0</span>)</h3>
+            <div id="comments-list">
+                <p>Cargando comentarios...</p>
+            </div>
+        </div>
+    </section>
+</div>

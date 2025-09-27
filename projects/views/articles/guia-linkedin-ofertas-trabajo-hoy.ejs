@@ -1,0 +1,144 @@
+<div data-article-id="<%= tutorial._id %>"> 
+    <h1><%= tutorial.title %></h1> 
+    <p>Vistas: <span id="article-views"><%= tutorial.views %></span></p> 
+
+    <section class="step">
+        <h2>🔍 Introducción</h2>
+        <p>En esta guía aprenderás:</p>
+        <ul>
+            <li>✅ Cómo filtrar ofertas publicadas exclusivamente HOY</li>
+            <li>✅ Trucos para recibir alertas en tiempo real (sin depender de LinkedIn)</li>
+            <li>✅ Cómo optimizar tu búsqueda para ser de los primeros en aplicar</li>
+            <li>✅ Estadísticas clave para aumentar tus posibilidades</li>
+        </ul>
+    </section>
+
+    <section class="step">
+        <h2>🚀 Paso 1: URL Mágica para Ofertas de HOY</h2>
+        <p>Estructura básica para Barcelona (programador web):</p>
+        <pre><code>https://www.linkedin.com/jobs/search/?keywords=programador%20web&location=Barcelona&f_TPR=r86400&sortBy=DD&f_JT=F,P,C,T&f_E=2,3,4&f_WT=1,2,3</code></pre>
+
+        <h3>🔑 Parámetros clave:</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Parámetro</th>
+                    <th>Función</th>
+                    <th>Valores útiles</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>keywords</code></td>
+                    <td>Palabras clave</td>
+                    <td>Ej: <code>programador web</code>, <code>frontend</code>, <code>backend</code></td>
+                </tr>
+                <tr>
+                    <td><code>location</code></td>
+                    <td>Ubicación</td>
+                    <td>Ej: <code>Barcelona</code>, <code>Madrid</code>, <code>Remoto</code></td>
+                </tr>
+                <tr>
+                    <td><code>f_TPR</code></td>
+                    <td>Filtra ofertas de las últimas 24hr</td>
+                    <td><code>r86400</code> (24h), <code>r43200</code> (12h), <code>r21600</code> (6h)</td>
+                </tr>
+                <tr>
+                    <td><code>sortBy</code></td>
+                    <td>Ordena por fecha (más nuevas primero)</td>
+                    <td>Solo <code>DD</code> funciona</td>
+                </tr>
+                <tr>
+                    <td><code>f_JT</code></td>
+                    <td>Tipo de empleo</td>
+                    <td><code>F</code> (Full-time), <code>P</code> (Part-time), <code>C</code> (Contrato), <code>T</code> (Temporal)</td>
+                </tr>
+                <tr>
+                    <td><code>f_E</code></td>
+                    <td>Nivel experiencia</td>
+                    <td><code>2</code> (Junior), <code>3</code> (Mid), <code>4</code> (Senior)</td>
+                </tr>
+                <tr>
+                    <td><code>f_WT</code></td>
+                    <td>Modalidad</td>
+                    <td><code>1</code> (Presencial), <code>2</code> (Híbrido), <code>3</code> (Remoto)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>📌 Ejemplos para otros puestos:</h3>
+        <p>Diseñador UX en Madrid (últimas 12h):</p>
+        <pre><code>https://www.linkedin.com/jobs/search/?keywords=diseñador%20ux&location=Madrid&f_TPR=r43200&sortBy=DD</code></pre>
+        <p>Marketing Digital Remoto (últimas 6h):</p>
+        <pre><code>https://www.linkedin.com/jobs/search/?keywords=marketing%20digital&f_WT=3&f_TPR=r21600&sortBy=DD</code></pre>
+    </section>
+
+    <section class="step">
+        <h2>⏰ Paso 2: Alertas en Tiempo Real (RSS)</h2>
+        <p>Cómo crear un feed RSS oculto de LinkedIn:</p>
+        <p>Toma tu URL de búsqueda (ej: la de programador web en Barcelona).</p>
+        <p>Añade <code>&feedType=rss</code> al final:</p>
+        <pre><code>https://www.linkedin.com/jobs/search/?keywords=programador%20web&location=Barcelona&feedType=rss</code></pre>
+        <p>Conéctalo a notificaciones:</p>
+        <ul>
+            <li>📱 <strong>Telegram:</strong> Usa <a href="https://t.me/IFTTTbot" target="_blank">@IFTTTbot</a> para recibir mensajes.</li>
+            <li>📧 <strong>Email:</strong> Configura un applet en <a href="https://ifttt.com/" target="_blank">IFTTT</a> con trigger RSS.</li>
+            <li>🔔 <strong>Zapier:</strong> Envía alertas a Slack o Discord.</li>
+        </ul>
+    </section>
+
+    <section class="step">
+        <h2>📊 Paso 3: Estadísticas Clave</h2>
+        <ul>
+            <li>El 80% de los reclutadores revisan CVs en las primeras 4h tras publicar la oferta.</li>
+            <li>Las ofertas de hoy tienen un 70% menos competencia que las de 3 días atrás.</li>
+            <li>Los candidatos que aplican en las primeras 24h tienen 3x más probabilidades de ser contactados.</li>
+        </ul>
+    </section>
+
+    <section class="step">
+        <h2>⚡ Paso 4: Trucos Adicionales</h2>
+        <p>1. <strong>Búsqueda en empresas específicas</strong></p>
+        <p>Usa <code>company:"Nombre"</code> en la URL:</p>
+        <pre><code>https://www.linkedin.com/jobs/search/?keywords=programador&company=%22Google%22</code></pre>
+        <p>2. <strong>Ofertas en inglés (para empresas internacionales)</strong></p>
+        <pre><code>https://www.linkedin.com/jobs/search/?keywords=web%20developer&location=Barcelona</code></pre>
+        <p>3. <strong>Forzar más resultados con <code>start=</code></strong></p>
+        <p>Añade <code>&start=25</code>, <code>&start=50</code>, etc., para ver ofertas ocultas.</p>
+    </section>
+
+    <section class="summary">
+        <h2>🎯 Conclusión Final</h2>
+        <ul>
+            <li>Usa la URL mágica con <code>f_TPR=r86400</code> y <code>sortBy=DD</code>.</li>
+            <li>Configura alertas RSS para recibir ofertas al instante.</li>
+            <li>Aplica en las primeras 4h para maximizar tus oportunidades.</li>
+        </ul>
+    </section>
+    
+    <!-- Sección de Comentarios (ya tenía las clases correctas) -->
+    <section id="comments-section">
+        <h2>Comentarios</h2>
+        <div class="comment-form-container step">
+            <h3>Deja tu comentario</h3>
+            <form id="comment-form">
+                <div class="form-group">
+                    <!-- Este div está vacío en tu ejemplo, puedes quitarlo si no lo usas -->
+                </div>
+                <div class="form-group">
+                    <label for="comment-text">Comentario:</label>
+                    <textarea id="comment-text" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="version-button">Enviar Comentario</button>
+                <p id="comment-message" style="margin-top: 10px;"></p>
+            </form>
+        </div>
+
+        <div id="comments-list-container" class="step">
+            <h3>Comentarios (<span id="comments-count">0</span>)</h3>
+            <div id="comments-list">
+                <p>Cargando comentarios...</p>
+            </div>
+        </div>
+    </section>
+</div>

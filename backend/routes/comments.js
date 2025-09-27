@@ -128,4 +128,5 @@ router.get('/user-summary', authMiddleware, async (req, res) => {
 
 console.log('Router de comentarios cargado y rutas definidas.');
 
+
 module.exports = router;
