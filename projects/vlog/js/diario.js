@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
     // URL base de tu backend
-    const BASE_URL_BACKEND = 'http://localhost:3000';
+    const BASE_URL_BACKEND = 'https://tutorial-views-api.onrender.com';
     console.log(`diario.js: Conectando al backend en: ${BASE_URL_BACKEND}`);
 
     // Función para mostrar mensajes (centralizada para feedback al usuario)
