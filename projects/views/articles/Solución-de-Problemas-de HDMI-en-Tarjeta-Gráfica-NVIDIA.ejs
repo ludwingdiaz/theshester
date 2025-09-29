@@ -1,0 +1,295 @@
+<div data-article-id="<%= tutorial._id %>"> 
+    <h1><%= tutorial.title %></h1> 
+    <p>Vistas: <span id="article-views"><%= tutorial.views %></span></p> 
+    <hr>
+
+    <section class="step">
+        <h2>💡 Introducción</h2>
+        <h2>La Pantalla Negra de HDMI con NVIDIA</h2>
+        <p>Este es un problema recurrente que afecta a muchos usuarios de **Ubuntu y derivados con hardware NVIDIA (como la GTX 1660 SUPER)**. Al intentar conectar un monitor por **HDMI** o **DisplayPort**, no obtienen señal. Generalmente, el sistema detecta la tarjeta, pero los controladores o la configuración del servidor gráfico (Xorg) impiden que la señal se active correctamente.</p>
+        <p>Esta guía te llevará a través de un diagnóstico exhaustivo y soluciones paso a paso, desde la limpieza de drivers hasta la configuración avanzada de **Prime Select**, aplicable a la mayoría de las series NVIDIA.</p>
+        
+        <h3>Marca Específica: NVIDIA GeForce GTX 1660 SUPER (aplica para todas las series NVIDIA)</h3>
+        
+        <h3>📋 Índice de la Guía</h3>
+        <ul>
+            <li>Diagnóstico del Problema</li>
+            <li>Requisitos Previos</li>
+            <li>Solución Paso a Paso</li>
+            <li>Verificación Final</li>
+            <li>Solución de Problemas Persistentes</li>
+            <li>Scripts Automáticos</li>
+        </ul>
+    </section>
+
+    <section class="step">
+        <h2>🔍 1. Diagnóstico del Problema</h2>
+        
+        <h3>Síntomas Típicos:</h3>
+        <ul>
+            <li>El monitor funciona al conectar **HDMI** a la placa base (**GPU** integrada), pero no a la tarjeta **NVIDIA**.</li>
+            <li>La tarjeta gráfica **no da señal** al conectar por **HDMI** o **DisplayPort**.</li>
+            <li>El sistema detecta el hardware, pero la utilidad **xrandr** no muestra la salida **HDMI** como conectada.</li>
+        </ul>
+
+        <h3>Causas Principales:</h3>
+        <ul>
+            <li>**Controladores NVIDIA incorrectos** o conflictivos (el driver no corresponde a la versión del kernel).</li>
+            <li>Modo **"on-demand" de Prime Select** activo, que a veces desactiva puertos físicos hasta que se usa la GPU.</li>
+            <li>**Conflicto con controlador Nouveau** (open source de NVIDIA).</li>
+            <li>Problemas de configuración de Xorg que no inicializa el puerto HDMI.</li>
+        </ul>
+
+        <hr>
+
+        <h2>⚙️ 2. Requisitos Previos</h2>
+        
+        <h3>Verificar Hardware (Comandos):</h3>
+        <p>Abre una terminal y ejecuta:</p>
+        <pre><code># Detectar tarjeta NVIDIA
+lspci | grep -i nvidia
+
+# Verificar si el monitor está detectado (aunque no dé señal)
+xrandr --listmonitors
+</code></pre>
+        
+        <h3>Preparación del Sistema:</h3>
+        <ul>
+            <li>Sistema Operativo: Ubuntu 20.04 LTS o superior.</li>
+            <li>Acceso de administrador (sudo).</li>
+            <li>Conexión a internet para descargar controladores.</li>
+        </ul>
+    </section>
+
+    <section class="step">
+        <h2>🛠️ 3. Solución Paso a Paso</h2>
+        
+        <h3>Paso 1: Desinstalar Controladores Existentes</h3>
+        <p>Es vital empezar con una limpieza profunda de cualquier driver NVIDIA o CUDA que pueda estar causando conflictos.</p>
+        <pre><code># Detener servicios gráficos (GDM o LightDM)
+sudo systemctl stop gdm3
+
+# Purgar controladores NVIDIA existentes
+sudo apt purge nvidia-* *cuda* *cudnn* -y
+sudo apt autoremove -y
+sudo apt autoclean -y
+</code></pre>
+
+        <h3>Paso 2: Eliminar Configuraciones Conflictivas</h3>
+        <p>Elimina cualquier archivo de configuración de **Xorg** que pudiera estar apuntando a una configuración antigua o errónea de **NVIDIA**:</p>
+        <pre><code># Eliminar configuraciones de Xorg
+sudo rm -f /etc/X11/xorg.conf
+sudo rm -f /etc/X11/xorg.conf.d/*nvidia*
+
+# Eliminar configuraciones de usuario
+rm -rf ~/.config/nvidia-settings*
+</code></pre>
+
+        <h3>Paso 3: Bloquear Controlador Nouveau (Blacklist)</h3>
+        <p>El driver open source **Nouveau** a menudo interfiere con la instalación del driver propietario **NVIDIA**. Debemos bloquearlo.</p>
+        <pre><code># Crear archivo de blacklist para Nouveau
+echo 'blacklist nouveau' | sudo tee /etc/modprobe.d/blacklist-nouveau.conf
+echo 'options nouveau modeset=0' | sudo tee -a /etc/modprobe.d/blacklist-nouveau.conf
+
+# Regenerar initramfs para aplicar el bloqueo
+sudo update-initramfs -u
+</code></pre>
+
+        <h3>Paso 4: Instalar Controladores NVIDIA Correctos</h3>
+        <p>Utiliza **ubuntu-drivers** para instalar la versión recomendada, o especifica el driver si sabes cuál necesitas para tu serie de tarjeta. **Para la GTX 1660 SUPER, el driver 535 o superior es el recomendado.**</p>
+        <pre><code># Actualizar repositorios
+sudo apt update && sudo apt upgrade -y
+
+# Instalar controladores recomendados (la mejor opción)
+sudo ubuntu-drivers autoinstall
+
+# O instalar específicamente el driver 535 si sabes que es el adecuado
+sudo apt install nvidia-driver-535 nvidia-settings nvidia-prime -y
+</code></pre>
+        
+        <p>**Para Series Específicas (como referencia):**</p>
+        <ul>
+            <li>Series 10xx (1070, 1080, etc.): nvidia-driver-470 o nvidia-driver-510</li>
+            <li>Series 16xx (1660, 1650): nvidia-driver-535</li>
+            <li>Series 20xx/30xx/40xx: nvidia-driver-535 o superior</li>
+        </ul>
+
+        <h3>Paso 5: Configurar Prime Select (Forzar NVIDIA)</h3>
+        <p>Asegúrate de que la **GPU** dedicada (**NVIDIA**) esté configurada como el motor de renderizado primario, y no en modo on-demand.</p>
+        <pre><code># Configurar NVIDIA como predeterminada (NO on-demand)
+sudo prime-select nvidia
+
+# Verificar configuración
+prime-select query
+# Debe mostrar: nvidia
+</code></pre>
+
+        <h3>Paso 6: Configurar BIOS/UEFI</h3>
+        <p>Asegúrate de que la **BIOS** está configurada para dar prioridad a la ranura **PCIe** donde reside tu **GPU** dedicada.</p>
+        <ul>
+            <li>Reinicia y entra a **BIOS** (**Del**/**F2** durante el boot).</li>
+            <li>Busca **Advanced > Chipset Configuration** o **Graphics Configuration**.</li>
+            <li>Cambia **Primary Display** de "Auto" a **"PCIe"** o **"PEG"** (PCI Express Graphics).</li>
+            <li>Guarda cambios y sal (**F10**).</li>
+        </ul>
+
+        <h3>Paso 7: Reiniciar el Sistema</h3>
+        <p>Aplica todos los cambios realizados:</p>
+        <pre><code>sudo reboot</code></pre>
+    </section>
+
+    <section class="step">
+        <h2>✅ 4. Verificación Final</h2>
+        <p>Después del reinicio, verifica que la **GPU** y el driver se hayan cargado correctamente, y lo más importante, que el monitor esté visible en la configuración.</p>
+        <ol>
+            <li>**Estado de NVIDIA:**
+                <pre><code>nvidia-smi</code></pre>
+                *Debe mostrar: Información de la GTX 1660 SUPER con driver version.*
+            </li>
+            <li>**Renderizador Activo:**
+                <pre><code>glxinfo | grep "OpenGL renderer"</code></pre>
+                *Debe mostrar: NVIDIA GeForce GTX 1660 SUPER/PCIe/SSE2*
+            </li>
+            <li>**Configuración Prime:**
+                <pre><code>prime-select query</code></pre>
+                *Debe mostrar: nvidia*
+            </li>
+            <li>**Monitores Detectados:**
+                <pre><code>xrandr --listmonitors</code></pre>
+                *Debe mostrar: HDMI-1 conectado (o el nombre de tu puerto).*
+            </li>
+            <li>**Controladores Cargados:**
+                <pre><code>lsmod | grep nvidia</code></pre>
+                *Debe mostrar: módulos nvidia cargados.*
+            </li>
+        </ol>
+    </section>
+
+    <section class="step">
+        <h2>🐛 5. Solución de Problemas Persistentes</h2>
+        
+        <h3>Problema 1: "Failed to initialize NVML"</h3>
+        <p>Esto indica que los drivers no están inicializando correctamente la GPU.</p>
+        <pre><code># Reinstalar controladores específicos y forzar initramfs
+sudo apt install --reinstall nvidia-driver-535 nvidia-utils-535
+sudo update-initramfs -u
+sudo reboot
+</code></pre>
+        
+        <h3>Problema 2: El sistema no arranca después de la instalación</h3>
+        <p>Si el sistema se congela en el boot:</p>
+        <ul>
+            <li>En el menú **GRUB**, presiona **'e'** para editar.</li>
+            <li>Busca la línea que comienza con **linux** y añade **<code>nomodeset</code>** al final.</li>
+            <li>**Ctrl+X** para bootear.</li>
+            <li>Una vez dentro del sistema, reinstala los drivers.</li>
+        </ul>
+
+        <h3>Problema 3: Monitor no detectado pero nvidia-smi funciona</h3>
+        <p>Si el driver funciona pero **xrandr** no detecta la salida, intenta forzar la detección y reiniciar el servidor gráfico.</p>
+        <pre><code># Forzar detección del monitor
+xrandr --auto
+# O intentar configurar manualmente (ej: 1920x1080 a 60Hz)
+xrandr --output HDMI-1 --mode 1920x1080 --rate 60 
+
+# Reiniciar servidor gráfico (podría cerrar tu sesión)
+sudo systemctl restart gdm3
+</code></pre>
+    </section>
+
+    <section class="step">
+        <h2>🤖 6. Scripts Automáticos</h2>
+        <p>Para facilitar la instalación y el diagnóstico, puedes guardar los siguientes comandos en archivos .sh y darles permisos de ejecución (**chmod +x**):</p>
+        
+        <h3>Script de Instalación Completa:</h3>
+        <pre><code>#!/bin/bash
+echo "=== INSTALACIÓN AUTOMÁTICA NVIDIA ==="
+# Paso 1: Limpiar instalación anterior
+sudo systemctl stop gdm3
+sudo apt purge nvidia-* -y
+sudo apt autoremove -y
+
+# Paso 2: Blacklist Nouveau
+echo 'blacklist nouveau' | sudo tee /etc/modprobe.d/blacklist-nouveau.conf
+echo 'options nouveau modeset=0' | sudo tee -a /etc/modprobe.d/blacklist-nouveau.conf
+sudo update-initramfs -u
+
+# Paso 3: Instalar controladores (usando la versión 535 como ejemplo)
+sudo apt update
+sudo apt install nvidia-driver-535 nvidia-settings nvidia-prime -y
+
+# Paso 4: Configurar Prime
+sudo prime-select nvidia
+
+# Paso 5: Limpiar configuraciones
+sudo rm -f /etc/X11/xorg.conf
+# Crea un xorg.conf básico usando el utilitario de nvidia
+sudo nvidia-xconfig
+echo "✅ Instalación completada. Reinicia con: sudo reboot"
+</code></pre>
+        
+        <h3>Script de Diagnóstico:</h3>
+        <pre><code>#!/bin/bash
+echo "=== DIAGNÓSTICO NVIDIA ==="
+echo "1. Hardware:"
+lspci | grep -i nvidia
+echo ""
+echo "2. Driver NVIDIA (nvidia-smi):"
+nvidia-smi
+echo ""
+echo "3. Renderizador (glxinfo):"
+glxinfo | grep "OpenGL renderer"
+echo ""
+echo "4. Prime Select:"
+prime-select query
+echo ""
+echo "5. Monitores (xrandr):"
+xrandr --listmonitors
+echo ""
+echo "6. Módulos Cargados (lsmod):"
+lsmod | grep nvidia
+</code></pre>
+    </section>
+
+    <section class="summary">
+        <h2>🎯 Conclusión Final</h2>
+        <ul>
+            <li>La clave es la **limpieza total** de drivers y configuraciones conflictivas antes de la reinstalación.</li>
+            <li>Siempre verifica que **Prime Select** esté configurado en **<code>nvidia</code>** y no en on-demand.</li>
+            <li>Un error de **HDMI** casi siempre se resuelve entre los pasos de **limpieza, blacklist de Nouveau, e instalación del driver correcto.**</li>
+        </ul>
+
+        <h3>💡 Consejos Finales para Mantenimiento</h3>
+        <ul>
+            <li>**Actualización:** Actualiza controladores cada 6 meses, o después de actualizar la versión principal de Ubuntu.</li>
+            <li>**Verificación:** Verifica siempre la compatibilidad del driver **NVIDIA** con tu versión de kernel antes de hacer cambios mayores.</li>
+            <li>**Backup:** Considera hacer un **backup** de tu configuración de **Xorg** antes de modificarla.</li>
+        </ul>
+        <p>¡Con estos pasos, tu monitor **HDMI** debería funcionar sin problemas con tu **GPU NVIDIA** en Ubuntu!</p>
+    </section>
+    
+    <!-- Sección de Comentarios -->
+    <section id="comments-section">
+        <h2>Comentarios</h2>
+        <div class="comment-form-container step">
+            <h3>Deja tu comentario</h3>
+            <form id="comment-form">
+                <div class="form-group">
+                </div>
+                <div class="form-group">
+                    <label for="comment-text">Comentario:</label>
+                    <textarea id="comment-text" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="version-button">Enviar Comentario</button>
+                <p id="comment-message" style="margin-top: 10px;"></p>
+            </form>
+        </div>
+
+        <div id="comments-list-container" class="step">
+            <h3>Comentarios (<span id="comments-count">0</span>)</h3>
+            <div id="comments-list">
+                <p>Cargando comentarios...</p>
+            </div>
+        </div>
+    </section>
+</div>

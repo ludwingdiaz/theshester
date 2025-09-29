@@ -111,6 +111,12 @@
         });
     });
 
+    app.get('/products', (req, res) => {
+    // Express busca automáticamente el archivo "products.ejs"
+    // en la carpeta que definiste con app.set('views', ...)
+    res.render('products'); 
+});
+
     // ====================================================================
     // Iniciar el servidor
     // ====================================================================

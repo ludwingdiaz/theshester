@@ -1,0 +1,133 @@
+<div data-article-id="<%= tutorial._id %>"> 
+    <h1><%= tutorial.title %></h1> 
+    <p>Vistas: <span id="article-views"><%= tutorial.views %></span></p> 
+    <hr>
+
+    <section class="step">
+        <h2>💡 Introducción</h2>
+        <h2>¿Por qué Ubuntu se Congela al Apagar con NVIDIA?</h2>
+        <p>Este es un problema recurrente que afecta a muchos usuarios de **Ubuntu y derivados con hardware NVIDIA**. Al intentar apagar o reiniciar el sistema, la máquina se queda colgada en el logo de la BIOS o en una pantalla negra, sin completar el ciclo de apagado.</p>
+        <p>El núcleo del problema reside en que los **controladores propietarios de NVIDIA** a veces no liberan correctamente la tarjeta gráfica antes de que el kernel de Linux entregue el control al firmware (BIOS/UEFI) para el apagado final. Esto impide al firmware completar el proceso.</p>
+        <p>A continuación, te presentamos una guía con cuatro pasos probados, desde los más sencillos hasta la solución más robusta a nivel de servicio.</p>
+    </section>
+
+    <section class="step">
+        <h2>🔹 Paso 1: Actualización del Sistema y Drivers</h2>
+        <p>Antes de modificar archivos del sistema, asegúrate de que todo el software esté actualizado. Las nuevas versiones del kernel o de los drivers de NVIDIA a menudo incluyen correcciones para este tipo de errores de liberación de hardware.</p>
+        
+        <h3>Ejecuta los siguientes comandos en tu terminal:</h3>
+        <pre><code>sudo apt update && sudo apt upgrade -y
+sudo ubuntu-drivers autoinstall
+</code></pre>
+        <ul>
+            <li>El primer comando actualiza el sistema.</li>
+            <li>El segundo detecta e instala la versión más reciente y adecuada del driver propietario NVIDIA para tu tarjeta.</li>
+        </ul>
+        <p>Después de este paso, **reinicia el equipo (`sudo reboot`) y prueba si el apagado funciona correctamente**. Si el problema persiste, continúa con el paso 2.</p>
+    </section>
+
+    <section class="step">
+        <h2>🔹 Paso 2: Revisión de la Configuración de BIOS/UEFI</h2>
+        <p>En ocasiones, ciertas características de arranque rápido del firmware (BIOS/UEFI) pueden interferir con la forma en que el sistema operativo maneja el apagado.</p>
+        
+        <h3>Acciones a realizar:</h3>
+        <ol>
+            <li>Reinicia el ordenador y accede a la configuración de la **BIOS/UEFI** (la tecla suele ser $\text{Supr}$, $\text{F2}$, $\text{F10}$ o $\text{Esc}$ al arrancar).</li>
+            <li>Busca y **desactiva** la opción **Fast Boot** (Arranque Rápido).</li>
+            <li>Si estás utilizando el driver propietario de NVIDIA, también es recomendable **desactivar Secure Boot**, ya que a menudo genera conflictos de firma con los módulos del kernel de NVIDIA.</li>
+        </ol>
+        <p>Guarda los cambios, sal del $\text{BIOS}$ y prueba nuevamente el apagado.</p>
+    </section>
+
+    <section class="step">
+        <h2>🔹 Paso 3: Ajustar Parámetros del Kernel en GRUB</h2>
+        <p>Si las soluciones anteriores fallan, podemos indicarle al kernel cómo manejar el hardware al arrancar y al apagar, añadiendo parámetros específicos en el gestor de arranque GRUB.</p>
+
+        <h3>Modificación del archivo GRUB:</h3>
+        <p>Edita el archivo de configuración de GRUB:</p>
+        <pre><code>sudo nano /etc/default/grub</code></pre>
+        
+        <p>Busca la línea:</p>
+        <pre><code>GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"</code></pre>
+
+        <p>Añade uno de los siguientes parámetros **(prueba uno por vez)** dentro de las comillas. El parámetro más efectivo para problemas de apagado de NVIDIA suele ser el primero:</p>
+        <ul>
+            <li><code>nvidia-drm.modeset=0</code> (Deshabilita el *kernel mode setting* de NVIDIA)</li>
+            <li><code>acpi=force</code> (Fuerza al kernel a usar ACPI para la gestión de energía)</li>
+            <li><code>nomodeset</code> (Desactiva la configuración de modos de kernel. Útil si la pantalla se queda negra al arrancar)</li>
+        </ul>
+        
+        <p>Ejemplo con el primer parámetro:</p>
+        <pre><code>GRUB_CMDLINE_LINUX_DEFAULT="quiet splash nvidia-drm.modeset=0"</code></pre>
+
+        <h3>Actualizar GRUB:</h3>
+        <p>Guarda el archivo ($\text{Ctrl+O}$, $\text{Enter}$, $\text{Ctrl+X}$) y actualiza el gestor de arranque:</p>
+        <pre><code>sudo update-grub</code></pre>
+        <p>Reinicia el equipo y comprueba si el apagado se ha corregido.</p>
+    </section>
+
+    <section class="step">
+        <h2>✅ Paso 4: Crear un Servicio Systemd (La Solución Definitiva)</h2>
+        <p>Si nada de lo anterior funciona, la solución más robusta es forzar la descarga (liberación) de los módulos del kernel de NVIDIA justo antes de que el sistema inicie el proceso de apagado, asegurando que la tarjeta gráfica no esté siendo utilizada.</p>
+
+        <h3>Creación del archivo de servicio:</h3>
+        <p>Crea el archivo de la unidad $\text{systemd}$ con $\text{nano}$:</p>
+        <pre><code>sudo nano /etc/systemd/system/force-shutdown-nvidia.service</code></pre>
+        
+        <p>Copia el siguiente contenido **exactamente** como está. Este script usa $\text{modprobe -r}$ para remover los módulos `nvidia_drm` y `nvidia_modeset`:</p>
+        <pre><code>[Unit]
+Description=Force NVIDIA module unload before shutdown
+Before=poweroff.target reboot.target halt.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/true
+ExecStop=/sbin/modprobe -r nvidia_drm nvidia_modeset nvidia
+RemainAfterExit=yes
+
+[Install]
+WantedBy=halt.target reboot.target poweroff.target</code></pre>
+        
+        <h3>Activación y prueba del servicio:</h3>
+        <p>Guarda el archivo y luego activa el nuevo servicio:</p>
+        <pre><code>sudo systemctl enable force-shutdown-nvidia.service</code></pre>
+        <p>Reinicia el equipo y, finalmente, prueba a apagarlo. Esta solución suele ser la definitiva.</p>
+    </section>
+
+    <section class="summary">
+        <h2>🎯 Conclusión Final</h2>
+        <ul>
+            <li>La causa es la falta de liberación de la tarjeta por parte del driver NVIDIA al finalizar la sesión.</li>
+            <li>Siempre comienza por la **actualización de drivers y el sistema** (Paso 1).</li>
+            <li>Si el problema persiste, ajusta los parámetros del kernel en GRUB, priorizando **<code>nvidia-drm.modeset=0</code>** (Paso 3).</li>
+            <li>La solución más fiable es la creación del **servicio $\text{systemd}$** (Paso 4), que garantiza la descarga de los módulos NVIDIA antes de que el $\text{firmware}$ tome el control.</li>
+        </ul>
+        <p>Tu PC con Ubuntu ahora debería apagarse sin problemas y sin quedarse colgado en el logo de la $\text{BIOS}$.</p>
+        <p>¿Qué te parece? ¿Necesitas que te ayude a adaptar los scripts de aprovisionamiento si alguno de tus tutoriales lo requiere, o tienes otro post en mente?</p>
+    </section>
+    
+    <!-- Sección de Comentarios -->
+    <section id="comments-section">
+        <h2>Comentarios</h2>
+        <div class="comment-form-container step">
+            <h3>Deja tu comentario</h3>
+            <form id="comment-form">
+                <div class="form-group">
+                </div>
+                <div class="form-group">
+                    <label for="comment-text">Comentario:</label>
+                    <textarea id="comment-text" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="version-button">Enviar Comentario</button>
+                <p id="comment-message" style="margin-top: 10px;"></p>
+            </form>
+        </div>
+
+        <div id="comments-list-container" class="step">
+            <h3>Comentarios (<span id="comments-count">0</span>)</h3>
+            <div id="comments-list">
+                <p>Cargando comentarios...</p>
+            </div>
+        </div>
+    </section>
+</div>

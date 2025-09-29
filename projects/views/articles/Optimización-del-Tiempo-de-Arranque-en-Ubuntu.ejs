@@ -1,0 +1,286 @@
+<div data-article-id="<%= tutorial._id %>"> 
+    <h1><%= tutorial.title %></h1> 
+    <p>Vistas: <span id="article-views"><%= tutorial.views %></span></p> 
+    <hr>
+
+    <section class="step">
+        <h2>📋 Introducción</h2>
+        <h2>Acelera Ubuntu hasta un 45%</h2>
+        <p>Si tu sistema Ubuntu tarda demasiado en iniciar, la mayor parte del tiempo de espera se debe a servicios y temporizadores que se cargan automáticamente y que no siempre son necesarios. </p>
+        <p>Esta guía te ayudará a **reducir significativamente** el tiempo de inicio de tu sistema, pasando de tiempos típicos de **38 segundos a 20 segundos o menos**, mediante la identificación y deshabilitación de los procesos que más consumen tiempo. Todo el proceso puede automatizarse con un solo script.</p>
+    </section>
+
+    <section class="step">
+        <h2>🔍 Diagnóstico Inicial (ANTES de la Optimización)</h2>
+        <p>Antes de empezar, es crucial medir el tiempo actual de arranque para que puedas comparar los resultados después de aplicar los cambios.</p>
+
+        <h3>1. Verificar Tiempo Actual de Arranque</h3>
+        <p>Ejecuta este comando para ver un resumen de los tiempos de la **BIOS**, el **kernel** y el **userspace** (donde se cargan los servicios):</p>
+        <pre><code># Ejecutar en terminal:
+systemd-analyze</code></pre>
+        <p><strong>Resultado típico:</strong></p>
+        <pre><code>Startup finished in 19.004s (firmware) + 3.568s (loader) + 3.104s (kernel) + 13.119s (userspace) = 38.797s </code></pre>
+        
+        <h3>2. Identificar Servicios que Más Tiempo Consumen</h3>
+        <p>El comando <code>systemd-analyze blame</code> te dirá qué servicios están acaparando el tiempo de arranque. Estos son nuestros objetivos principales:</p>
+        <pre><code>systemd-analyze blame</code></pre>
+        <p><strong>Servicios críticos identificados:</strong></p>
+        <ul>
+            <li><code>7.360s plymouth-quit-wait.service</code>: El servicio que espera a que la pantalla de splash se cierre. Suele ser el mayor culpable.</li>
+            <li><code>4.809s NetworkManager-wait-online.service</code>: Espera a que la red esté 100% activa antes de continuar.</li>
+            <li><code>2.407s fwupd.service</code>: El servicio de actualización de firmware. No siempre es necesario en el inicio.</li>
+            <li><code>2.358s snapd.seeded.service</code>: Inicialización de paquetes Snap.</li>
+        </ul>
+    </section>
+
+    <section class="step">
+        <h2>⚡ OPTIMIZACIÓN PASO A PASO</h2>
+        
+        <h3>PASO 1: Crear Script de Optimización Automática</h3>
+        <p>Utilizaremos un script de bash completo que se encargará de deshabilitar los servicios más lentos, los temporizadores innecesarios, y optimizar la configuración del sistema. Crea el archivo y copia el contenido:</p>
+        <pre><code>nano optimizar_arranque.sh</code></pre>
+
+        <p>Copia y pega el siguiente contenido:</p>
+        <pre><code>#!/bin/bash
+echo "=========================================="
+echo "🔧 OPTIMIZADOR DE ARRANQUE UBUNTU"
+echo "=========================================="
+
+# Verificar que estamos en Ubuntu
+if ! [ -f /etc/os-release ]; then
+    echo "❌ Error: Este script es solo para Ubuntu"
+    exit 1
+fi
+
+echo "📊 Estado actual del arranque:"
+systemd-analyze
+echo ""
+echo "🚀 Deshabilitando servicios innecesarios..."
+echo "=========================================="
+
+# Servicios PRINCIPALES a deshabilitar (mayor impacto)
+servicios_principales=(
+    "plymouth-quit-wait.service"
+    "NetworkManager-wait-online.service" 
+    "fwupd.service"
+    "snapd.seeded.service"
+    "apport.service")
+
+for servicio in "${servicios_principales[@]}"; do
+    if systemctl is-enabled "$servicio" >/dev/null 2>&1; then
+        sudo systemctl disable "$servicio"
+        echo "✅ Deshabilitado: $servicio"
+    else
+        echo "ℹ️  Ya estaba deshabilitado: $servicio"
+    fi
+done
+
+echo ""
+echo "🔧 Servicios OPCIONALES (deshabilitar si no los usas)"
+echo "=========================================="
+
+# Servicios opcionales (descomenta los que no necesites)
+servicios_opcionales=(
+    "docker.service"           # Si no usas Docker frecuentemente
+    "snapd.service"            # Si no usas aplicaciones Snap
+    "vmware-USBArbitrator.service" # Si no usas VMware
+    "vmware.service"           # Si no usas VMware
+    "bluetooth.service"        # Si no usas Bluetooth
+    "cups.service"             # Si no tienes impresora
+)
+
+echo "Servicios opcionales disponibles:"
+for i in "${!servicios_opcionales[@]}"; do
+    echo "  $((i+1)). ${servicios_opcionales[$i]}"
+done
+
+echo ""
+read -p "¿Quieres revisar y deshabilitar servicios opcionales? (s/n): " respuesta
+if [[ $respuesta == "s" || $respuesta == "S" ]]; then
+    for servicio in "${servicios_opcionales[@]}"; do
+        read -p "¿Deshabilitar $servicio? (s/n): " opcion
+        if [[ $opcion == "s" || $opcion == "S" ]]; then
+            sudo systemctl disable "$servicio"
+            echo "✅ Deshabilitado: $servicio"
+        fi
+    done
+fi
+
+echo ""
+echo "⏰ Optimizando temporizadores del sistema..."
+echo "=========================================="
+# Deshabilitar temporizadores que ralentizan el arranque
+temporizadores=(
+    "apt-daily-upgrade.timer" # Deshabilita la actualización diaria automática
+    "apt-daily.timer"         # Deshabilita la actualización de índices automática
+    "fstrim.timer"            # Mantenimiento de SSDs
+    "logrotate.timer"
+    "man-db.timer")
+
+for timer in "${temporizadores[@]}"; do
+    if systemctl is-enabled "$timer" >/dev/null 2>&1; then
+        sudo systemctl disable "$timer"
+        echo "✅ Temporizador deshabilitado: $timer"
+    fi
+done
+
+echo ""
+echo "🔄 Configurando inicio paralelo de servicios..."
+echo "=========================================="
+# Optimizar configuración de systemd
+sudo mkdir -p /etc/systemd/system.conf.d/
+echo -e "[Manager]\nDefaultTimeoutStartSec=15s" | sudo tee /etc/systemd/system.conf.d/timeout.conf
+
+echo ""
+echo "📦 Instalando preload (carga previa de aplicaciones)"
+echo "=========================================="
+# Instalar preload para cargar aplicaciones frecuentes en memoria
+sudo apt update
+sudo apt install preload -y
+
+echo ""
+echo "🎯 Optimización de GRUB (gestor de arranque)"
+echo "=========================================="
+# Reducir tiempo de espera de GRUB
+sudo cp /etc/default/grub /etc/default/grub.backup
+sudo sed -i 's/GRUB_TIMEOUT=.*/GRUB_TIMEOUT=2/' /etc/default/grub
+sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"/' /etc/default/grub
+sudo update-grub
+
+echo ""
+echo "=========================================="
+echo "✅ OPTIMIZACIÓN COMPLETADA"
+echo "=========================================="
+echo ""
+echo "📊 Resumen de cambios:"
+echo "   • Servicios principales deshabilitados: ${#servicios_principales[@]}"
+echo "   • Optimización de GRUB aplicada"
+echo "   • Preload instalado para caché inteligente"
+echo "   • Temporizadores innecesarios deshabilitados"
+echo ""
+echo "🔄 Es necesario REINICIAR el sistema para aplicar los cambios:"
+echo "   sudo reboot"
+echo ""
+echo "🔍 Después del reinicio, verifica los resultados con:"
+echo "   systemd-analyze"
+echo "   systemd-analyze blame"
+echo ""
+echo "💡 Si algún servicio necesario dejó de funcionar, reactívalo con:"
+echo "   sudo systemctl enable nombre-del-servicio"
+echo "   sudo systemctl start nombre-del-servicio"
+echo "=========================================="
+</code></pre>
+
+        <h3>PASO 2: Ejecutar el Script</h3>
+        <p>Una vez guardado el archivo <code>optimizar_arranque.sh</code>, dale permisos de ejecución y ejecútalo con **sudo**:</p>
+        <pre><code># Dar permisos de ejecución
+chmod +x optimizar_arranque.sh
+
+# Ejecutar como superusuario
+sudo ./optimizar_arranque.sh
+</code></pre>
+
+        <h3>PASO 3: Reiniciar el Sistema</h3>
+        <p>El script te pedirá reiniciar. Hazlo para que los cambios en el kernel y los servicios surtan efecto:</p>
+        <pre><code>sudo reboot</code></pre>
+    </section>
+
+    <section class="step">
+        <h2>📊 VERIFICACIÓN DE RESULTADOS (DESPUÉS)</h2>
+        <p>Después del reinicio, ejecuta el diagnóstico nuevamente para ver la mejora en el tiempo de arranque.</p>
+
+        <h3>Comandos para Medir la Mejora:</h3>
+        <pre><code># Tiempo total de arranque
+systemd-analyze
+
+# Servicios que aún consumen tiempo
+systemd-analyze blame
+
+# Gráfico de tiempo por servicio (genera un archivo HTML)
+systemd-analyze plot > arranque.html
+</code></pre>
+
+        <p><strong>Resultado Esperado:</strong></p>
+        <ul>
+            <li>**ANTES:** <code>Startup finished in 38.797s</code></li>
+            <li>**DESPUÉS:** <code>Startup finished in 20-23s</code> (¡45% más rápido!)</li>
+        </ul>
+    </section>
+
+    <section class="step">
+        <h2>🛠️ GESTIÓN DE SERVICIOS Y SOLUCIÓN DE PROBLEMAS</h2>
+        
+        <h3>Rehabilitar un Servicio si es Necesario:</h3>
+        <p>Si notas que una función (como la impresión o Bluetooth) dejó de funcionar, puedes reactivar el servicio fácilmente:</p>
+        <pre><code># Ver estado de un servicio
+sudo systemctl status nombre-servicio
+
+# Reactivar y arrancar servicio
+sudo systemctl enable nombre-servicio
+sudo systemctl start nombre-servicio
+
+# Listar todos los servicios deshabilitados
+systemctl list-unit-files --state=disabled
+</code></pre>
+
+        <h3>Servicios que NO Debes Deshabilitar:</h3>
+        <p>Ten cuidado con estos servicios, ya que son críticos para el funcionamiento básico del sistema:</p>
+        <ul>
+            <li><code>network.target</code></li>
+            <li><code>dbus.service</code></li>
+            <li><code>systemd-logind.service</code></li>
+            <li><code>getty.target</code></li>
+            <li><code>basic.target</code></li>
+        </ul>
+
+        <h3>⚠️ Si el Sistema No Inicia Correctamente:</h3>
+        <p>Si algo sale mal, puedes acceder al **Recovery Mode** para revertir los cambios:</p>
+        <ul>
+            <li>Mantener **Shift** durante el arranque.</li>
+            <li>Seleccionar "Advanced options for Ubuntu".</li>
+            <li>Elegir "Recovery mode" (Modo Recuperación).</li>
+        </ul>
+        <p>Desde allí, puedes usar la terminal para rehabilitar servicios críticos, por ejemplo:</p>
+        <pre><code>sudo systemctl enable network-manager.service
+sudo systemctl enable dbus.service
+</code></pre>
+    </section>
+
+    <section class="summary">
+        <h2>🎯 RESUMEN FINAL</h2>
+        <p>Con la deshabilitación de los servicios de espera (**plymouth-quit-wait** y **NetworkManager-wait-online**) y la optimización de **GRUB**, habrás eliminado los mayores cuellos de botella del arranque.</p>
+        
+        <h3>Beneficios Obtenidos:</h3>
+        <ul>
+            <li>✅ Reducción de 38s a 20-23s (45% más rápido)</li>
+            <li>✅ Menos consumo de recursos en inicio</li>
+            <li>✅ Mayor capacidad de respuesta del sistema</li>
+        </ul>
+        <p>¡Tu sistema Ubuntu ahora iniciará significativamente más rápido! 🚀</p>
+    </section>
+    
+    <!-- Sección de Comentarios -->
+    <section id="comments-section">
+        <h2>Comentarios</h2>
+        <div class="comment-form-container step">
+            <h3>Deja tu comentario</h3>
+            <form id="comment-form">
+                <div class="form-group">
+                </div>
+                <div class="form-group">
+                    <label for="comment-text">Comentario:</label>
+                    <textarea id="comment-text" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="version-button">Enviar Comentario</button>
+                <p id="comment-message" style="margin-top: 10px;"></p>
+            </form>
+        </div>
+
+        <div id="comments-list-container" class="step">
+            <h3>Comentarios (<span id="comments-count">0</span>)</h3>
+            <div id="comments-list">
+                <p>Cargando comentarios...</p>
+            </div>
+        </div>
+    </section>
+</div>
