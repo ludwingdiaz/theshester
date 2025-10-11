@@ -1,0 +1,106 @@
+<div data-article-id="<%= tutorial._id %>"> 
+    <h1>💾 Guía de Rescate: Copiar Archivos ISO con Espacios Usando XCOPY (Terminal de Emergencia)</h1> 
+    <p>Vistas: <span id="article-views"><%= tutorial.views %></span></p> 
+    <hr>
+
+    <section class="step">
+        <h2>💡 Introducción: La Solución al Error "Invalid number of parameters"</h2>
+        <p>Esta guía es vital para situaciones de emergencia, como cuando tu sistema Windows no inicia y necesitas mover o respaldar archivos de instalación (ISOs) desde la línea de comandos (Símbolo del Sistema).</p>
+        <p>El error más común al intentar copiar archivos con nombres que contienen **espacios** (como <code>KernelOS11 23H2...iso</code>) es **"Invalid number of parameters"** (Número de parámetros no válido). La solución es simple: encerrar la ruta de origen entre comillas (<code>"</code>) usando el comando <strong><code>XCOPY</code></strong>.</p>
+    </section>
+
+    <section class="step">
+        <h2>🚀 Escenario de Emergencia: Acceder al Símbolo del Sistema (WinRE)</h2>
+        <p>Si tu sistema no arranca, así es como accedes a la terminal de recuperación:</p>
+        
+        <h3>Método 1: Arranque Forzado (Más Común)</h3>
+        <p>Fuerza el apagado de tu PC tres veces seguidas durante el inicio. En el menú de recuperación que aparece, selecciona:</p>
+        <ul>
+            <li>**Opciones avanzadas** → **Solucionar problemas** → **Opciones avanzadas** → **Símbolo del sistema**.</li>
+        </ul>
+
+        <h3>Método 2: Combinación Directa (Shift + F10)</h3>
+        <p>Si estás en la pantalla de instalación de Windows o en el entorno de recuperación, la combinación de teclas **Shift + F10** suele abrir la terminal al instante.</p>
+    </section>
+
+    <section class="step">
+        <h2>📋 Paso 1: La Sintaxis Clave de XCOPY</h2>
+        <p>En el Entorno de Recuperación (WinRE), las letras de unidad pueden ser diferentes. Usa <code>DIR</code> para verificar las unidades antes de copiar. La sintaxis que usaremos es:</p>
+
+        <pre><code>XCOPY "[RUTA DE ORIGEN COMPLETA]" [RUTA DE DESTINO] /V /Y</code></pre>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Parte</th>
+                    <th>Descripción</th>
+                    <th>Importancia Clave</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>" ... "</code></td>
+                    <td>**Comillas Dobles.**</td>
+                    <td>**OBLIGATORIAS** para nombres de archivo con espacios (como KernelOS).</td>
+                </tr>
+                <tr>
+                    <td><code>/V</code></td>
+                    <td>Modificador de **Verificación**.</td>
+                    <td>Comprueba que la copia se ha realizado correctamente.</td>
+                </tr>
+                <tr>
+                    <td><code>/Y</code></td>
+                    <td>Modificador de **Sobrescritura**.</td>
+                    <td>Copia sin pedir confirmación si ya existe un archivo con el mismo nombre.</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section class="step">
+        <h2>🛠️ Paso 2: Ejecutar los Comandos de Copia para los Archivos ISO</h2>
+        <p>Copia y pega (o escribe) cada comando. Asumimos que la unidad de origen es <code>D:</code> y el destino es <code>E:</code>.</p>
+
+        <h3>A. Copiar Kali Linux (ISO sin espacios)</h3>
+        <pre><code>XCOPY "D:\kali-linux-2024.4-installer-amd64.iso" E:\ /V /Y</code></pre>
+
+        <h3>B. Copiar KernelOS 11 (Requiere comillas por los espacios)</h3>
+        <pre><code>XCOPY "D:\KernelOS11 23H2 Ai0v1.4.iso" E:\ /V /Y</code></pre>
+
+        <h3>C. Copiar KernelOS 10 (Requiere comillas por los espacios)</h3>
+        <pre><code>XCOPY "D:\KernelOS10 22H2 Ai0v1.3.2.iso" E:\ /V /Y</code></pre>
+    </section>
+
+    <section class="step">
+        <h2>✅ Paso 3: Confirmación</h2>
+        <p>Después de ejecutar cada comando, el sistema te mostrará:</p>
+        <ul>
+            <li><code>1 File(s) copied</code> (1 archivo(s) copiado(s)).</li>
+        </ul>
+        <p>Si la terminal no devuelve errores, la copia fue exitosa y tus archivos ISO de rescate están seguros en la unidad de destino.</p>
+    </section>
+
+    <section id="comments-section">
+        <h2>Comentarios</h2>
+        <div class="comment-form-container step">
+            <h3>Deja tu comentario</h3>
+            <form id="comment-form">
+                <div class="form-group">
+                </div>
+                <div class="form-group">
+                    <label for="comment-text">Comentario:</label>
+                    <textarea id="comment-text" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="version-button">Enviar Comentario</button>
+                <p id="comment-message" style="margin-top: 10px;"></p>
+            </form>
+        </div>
+
+        <div id="comments-list-container" class="step">
+            <h3>Comentarios (<span id="comments-count">0</span>)</h3>
+            <div id="comments-list">
+                <p>Cargando comentarios...</p>
+            </div>
+        </div>
+    </section>
+</div>

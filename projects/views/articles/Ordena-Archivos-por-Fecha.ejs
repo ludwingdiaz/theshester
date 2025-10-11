@@ -1,0 +1,144 @@
+<div data-article-id="<%= tutorial._id %>"> 
+    <h1>💻 Guía Completa: Ordena Archivos por Fecha y Muestra Solo Nombres en PowerShell</h1> 
+    <p>Vistas: <span id="article-views"><%= tutorial.views %></span></p> 
+    <hr>
+
+    <section class="step">
+        <h2>💡 Introducción: El Poder de la Terminal en Windows</h2>
+        <p>¿Cansado de ver tus archivos sin orden en la terminal de Windows? **PowerShell** (la terminal moderna de Windows) es una herramienta increíblemente poderosa que te permite hacer esto y mucho más.</p>
+        <p>Aprende a usar los **Pipes** (<code>|</code>) y los comandos **<code>Sort-Object</code>** y **<code>Select-Object</code>** para organizar tus archivos por fecha de modificación y filtrar solo lo que realmente necesitas: ¡una lista limpia de nombres!</p>
+    </section>
+
+    <section class="step">
+        <h2>🚀 Paso 1: Abrir PowerShell y Preparar el Directorio</h2>
+        <p>Antes de empezar, asegúrate de estar en la carpeta correcta donde residen los archivos que quieres ordenar.</p>
+        <ol>
+            <li>Abre **PowerShell** (puedes buscarlo en el menú de inicio de Windows).</li>
+            <li>Usa el comando <code>cd</code> (Change Directory) para navegar a la carpeta de tus archivos.</li>
+        </ol>
+
+        <h3>Ejemplo de Navegación:</h3>
+        <pre><code>cd D:\Videos shorts\agustin hoy\Ya subi\Sofia Martinez</code></pre>
+    </section>
+
+    <section class="step">
+        <h2>📋 Paso 2: Listar y Ordenar por Fecha de Modificación</h2>
+        <p>El comando base para ver el contenido de un directorio es <strong><code>ls</code></strong> (un alias de <code>Get-ChildItem</code> en PowerShell). Luego lo conectamos a <code>Sort-Object</code> usando el **Pipe** (<code>|</code>).</p>
+
+        <h3>Comando de Ordenación (¡Recomendado: Reciente a Antiguo!):</h3>
+        <p>Para ver los archivos que modificaste más recientemente primero, usa el parámetro <code>-Descending</code>.</p>
+        <pre><code>ls | Sort-Object LastWriteTime -Descending</code></pre>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Componente</th>
+                    <th>Función</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>ls</code></td>
+                    <td>Obtiene la lista de archivos.</td>
+                </tr>
+                <tr>
+                    <td><code>|</code></td>
+                    <td>Envía la lista al siguiente comando (Pipe).</td>
+                </tr>
+                <tr>
+                    <td><code>Sort-Object LastWriteTime</code></td>
+                    <td>Ordena la lista usando la columna <strong><code>LastWriteTime</code></strong> (fecha de modificación).</td>
+                </tr>
+                <tr>
+                    <td><code>-Descending</code></td>
+                    <td>Invierte el orden, mostrando los archivos más **recientes** primero.</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section class="step">
+        <h2>💎 Paso 3: Filtrar para Mostrar SOLO los Nombres (Con Extensión)</h2>
+        <p>Si solo necesitas el nombre completo del archivo (incluyendo la extensión, ej., <code>.mp4</code>), usa un segundo Pipe (<code>|</code>) y el comando <code>Select-Object</code> con la propiedad **<code>Name</code>**.</p>
+
+        <h3>Comando para Nombres Completos:</h3>
+        <pre><code>ls | Sort-Object LastWriteTime -Descending | Select-Object -ExpandProperty Name</code></pre>
+        
+        <p><strong>Explicación:</strong> <code>-ExpandProperty Name</code> selecciona y extrae solo la propiedad **<code>Name</code>** del archivo, eliminando las demás columnas de la tabla.</p>
+
+        <h3>Resultado Esperado (Ejemplo):</h3>
+        <pre><code>Sofia Martinez la mama de messi me quiere.mp4
+Sofia Martinez messi me prefiere.mp4
+Sofia Martinez sueño con messi.mp4
+...</code></pre>
+    </section>
+
+    <section class="step">
+        <h2>✨ Paso 4: Ocultar la Extensión del Archivo (La Lista más Limpia)</h2>
+        <p>Esta es la técnica que estabas buscando: para obtener una lista totalmente limpia, sin las extensiones (<code>.mp4</code>, <code>.txt</code>, etc.), debes usar la propiedad <strong><code>BaseName</code></strong> en lugar de <code>Name</code>.</p>
+
+        <h3>El Comando Final (Nombres Sin Extensión):</h3>
+        <pre><code>ls | Sort-Object LastWriteTime -Descending | Select-Object -ExpandProperty BaseName</code></pre>
+        
+        <p><strong>Explicación:</strong> La propiedad <code>BaseName</code> de un objeto de archivo en PowerShell contiene solo el nombre, sin el punto ni la extensión.</p>
+
+        <h3>Resultado Esperado:</h3>
+        <pre><code>Sofia Martinez la mama de messi me quiere
+Sofia Martinez messi me prefiere
+Sofia Martinez sueño con messi
+...</code></pre>
+    </section>
+
+    <section class="summary">
+        <h2>🔑 Resumen de Comandos Clave</h2>
+        <p>Estos son los comandos clave de la gestión de archivos por fecha en PowerShell:</p>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Objetivo</th>
+                    <th>Comando en PowerShell</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>**Listar y Ordenar Todo**</td>
+                    <td><code>ls | Sort-Object LastWriteTime -Descending</code></td>
+                </tr>
+                <tr>
+                    <td>**Mostrar Solo Nombre (Con Extensión)**</td>
+                    <td><code>ls | Sort-Object LastWriteTime -Descending | Select-Object -ExpandProperty Name</code></td>
+                </tr>
+                <tr>
+                    <td>**Mostrar Solo Nombre (SIN Extensión)**</td>
+                    <td><code>ls | Sort-Object LastWriteTime -Descending | Select-Object -ExpandProperty BaseName</code></td>
+                </tr>
+            </tbody>
+        </table>
+        <p>¡Con estos sencillos comandos, has dominado una técnica avanzada de gestión de archivos en PowerShell!</p>
+    </section>
+    
+    <section id="comments-section">
+        <h2>Comentarios</h2>
+        <div class="comment-form-container step">
+            <h3>Deja tu comentario</h3>
+            <form id="comment-form">
+                <div class="form-group">
+                </div>
+                <div class="form-group">
+                    <label for="comment-text">Comentario:</label>
+                    <textarea id="comment-text" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="version-button">Enviar Comentario</button>
+                <p id="comment-message" style="margin-top: 10px;"></p>
+            </form>
+        </div>
+
+        <div id="comments-list-container" class="step">
+            <h3>Comentarios (<span id="comments-count">0</span>)</h3>
+            <div id="comments-list">
+                <p>Cargando comentarios...</p>
+            </div>
+        </div>
+    </section>
+</div>
