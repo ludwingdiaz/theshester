@@ -91,9 +91,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       // Actualiza la imagen del avatar
     function updateProfileAvatar(url) {
-        if (profileAvatarDisplay) {
+        if (profileAvatarDisplay && url) {
             profileAvatarDisplay.src = url;
-        }
+        }else {
+        // En caso de que no haya URL, aseguras el avatar por defecto si lo quieres
+        profileAvatarDisplay.src = '/assets/default-avatar.png'; 
+    }
     }
 
     // Función para cargar los datos del perfil (al cargar la página y verificar autenticación)
@@ -103,6 +106,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         let userIdFromLocalStorage = localStorage.getItem('userId');
         let userEmailFromLocalStorage = localStorage.getItem('userEmail');
         let profilePictureFromLocalStorage = localStorage.getItem('profilePicture'); 
+
+        console.log('DEBUG: URL real de avatar en localStorage:', profilePictureFromLocalStorage); // <-- ¡AÑADE ESTO!
+
 
         console.log('diario.js: Valor de userId en localStorage al inicio:', userIdFromLocalStorage);
 
@@ -115,8 +121,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         updateUsernameDisplays(usernameFromLocalStorage);
         updateEmailDisplay(userEmailFromLocalStorage);
+        console.log('DEBUG 1: Intentando actualizar avatar inicial.');
         // Usa la URL de Cloudinary por defecto si no hay profilePictureFromLocalStorage
         updateProfileAvatar(profilePictureFromLocalStorage || 'https://asset.cloudinary.com/dvulqsi0o/70bba0a0431785d3f86227e24e48e023'); 
+                        console.log('DEBUG 2: Avatar inicial actualizado. Pasando a FETCH.');
+
 
         try {
             const response = await fetch(`${BASE_URL_BACKEND}/api/auth/profile`, { 

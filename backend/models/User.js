@@ -30,11 +30,11 @@ const UserSchema = new mongoose.Schema({
     profilePicture: { // URL de la imagen en Cloudinary
         type: String,
         // Sugerencia: Usa una URL de Cloudinary para tu imagen por defecto también
-        default: 'https://asset.cloudinary.com/dvulqsi0o/70bba0a0431785d3f86227e24e48e023' 
+        default: 'https://res.cloudinary.com/dvulqsi0o/image/upload/v1752884573/default-avatar_pqncmh.png'
     },
     profilePicturePublicId: { // Public ID de la imagen en Cloudinary, para su eliminación
         type: String,
-        default: null
+        default: 'default-avatar_pqncmh.png' 
     }
 });
 
