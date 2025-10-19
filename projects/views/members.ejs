@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Clan: <%= clanName %></title>
+    
+    <link rel="stylesheet" href="/projects/vlog/css/clash.css">
+</head>
+<body class="subreal-body"> 
+    
+    <div class="clan-container">
+        <h1 class="clan-title">⚔️ Clan: <%= clanName %> 🛡️</h1>
+
+        <% if (typeof error !== 'undefined' && error) { %>
+            <p class="error-message">Error al cargar los datos: <%= error %></p>
+        
+        <% } else if (Array.isArray(members) && members.length > 0) { %>
+            
+            <table class="member-table">
+                <thead>
+                    <tr class="table-header">
+                        <th>NOMBRE</th>
+                        <th>ROL</th>
+                        <th>TROFEOS</th>
+                        <th>DONACIONES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% members.forEach(member => { %>
+                        <tr class="member-row">
+                            <td class="col-name">
+                                <a href="#" 
+                                   onclick="showPlayerDetails(decodeURIComponent('<%= encodeURIComponent(JSON.stringify(member)) %>')); return false;"
+                                   class="player-link">
+                                    <%= member.name %>
+                                </a>
+                            </td>
+                            <td><%= member.role %></td>
+                            <td><%= member.trophies %></td>
+                            <td><%= member.donations %></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+
+        <% } else { %>
+            <p class="no-members">No se encontraron miembros o el clan está vacío.</p>
+        <% } %>
+    </div>
+
+    <%- include('./modal_detail') %> 
+
+    <script src="/projects/vlog/js/members.js"></script>
+
+</body>
+</html>
